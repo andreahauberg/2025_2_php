@@ -27,7 +27,7 @@ node_modules/
 Thumbs.db
 
 # Ignorer databasefiler og logs
-*.sql
+
 *.sqlite
 *.db
 /dumps/
