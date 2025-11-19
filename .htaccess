@@ -12,7 +12,7 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
 RewriteRule ^$         /views/index.php [L]
 RewriteRule ^home$      /views/home.php [NC,L]
-RewriteRule ^contact-us$ /views/contact-us.php [NC,L]
+RewriteRule ^profile$ /views/profile.php [NC,L]
 
 RewriteRule ^person$   /views/person.php [NC,L]
 RewriteRule ^proxy$     /views/proxy.php [NC,L]
@@ -27,5 +27,8 @@ RewriteRule ^api-unfollow$   /api/api-unfollow.php [NC,L]
 RewriteRule ^api-create-post$   /api/api-create-post.php [NC,L]
 RewriteRule ^api-update-profile$   /api/api-update-profile.php [NC,L]
 RewriteRule ^api-delete-profile$   /api/api-delete-profile.php [NC,L]
+RewriteRule ^api-like-post$   /api/api-like-post.php [NC,L]
+RewriteRule ^api-unlike-post$   /api/api-unlike-post.php [NC,L]
+
 
 ErrorDocument 404 /views/404.php

@@ -1,13 +1,29 @@
-<div class="profile-info" id="<?php _($user["user_pk"]); ?>">
-    <img src="https://avatar.iran.liara.run/public/94" alt="Profile Picture">
+<div class="profile-info" id="<?php echo $user["user_pk"]; ?>">
+    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user["user_username"]) % 100; ?>" alt="Profile Picture">
     <div class="info-copy">
-        <p class="name"><?php _($user["user_full_name"]); ?></p>
-        <p class="handle"><?php _("@" . $user["user_username"]); ?></p>
+        <p class="name"><?php echo htmlspecialchars($user["user_full_name"]); ?></p>
+        <p class="handle"><?php echo htmlspecialchars("@" . $user["user_username"]); ?></p>
     </div>
-
-    <?php 
+    <?php
     $user_pk = $user["user_pk"];
-    require __DIR__.'/___button_follow.php';
-    
+
+    // Tjek om den loggede bruger følger denne bruger
+    $isFollowing = false;
+    if (isset($_SESSION["user"])) {
+        require_once __DIR__ . '/../db.php';
+        $q = "SELECT COUNT(*) FROM follows WHERE follower_user_fk = :followerPk AND follow_user_fk = :followPk";
+        $stmt = $_db->prepare($q);
+        $stmt->bindValue(':followerPk', $_SESSION["user"]["user_pk"]);
+        $stmt->bindValue(':followPk', $user_pk);
+        $stmt->execute();
+        $isFollowing = $stmt->fetchColumn() > 0;
+    }
+
+    // Vis den korrekte knap
+    if ($isFollowing) {
+        require __DIR__ . '/___button_unfollow.php';
+    } else {
+        require __DIR__ . '/___button_follow.php';
+    }
     ?>
 </div>
