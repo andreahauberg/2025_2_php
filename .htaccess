@@ -1,0 +1,31 @@
+RewriteEngine On
+
+
+# Hvis filen findes som .php, omskriv URL uden filendelse til .php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Hvis det ikke er en statisk fil, send til routes.php
+# RewriteCond %{REQUEST_URI} !(\.png|\.jpg|\.webp|\.gif|\.jpeg|\.zip|\.css|\.svg|\.js|\.pdf)$
+# RewriteRule ^(.*)$ routes.php [QSA,L]
+
+RewriteRule ^$         /views/index.php [L]
+RewriteRule ^home$      /views/home.php [NC,L]
+RewriteRule ^contact-us$ /views/contact-us.php [NC,L]
+
+RewriteRule ^person$   /views/person.php [NC,L]
+RewriteRule ^proxy$     /views/proxy.php [NC,L]
+RewriteRule ^save$     /save.php [NC,L]
+
+RewriteRule ^bridge-login$ /connections/bridge-login.php [NC,L]
+RewriteRule ^bridge-signup$ /connections/bridge-signup.php [NC,L]
+RewriteRule ^bridge-logout$ /connections/bridge-logout.php [NC,L]
+
+RewriteRule ^api-follow$     /api/api-follow.php [NC,L]
+RewriteRule ^api-unfollow$   /api/api-unfollow.php [NC,L]
+RewriteRule ^api-create-post$   /api/api-create-post.php [NC,L]
+RewriteRule ^api-update-profile$   /api/api-update-profile.php [NC,L]
+RewriteRule ^api-delete-profile$   /api/api-delete-profile.php [NC,L]
+
+ErrorDocument 404 /views/404.php

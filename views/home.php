@@ -1,0 +1,169 @@
+<?php
+require_once __DIR__ . "/../x.php";
+// _noCache();
+session_start();
+
+if (!isset($_SESSION["user"])) { 
+    header("location: /?message=not logged in, please login first");
+    exit();
+}
+
+require_once __DIR__ . "/../db.php";
+
+$q = "
+  SELECT
+    posts.post_pk,
+    posts.post_message,
+    posts.post_image_path,
+    posts.post_user_fk,
+    users.user_full_name,
+    users.user_username,
+    users.user_pk AS author_user_pk
+  FROM posts
+  JOIN users ON posts.post_user_fk = users.user_pk
+  ORDER BY RAND()
+  LIMIT 10
+";
+$stmt = $_db->prepare($q);
+$stmt->execute();
+$posts = $stmt->fetchAll();
+
+
+$currentUser = $_SESSION["user"]["user_pk"];
+$q = "SELECT * FROM users WHERE user_pk != :currentUser ORDER BY RAND() LIMIT 3";
+$stmt = $_db->prepare($q);
+$stmt->bindValue(":currentUser", $currentUser);
+$stmt->execute();
+$users = $stmt->fetchAll();
+
+
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script type="module" src="../public/js/app.js"></script>
+    <script defer src="../public/js/dialog.js"></script>
+    <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
+</head>
+
+<body>
+    <div id="container">
+        <button class="burger" aria-label="Menu">
+            <i class="fa-solid fa-bars"></i>
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <nav>
+            <ul>
+                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
+                <li><a href="#"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
+                <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
+                <li><a href="#"><i class="fa-regular fa-bookmark"></i><span>Bookmarks</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-briefcase"></i><span>Jobs</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-users"></i><span>Communities</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-star"></i><span>Premium</span></a></li>
+                <li><a href="#"><i class="fa-solid fa-bolt"></i><span>Verified Orgs</span></a></li>
+                <li><button data-open="updateProfileDialog"><i class="fa-regular fa-user"></i><span>Profile</span></button></li>
+                <li><a href="#"><i class="fa-solid fa-ellipsis"></i><span>More</span></a></li>
+                <li><a href="bridge-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+            </ul>
+
+            <button class="post-btn" data-open="postDialog">Post</button>
+            
+
+            <div id="profile_tag">
+                <img src="https://avatar.iran.liara.run/public/73" alt="Profile">
+                <div>
+                    <div class="name">
+                        <?php _($_SESSION["user"]["user_full_name"]); ?>
+                    </div>
+                    <div class="handle">
+                        <?php _("@" . $_SESSION["user"]["user_username"]); ?>
+                    </div>
+                </div>
+                <i class="fa-solid fa-ellipsis option"></i>
+            </div>
+        </nav>
+        <?php 
+            require_once __DIR__ . "/../components/_post-dialog.php";
+            require_once __DIR__ . "/../components/_update-profile-dialog.php";
+            ?>
+        
+
+        <main>
+            <?php //<span class="action flip-btn"><i class="fa-regular fa-heart"></i></span> 
+            ?>
+            <?php
+            foreach ($posts as $post):
+                require __DIR__ . "/../components/_post.php";
+            endforeach
+            ?>
+
+        </main>
+        <aside>
+            <form action="">
+                <input type="text" placeholder="Search Twitter">
+                <button>Search</button>
+            </form>
+            <div class="happening-now">
+                <h2>What's happening now</h2>
+                <div class="trending">
+                    <div class="trending-item">
+                        <div class="trending-info">
+                            <span class="item_title">Trending in Denmark</span>
+                            <p>Grækenland</p>
+                        </div>
+                        <span class="option">⋮</span>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-info">
+                            <span class="item_title">Politics . Trending</span>
+                            <p>Syria</p>
+                        </div>
+                        <span class="option">⋮</span>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-info">
+                            <span class="item_title">Bussiness . Trending</span>
+                            <p>#AlgoTrading</p>
+                        </div>
+                        <span class="option">⋮</span>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-info">
+                            <span class="item_title">Trending in Denmark</span>
+                            <p>Italien</p>
+                        </div>
+                        <span class="option">⋮</span>
+                    </div>
+                    <button class="show-more-btn">Show more</button>
+                </div>
+
+            </div>
+            <hr>
+            <div class="who-to-follow">
+                <h2>Who to follow</h2>
+                <div class="follow-suggestion">
+                    <?php
+                    foreach ($users as $user):
+                        require __DIR__ . "/../components/_follow_tag.php";
+                    endforeach
+                    ?>
+
+                    <button class="show-more-btn">Show more</button>
+                </div>
+        </aside>
+    </div>
+      <script src="../public/js/mixhtml.js"></script>
+</body>
+
+</html>
