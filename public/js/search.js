@@ -11,6 +11,8 @@ export function searchOverlay() {
 
   const homeInput = document.querySelector("#home-search-input");
   const homeForm = document.querySelector("#home-search-form");
+  const exploreBtn = document.querySelector(".open-search");
+  const profileInput = document.querySelector("#profile-search-input");
 
   let debounceTimer = null;
 
@@ -72,6 +74,15 @@ export function searchOverlay() {
     });
   }
 
+  if (exploreBtn) {
+    exploreBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      open("");
+    });
+  }
+  if (profileInput) {
+    profileInput.addEventListener("focus", () => open(profileInput.value));
+  }
   overlayInput.addEventListener("input", () => {
     const query = overlayInput.value.trim();
     liveSearch(query);
