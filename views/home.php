@@ -79,6 +79,7 @@ $users = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../public/css/app.css">
+    <link rel="stylesheet" href="../public/css/search.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script type="module" src="../public/js/app.js"></script>
@@ -143,10 +144,15 @@ $users = $stmt->fetchAll();
 
         </main>
         <aside>
-            <form action="">
-                <input id="search" type="text" placeholder="Search Twitter">
-                <button>Search</button>
-            </form>
+        <form id="home-search-form">
+        <input
+            id="home-search-input"
+            type="text"
+            placeholder="Search Twitter"
+            autocomplete="off"
+        >
+        <button type="submit">Search</button>
+    </form>
             <div class="happening-now">
                 <h2>What's happening now</h2>
                 <div class="trending">
@@ -198,6 +204,32 @@ $users = $stmt->fetchAll();
                     <button class="show-more-btn">Show more</button>
                 </div>
         </aside>
+        <div class="search-overlay" aria-hidden="true">
+    <div class="search-overlay__box">
+        <button
+            type="button"
+            class="search-overlay__close"
+            aria-label="Close search"
+        >
+            &times;
+        </button>
+
+        <form id="searchOverlayForm" class="search-overlay__form">
+            <input
+                id="searchOverlayInput"
+                type="text"
+                name="query"
+                placeholder="Search"
+                class="search-overlay__input"
+                autocomplete="off"
+            >
+            <button type="submit" class="search-overlay__submit">Search</button>
+        </form>
+
+        <div id="searchOverlayResults" class="search-overlay__results">
+        </div>
+    </div>
+</div>
     </div>
       <script src="../public/js/mixhtml.js"></script>
 </body>
