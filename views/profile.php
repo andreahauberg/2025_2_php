@@ -132,6 +132,7 @@ $usersToFollow = $stmt->fetchAll();
         <?php
             require_once __DIR__ . "/../components/_post-dialog.php";
             require_once __DIR__ . "/../components/_update-profile-dialog.php";
+            require_once __DIR__ . "/../components/_update-post-dialog.php";
         ?>
 
         <main>

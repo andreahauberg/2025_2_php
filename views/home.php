@@ -129,12 +129,11 @@ $users = $stmt->fetchAll();
         <?php 
             require_once __DIR__ . "/../components/_post-dialog.php";
             require_once __DIR__ . "/../components/_update-profile-dialog.php";
+            require_once __DIR__ . "/../components/_update-post-dialog.php";
             ?>
         
 
         <main>
-            <?php //<span class="action flip-btn"><i class="fa-regular fa-heart"></i></span> 
-            ?>
             <?php
             foreach ($posts as $post):
                 require __DIR__ . "/../components/_post.php";

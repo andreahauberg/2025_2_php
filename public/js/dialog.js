@@ -9,6 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const target = btn.getAttribute("data-open");
+
+      // Hvis det er update post-dialogboksen, indsæt postens data
+      if (target === "updatePostDialog") {
+        const postPk = btn.getAttribute("data-post-pk");
+        const postElement = btn.closest(".post");
+        const postMessage = postElement
+          .querySelector(".text")
+          .textContent.trim();
+
+        document.getElementById("postPkInput").value = postPk;
+        document.getElementById("postMessageInput").value = postMessage;
+      }
+
       document.getElementById(target).classList.add("active");
     });
   });
@@ -19,4 +32,5 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.closest(".x-dialog").classList.remove("active");
     });
   });
+
 });
