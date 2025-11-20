@@ -11,34 +11,17 @@ if (!isset($_SESSION["user"])) {
 require_once __DIR__ . "/../db.php";
 
 $q = "
-  SELECT post_message
+  SELECT 
+    LEFT(post_message, 40) AS topic,
+    COUNT(*) AS post_count
   FROM posts
-  ORDER BY post_pk DESC
-  LIMIT 50
+  GROUP BY topic
+  ORDER BY post_count DESC
+  LIMIT 4
 ";
 $stmt = $_db->prepare($q);
 $stmt->execute();
-$messages = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-$wordCount = [];
-
-foreach ($messages as $msg) {
-    $clean = strtolower(preg_replace('/[^a-zA-ZæøåÆØÅ0-9 ]/u', ' ', $msg));
-    $words = explode(' ', $clean);
-
-    foreach ($words as $w) {
-        if (strlen($w) < 3) continue;
-        if (is_numeric($w)) continue;
-
-        if (!isset($wordCount[$w])) {
-            $wordCount[$w] = 0;
-        }
-        $wordCount[$w]++;
-    }
-}
-
-arsort($wordCount);
-$trendingWords = array_slice($wordCount, 0, 4, true);
+$trending = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $q = "
   SELECT
@@ -184,22 +167,18 @@ $usersToFollow = $stmt->fetchAll();
     </form>
     <div class="happening-now">
     <h2>What's happening now</h2>
-
     <div class="trending">
-        <?php if (empty($trendingWords)): ?>
-            <p>No trends right now</p>
-        <?php else: ?>
-            <?php foreach ($trendingWords as $word => $count): ?>
-                <div class="trending-item">
-                    <div class="trending-info">
-                        <span class="item_title">Trending · <?php echo $count; ?> posts</span>
-                        <p><?php echo htmlspecialchars(ucfirst($word)); ?></p>
-                    </div>
-                    <span class="option">⋮</span>
+        <?php foreach ($trending as $item): ?>
+            <div class="trending-item">
+                <div class="trending-info">
+                    <span class="item_title">
+                        Trending · <?= htmlspecialchars($item["post_count"]) ?> posts
+                    </span>
+                    <p><?= htmlspecialchars($item["topic"]) ?></p>
                 </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-
+                <span class="option">⋮</span>
+            </div>
+        <?php endforeach; ?>
         <button class="show-more-btn">Show more</button>
     </div>
 </div>
