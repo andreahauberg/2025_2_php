@@ -11,11 +11,7 @@ export function searchOverlay() {
 
   const homeInput = document.querySelector("#home-search-input");
   const homeForm = document.querySelector("#home-search-form");
-
-  // NEW: Explore button
   const exploreBtn = document.querySelector(".open-search");
-
-  // NEW: Profile search input
   const profileInput = document.querySelector("#profile-search-input");
 
   let debounceTimer = null;
@@ -67,7 +63,6 @@ export function searchOverlay() {
     }, 250);
   }
 
-  // HOME → open overlay
   if (homeInput) {
     homeInput.addEventListener("focus", () => open(homeInput.value));
   }
@@ -79,26 +74,20 @@ export function searchOverlay() {
     });
   }
 
-  // EXPLORE → open overlay
   if (exploreBtn) {
     exploreBtn.addEventListener("click", (e) => {
       e.preventDefault();
       open("");
     });
   }
-
-  // PROFILE → open overlay
   if (profileInput) {
     profileInput.addEventListener("focus", () => open(profileInput.value));
   }
-
-  // Live search
   overlayInput.addEventListener("input", () => {
     const query = overlayInput.value.trim();
     liveSearch(query);
   });
 
-  // Submit
   if (overlayForm) {
     overlayForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -107,17 +96,13 @@ export function searchOverlay() {
     });
   }
 
-  // Close button
   if (overlayClose) overlayClose.addEventListener("click", close);
 
-  // Click outside
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) close();
   });
 
-  // ESC
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") close();
   });
-
 }
