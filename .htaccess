@@ -30,6 +30,8 @@ RewriteRule ^api-update-profile$   /api/api-update-profile.php [NC,L]
 RewriteRule ^api-delete-profile$   /api/api-delete-profile.php [NC,L]
 RewriteRule ^api-like-post$   /api/api-like-post.php [NC,L]
 RewriteRule ^api-unlike-post$   /api/api-unlike-post.php [NC,L]
+RewriteRule ^api-update-post$   /api/api-update-post.php [NC,L]
+RewriteRule ^api-delete-post$   /api/api-delete-post.php [NC,L]
 
 
 ErrorDocument 404 /views/404.php
