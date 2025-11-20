@@ -16,6 +16,9 @@ post('/bridge-login', 'connections/bridge-login.php');
 post('/bridge-signup', 'connections/bridge-signup.php');
 get('/bridge-logout', 'connections/bridge-logout.php');
 
+//search
+post('/bridge-search', 'connections/bridge-search.php');
+
 
 // API
 get('/api-follow', 'api/api-follow.php');
