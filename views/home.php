@@ -205,28 +205,28 @@ $users = $stmt->fetchAll();
                 </div>
         </aside>
         <div class="search-overlay" aria-hidden="true">
-    <div class="search-overlay__box">
+    <div class="search-overlay-box">
         <button
             type="button"
-            class="search-overlay__close"
+            class="search-overlay-close"
             aria-label="Close search"
         >
             &times;
         </button>
 
-        <form id="searchOverlayForm" class="search-overlay__form">
+        <form id="searchOverlayForm" class="search-overlay-form">
             <input
                 id="searchOverlayInput"
                 type="text"
                 name="query"
                 placeholder="Search"
-                class="search-overlay__input"
+                class="search-overlay-input"
                 autocomplete="off"
             >
-            <button type="submit" class="search-overlay__submit">Search</button>
+            <button type="submit" class="search-overlay-btn">Search</button>
         </form>
 
-        <div id="searchOverlayResults" class="search-overlay__results">
+        <div id="searchOverlayResults" class="search-overlay-results">
         </div>
     </div>
 </div>
