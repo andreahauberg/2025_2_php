@@ -11,6 +11,36 @@ if (!isset($_SESSION["user"])) {
 require_once __DIR__ . "/../db.php";
 
 $q = "
+  SELECT post_message
+  FROM posts
+  ORDER BY post_pk DESC
+  LIMIT 50
+";
+$stmt = $_db->prepare($q);
+$stmt->execute();
+$messages = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$wordCount = [];
+
+foreach ($messages as $msg) {
+    $clean = strtolower(preg_replace('/[^a-zA-ZæøåÆØÅ0-9 ]/u', ' ', $msg));
+    $words = explode(' ', $clean);
+
+    foreach ($words as $w) {
+        if (strlen($w) < 3) continue;
+        if (is_numeric($w)) continue;
+
+        if (!isset($wordCount[$w])) {
+            $wordCount[$w] = 0;
+        }
+        $wordCount[$w]++;
+    }
+}
+
+arsort($wordCount);
+$trendingWords = array_slice($wordCount, 0, 4, true);
+
+$q = "
   SELECT
     posts.post_pk,
     posts.post_message,
@@ -152,40 +182,27 @@ $usersToFollow = $stmt->fetchAll();
         >
         <button type="submit">Search</button>
     </form>
-            <div class="happening-now">
-                <h2>What's happening now</h2>
-                <div class="trending">
-                    <div class="trending-item">
-                        <div class="trending-info">
-                            <span class="item_title">Trending in Denmark</span>
-                            <p>Grækenland</p>
-                        </div>
-                        <span class="option">⋮</span>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-info">
-                            <span class="item_title">Politics . Trending</span>
-                            <p>Syria</p>
-                        </div>
-                        <span class="option">⋮</span>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-info">
-                            <span class="item_title">Bussiness . Trending</span>
-                            <p>#AlgoTrading</p>
-                        </div>
-                        <span class="option">⋮</span>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-info">
-                            <span class="item_title">Trending in Denmark</span>
-                            <p>Italien</p>
-                        </div>
-                        <span class="option">⋮</span>
-                    </div>
-                    <button class="show-more-btn">Show more</button>
-                </div>
+    <div class="happening-now">
+    <h2>What's happening now</h2>
 
+    <div class="trending">
+        <?php if (empty($trendingWords)): ?>
+            <p>No trends right now</p>
+        <?php else: ?>
+            <?php foreach ($trendingWords as $word => $count): ?>
+                <div class="trending-item">
+                    <div class="trending-info">
+                        <span class="item_title">Trending · <?php echo $count; ?> posts</span>
+                        <p><?php echo htmlspecialchars(ucfirst($word)); ?></p>
+                    </div>
+                    <span class="option">⋮</span>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <button class="show-more-btn">Show more</button>
+    </div>
+</div>
             </div>
             <hr>
             <div class="who-to-follow">
