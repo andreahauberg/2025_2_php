@@ -71,7 +71,7 @@ $usersToFollow = $stmt->fetchAll();
 
 
 
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -97,7 +97,7 @@ $usersToFollow = $stmt->fetchAll();
             <ul>
                 <li><a href="#"><i class="fab fa-twitter"></i></a></li>
                 <li><a href="#"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
-                <li><a href="#search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
+                <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
                 <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
