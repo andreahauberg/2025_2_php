@@ -18,9 +18,11 @@
                 <i id="like_<?php _($post["post_pk"]); ?>" class="<?php echo $post['is_liked_by_user'] ? 'fa-solid' : 'fa-regular'; ?> fa-heart"></i>
                 <span class="like-count"><?php echo $post['like_count'] ?? 0; ?></span>
             </span>
-            <span class="action">
-                <i class="fa-solid fa-ellipsis update-post-btn" data-post-pk="<?php _($post["post_pk"]); ?>" data-open="updatePostDialog"></i>
-            </span>
+            <?php if ($post["post_user_fk"] === $_SESSION["user"]["user_pk"]): ?>
+                <span class="action">
+                    <i class="fa-solid fa-ellipsis update-post-btn" data-post-pk="<?php _($post["post_pk"]); ?>" data-open="updatePostDialog"></i>
+                </span>
+            <?php endif; ?>
         </div>
     </div>
 </article>
