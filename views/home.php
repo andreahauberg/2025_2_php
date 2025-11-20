@@ -66,7 +66,7 @@ $q = "
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUser", $currentUser);
 $stmt->execute();
-$users = $stmt->fetchAll();
+$usersToFollow = $stmt->fetchAll();
 ?>
 
 

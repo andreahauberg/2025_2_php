@@ -136,7 +136,7 @@ $usersToFollow = $stmt->fetchAll();
         ?>
 
         <main>
-            <!-- Profile header -->
+
             <div class="profile-header">
                 <div class="profile-cover-container">
                     <img src="https://picsum.photos/600/200" alt="Cover" class="profile-cover">
@@ -154,7 +154,6 @@ $usersToFollow = $stmt->fetchAll();
                     </div>
                 </div>
 
-                <!-- Brugerens posts -->
             <?php if (empty($posts)): ?>
                 <p class="no-posts">No posts yet.</p>
             <?php else: ?>
@@ -170,7 +169,6 @@ $usersToFollow = $stmt->fetchAll();
                 <button>Search</button>
             </form>
 
-            <!-- Brugere, som den loggede bruger følger -->
             <div class="following">
                 <h2>Following</h2>
                 <?php if (empty($following)): ?>
@@ -186,7 +184,6 @@ $usersToFollow = $stmt->fetchAll();
 
             <hr>
 
-            <!-- Forslag til brugere at følge -->
             <div class="who-to-follow">
                 <h2>Who to follow</h2>
                 <?php if (empty($usersToFollow)): ?>
