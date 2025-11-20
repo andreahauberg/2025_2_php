@@ -3,11 +3,11 @@ export function searchOverlay() {
   const overlay = document.querySelector(".search-overlay");
   if (!overlay) return;
 
-  const overlayBox = overlay.querySelector(".search-overlay__box");
+  const overlayBox = overlay.querySelector(".search-overlay-box");
   const overlayForm = document.querySelector("#searchOverlayForm");
   const overlayInput = document.querySelector("#searchOverlayInput");
   const overlayResults = document.querySelector("#searchOverlayResults");
-  const overlayClose = document.querySelector(".search-overlay__close");
+  const overlayClose = document.querySelector(".search-overlay-close");
 
   const homeInput = document.querySelector("#home-search-input");
   const homeForm = document.querySelector("#home-search-form");
@@ -15,7 +15,7 @@ export function searchOverlay() {
   let debounceTimer = null;
 
   function open(initialValue = "") {
-    overlay.classList.add("search-overlay--open");
+    overlay.classList.add("search-overlay-open");
     overlay.setAttribute("aria-hidden", "false");
     overlayInput.value = initialValue;
     overlayInput.focus();
@@ -23,7 +23,7 @@ export function searchOverlay() {
   }
 
   function close() {
-    overlay.classList.remove("search-overlay--open");
+    overlay.classList.remove("search-overlay-open");
     overlay.setAttribute("aria-hidden", "true");
   }
 
