@@ -3,7 +3,7 @@ require_once __DIR__ . "/../x.php";
 // _noCache();
 session_start();
 
-if (!isset($_SESSION["user"])) { 
+if (!isset($_SESSION["user"])) {
     header("location: /?message=not logged in, please login first");
     exit();
 }
@@ -126,7 +126,7 @@ $usersToFollow = $stmt->fetchAll();
             </ul>
 
             <button class="post-btn" data-open="postDialog">Post</button>
-            
+
 
             <div id="profile_tag" data-open="updateProfileDialog">
                 <img src="https://avatar.iran.liara.run/public/73" alt="Profile">
@@ -141,12 +141,12 @@ $usersToFollow = $stmt->fetchAll();
                 <i class="fa-solid fa-ellipsis option"></i>
             </div>
         </nav>
-        <?php 
-            require_once __DIR__ . "/../components/_post-dialog.php";
-            require_once __DIR__ . "/../components/_update-profile-dialog.php";
-            require_once __DIR__ . "/../components/_update-post-dialog.php";
-            ?>
-        
+        <?php
+        require_once __DIR__ . "/../components/_post-dialog.php";
+        require_once __DIR__ . "/../components/_update-profile-dialog.php";
+        require_once __DIR__ . "/../components/_update-post-dialog.php";
+        ?>
+
 
         <main>
             <?php
@@ -157,32 +157,30 @@ $usersToFollow = $stmt->fetchAll();
 
         </main>
         <aside>
-        <form id="home-search-form">
-        <input
-            id="home-search-input"
-            type="text"
-            placeholder="Search Twitter"
-            autocomplete="off"
-        >
-        <button type="submit">Search</button>
-    </form>
-    <div class="happening-now">
-    <h2>What's happening now</h2>
-    <div class="trending">
-        <?php foreach ($trending as $item): ?>
-            <div class="trending-item">
-                <div class="trending-info">
-                    <span class="item_title">
-                        Trending · <?= htmlspecialchars($item["post_count"]) ?> posts
-                    </span>
-                    <p><?= htmlspecialchars($item["topic"]) ?></p>
+            <form id="home-search-form">
+                <input
+                    id="home-search-input"
+                    type="text"
+                    placeholder="Search Twitter"
+                    autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+            <div class="happening-now">
+                <h2>What's happening now</h2>
+                <div class="trending">
+                    <?php foreach ($trending as $item): ?>
+                        <div class="trending-item">
+                            <div class="trending-info">
+                                <span class="item_title">
+                                    Trending · <?= htmlspecialchars($item["post_count"]) ?> posts
+                                </span>
+                                <p><?= htmlspecialchars($item["topic"]) ?></p>
+                            </div>
+                            <span class="option">⋮</span>
+                        </div>
+                    <?php endforeach; ?>
+                    <button class="show-more-btn">Show more</button>
                 </div>
-                <span class="option">⋮</span>
-            </div>
-        <?php endforeach; ?>
-        <button class="show-more-btn">Show more</button>
-    </div>
-</div>
             </div>
             <hr>
             <div class="who-to-follow">
@@ -197,37 +195,35 @@ $usersToFollow = $stmt->fetchAll();
                     </div>
                 <?php endif; ?>
 
-                    <button class="show-more-btn">Show more</button>
-                </div>
+                <button class="show-more-btn">Show more</button>
+            </div>
         </aside>
         <div class="search-overlay" aria-hidden="true">
-    <div class="search-overlay-box">
-        <button
-            type="button"
-            class="search-overlay-close"
-            aria-label="Close search"
-        >
-            &times;
-        </button>
+            <div class="search-overlay-box">
+                <button
+                    type="button"
+                    class="search-overlay-close"
+                    aria-label="Close search">
+                    &times;
+                </button>
 
-        <form id="searchOverlayForm" class="search-overlay-form">
-            <input
-                id="searchOverlayInput"
-                type="text"
-                name="query"
-                placeholder="Search"
-                class="search-overlay-input"
-                autocomplete="off"
-            >
-            <button type="submit" class="search-overlay-btn">Search</button>
-        </form>
+                <form id="searchOverlayForm" class="search-overlay-form">
+                    <input
+                        id="searchOverlayInput"
+                        type="text"
+                        name="query"
+                        placeholder="Search"
+                        class="search-overlay-input"
+                        autocomplete="off">
+                    <button type="submit" class="search-overlay-btn">Search</button>
+                </form>
 
-        <div id="searchOverlayResults" class="search-overlay-results">
+                <div id="searchOverlayResults" class="search-overlay-results">
+                </div>
+            </div>
         </div>
     </div>
-</div>
-    </div>
-      <script src="../public/js/mixhtml.js"></script>
+    <script src="../public/js/mixhtml.js"></script>
 </body>
 
 </html>
