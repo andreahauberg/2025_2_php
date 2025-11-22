@@ -31,7 +31,8 @@ $q = "
     posts.post_user_fk,
     users.user_full_name,
     users.user_username,
-    users.user_pk AS author_user_pk
+    users.user_pk AS author_user_pk,
+    (SELECT COUNT(*) FROM comments WHERE comment_post_fk = posts.post_pk) AS comment_count
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
   ORDER BY RAND()
@@ -98,6 +99,7 @@ $usersToFollow = $stmt->fetchAll();
 
     <script type="module" src="../public/js/app.js"></script>
     <script defer src="../public/js/dialog.js"></script>
+    <script defer src="../public/js/comment.js"></script>
     <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
 </head>
 

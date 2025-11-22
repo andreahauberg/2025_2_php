@@ -370,18 +370,10 @@ a {
           display: flex;
           flex-direction: column;
 
-          .name {
-            font-weight: bold;
-            font-size: 0.9rem;
-          }
 
-          .handle {
-            font-size: 0.8rem;
-            color: rgb(110, 109, 109);
-          }
         }
 
-        .follow-btn {
+        .follow-btn{
           border: none;
   background: white;
   color: black;
@@ -430,6 +422,16 @@ a {
       }
     }
   }
+
+            .name {
+            font-weight: bold;
+            font-size: 0.9rem;
+          }
+
+          .handle {
+            font-size: 0.8rem;
+            color: rgb(110, 109, 109);
+          }
 
 /* LANDING PAGE */
 
@@ -774,4 +776,76 @@ a {
     padding: 2rem;
     color: #657786;
     font-size: 1rem;
+}
+
+.comment-dialog {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    background: white;
+}
+.comments-container {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.comment {
+    padding: 8px 0;
+    border-bottom: 1px solid #e1e8ed;
+}
+.comment:last-child {
+    border-bottom: none;
+}
+.comment-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    resize: none;
+    margin-bottom: 8px;
+}
+.comment-form_btn {
+          border: none;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+          padding: 0.4rem 1rem;
+          border-radius: 2rem;
+          margin-left: auto;
+          cursor: pointer;
+          font-size: 0.85rem;
+          font-weight: bold;
+
+          &:hover {
+              background: #f5f5f5;
+          }}
+
+/* Kommentar-styling */
+.comment {
+    padding: 12px 0;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.comment:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .name, .handle{
+      margin-right: 0.5rem;
+    }
+    
+}
+
+.comment-text {
+    margin: 10px 0 0;
+    color: #0f1419;
+    font-size: 15px;
+    line-height: 1.3125;
+    word-break: break-word;
 }
