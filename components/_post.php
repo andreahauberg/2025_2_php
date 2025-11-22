@@ -12,11 +12,10 @@
             <img src="<?php _($post["post_image_path"]); ?>" alt="Post image" class="post-image">
         <?php endif; ?>
         <div class="post-actions">
-            <span class="action comment-btn" data-post-pk="<?php _($post["post_pk"]); ?>">
+            <span class="action comment-btn" data-post-pk="<?php _($post["post_pk"]); ?>" data-user-pk="<?php echo $_SESSION["user"]["user_pk"]; ?>">
                 <i id="comment_<?php _($post["post_pk"]); ?>" class="fa-regular fa-comment"></i>
                 <span class="comment-count"><?php echo $post['comment_count'] ?? 0; ?></span>
             </span>
-
             <span class="action"><i id="retweet_<?php _($post["post_pk"]); ?>" class="fa-solid fa-retweet"></i> 5</span>
             <span class="action flip-btn" data-post-pk="<?php _($post["post_pk"]); ?>">
                 <i id="like_<?php _($post["post_pk"]); ?>" class="<?php echo $post['is_liked_by_user'] ? 'fa-solid' : 'fa-regular'; ?> fa-heart"></i>
@@ -28,7 +27,7 @@
                 </span>
             <?php endif; ?>
         </div>
-        <!-- Dialog for comments -->
+        <!-- Kommentar-dialog (skjult som standard) -->
         <div class="comment-dialog" id="commentDialog_<?php _($post["post_pk"]); ?>" style="display: none;">
             <div class="comments-container" id="commentsContainer_<?php _($post["post_pk"]); ?>"></div>
             <form class="comment-form" data-post-pk="<?php _($post["post_pk"]); ?>">

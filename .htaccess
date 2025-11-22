@@ -34,6 +34,9 @@ RewriteRule ^api-update-post$   /api/api-update-post.php [NC,L]
 RewriteRule ^api-delete-post$   /api/api-delete-post.php [NC,L]
 RewriteRule ^api-create-comment$   /api/api-create-comment.php [NC,L]
 RewriteRule ^api-get-comments$     /api/api-get-comments.php [NC,L]
+RewriteRule ^api-update-comment$   /api/api-update-comment.php [NC,L]
+RewriteRule ^api-delete-comment$   /api/api-delete-comment.php [NC,L]
+
 
 
 

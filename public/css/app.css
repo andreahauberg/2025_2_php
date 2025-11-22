@@ -849,3 +849,31 @@ a {
     line-height: 1.3125;
     word-break: break-word;
 }
+
+.edit-comment-btn,
+.delete-comment-btn,
+.cancel-edit-btn {
+    background: transparent;
+    border: none;
+    color: #1d9bf0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 16px;
+    transition: background-color 0.2s;
+}
+
+.edit-comment-form textarea {
+    width: 90%;
+    padding: 8px;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    resize: none;
+    margin-bottom: 8px;
+}
+
+.edit-comment-form button {
+    margin-top: 5px;
+    margin-right: 5px;
+}
