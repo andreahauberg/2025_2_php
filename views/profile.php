@@ -91,6 +91,7 @@ $usersToFollow = $stmt->fetchAll();
     <script type="module" src="../public/js/app.js"></script>
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/flip-btn.js"></script>
+    <script defer src="../public/js/comment.js"></script>
     <title>Profile: <?php echo htmlspecialchars($currentUser["user_full_name"]); ?></title>
 </head>
 <body>
