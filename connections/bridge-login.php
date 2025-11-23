@@ -19,8 +19,10 @@ try{
     // echo json_encode($user);
     if(!$user || !password_verify($userPassword, $user["user_password"])){
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        /* hvis brugeren ikke eksisterer eller adgangskoden/email er forkert */
+        // hvis brugeren ikke eksisterer eller adgangskoden/email er forkert 
         $_SESSION['toast'] = [ 'message' => 'Wrong email or password', 'type' => 'error' ];
+        // hold dialog boksen åben 
+        $_SESSION['open_dialog'] = 'login'; 
         header("Location: /");
         exit();
     }

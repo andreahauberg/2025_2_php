@@ -1,4 +1,12 @@
-<div class="x-dialog" id="loginDialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+<?php
+// åben når server er sat til `$_SESSION['open_dialog'] = 'login'`
+$__login_active = '';
+if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'login') {
+    $__login_active = ' active';
+    unset($_SESSION['open_dialog']);
+}
+?>
+<div class="x-dialog<?php echo $__login_active; ?>" id="loginDialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
   <div class="x-dialog__overlay"></div>
   <div class="x-dialog__content">
     <button class="x-dialog__close" aria-label="Close">&times;</button>
@@ -12,7 +20,7 @@
     </div>
     <h2 id="loginTitle">Log in to X</h2>
     <form class="x-dialog__form" action="bridge-login" method="POST" autocomplete="off">
-      <input name="user_email" type="text" placeholder="Email" required>
+      <input name="user_email" type="text" placeholder="Email" required <?php if ($__login_active) echo 'autofocus'; ?> >
       <input name="user_password" type="password" placeholder="Password" required>
       <button class="x-dialog__btn">Next</button>
     </form>
