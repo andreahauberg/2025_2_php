@@ -1,6 +1,7 @@
 <?php
 
 try{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start(); 
     require_once __DIR__."/../x.php";
     $userEmail = _validateEmail();
     $userPassword = _validatePassword();
@@ -18,7 +19,6 @@ try{
     // echo "<br>";
     // echo json_encode($user);
     if(!$user || !password_verify($userPassword, $user["user_password"])){
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         // hvis brugeren ikke eksisterer eller adgangskoden/email er forkert 
         $_SESSION['toast'] = [ 'message' => 'Wrong email or password', 'type' => 'error' ];
         // hold dialog boksen åben 
@@ -28,12 +28,13 @@ try{
     }
 
     unset($user["user_password"]);
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $_SESSION["user"] = $user;
     header("Location: /home");
 
 }catch(Exception $e){
-    http_response_code($e->getCode());
-    _($e->getMessage());
+    $_SESSION['toast'] = ['message' => $e->getMessage(), 'type' => 'error'];
+    $_SESSION['open_dialog'] = 'login';
+    header('Location: /');
+    exit();
 }
 

@@ -1,4 +1,12 @@
-<div class="x-dialog" id="signupDialog" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
+<?php
+// åben når server er sat til `$_SESSION['open_dialog'] = 'signup'`
+$__signup_active = '';
+if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'signup') {
+  $__signup_active = ' active';
+  unset($_SESSION['open_dialog']);
+}
+?>
+<div class="x-dialog<?php echo $__signup_active; ?>" id="signupDialog" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
   <div class="x-dialog__overlay"></div>
   <div class="x-dialog__content">
     <button class="x-dialog__close" aria-label="Close">&times;</button>
@@ -12,7 +20,7 @@
     </div>
     <h2 id="signupTitle">Create your account</h2>
     <form class="x-dialog__form" action="bridge-signup" method="POST" autocomplete="off">
-      <input name="user_full_name" type="text" placeholder="Name" required>
+      <input name="user_full_name" type="text" placeholder="Name" required <?php if ($__signup_active) echo 'autofocus'; ?>>
       <input name="user_username" type="text" placeholder="Username" required>
       <input name="user_email" type="email" placeholder="Email" required>
       <input name="user_password" type="password" placeholder="Password" required>
