@@ -18,7 +18,8 @@ function _validatePost() {
     $len = strlen($postMessage);
 
     if ($len < postMinLength || $len > postMaxLength) {
-        throw new Exception("Message must be between " . postMinLength . " and " . postMaxLength . " characters");
+        //throw new Exception("Message must be between " . postMinLength . " and " . postMaxLength . " characters");
+        throw new Exception("Post cannot be empty, must be at least ".postMinLength." characters long", 400);
     }
     return $postMessage;
 }
