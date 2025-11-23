@@ -17,16 +17,16 @@ try{
     // print_r($user); 
     // echo "<br>";
     // echo json_encode($user);
-    if(!$user){
+    if(!$user || !password_verify($userPassword, $user["user_password"])){
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        /* hvis brugeren ikke eksisterer eller adgangskoden/email er forkert */
+        $_SESSION['toast'] = [ 'message' => 'Wrong email or password', 'type' => 'error' ];
         header("Location: /");
         exit();
     }
-    if( !password_verify($userPassword, $user["user_password"])){
-        header("Location: /");
-        exit();
-    };
+
     unset($user["user_password"]);
-    session_start();
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $_SESSION["user"] = $user;
     header("Location: /home");
 
