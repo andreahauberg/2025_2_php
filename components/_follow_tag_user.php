@@ -1,4 +1,4 @@
-<a href="/user?user_pk=<?php echo $user['user_pk']; ?>"  class="profile-info" id="<?php echo $user["user_pk"]; ?>">
+<a href="/user?user_pk=<?php echo $user['user_pk']; ?>" class="profile-info" id="<?php echo $user["user_pk"]; ?>">
     <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user["user_username"]) % 100; ?>" alt="Profile Picture">
     <div class="info-copy">
         <p class="name"><?php echo htmlspecialchars($user["user_full_name"]); ?></p>
@@ -6,7 +6,6 @@
     </div>
     <?php
     $user_pk = $user["user_pk"];
-
     // Tjek om den loggede bruger følger denne bruger
     $isFollowing = false;
     if (isset($_SESSION["user"])) {
@@ -18,7 +17,6 @@
         $stmt->execute();
         $isFollowing = $stmt->fetchColumn() > 0;
     }
-
     // Vis den korrekte knap
     if ($isFollowing) {
         require __DIR__ . '/___button_unfollow.php';
@@ -27,3 +25,4 @@
     }
     ?>
 </a>
+

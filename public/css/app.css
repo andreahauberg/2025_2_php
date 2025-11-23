@@ -12,6 +12,7 @@ body {
 
 a {
   text-decoration: none;
+  color: black;
 }
 
 #container {
@@ -355,6 +356,7 @@ a {
         cursor: pointer;
         transition: background-color 0.2s;
 
+
         &:hover {
           background-color: rgb(247, 249, 249);
         }
@@ -370,10 +372,29 @@ a {
           display: flex;
           flex-direction: column;
 
-
         }
 
-        .follow-btn{
+        
+      }
+    }
+
+
+    .show-more-btn {
+      border: none;
+      background-color: transparent;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      color: rgb(29, 155, 240);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &:hover {
+        background-color: rgb(247, 249, 249);
+      }
+    }
+  }
+      .follow-btn{
           border: none;
   background: white;
   color: black;
@@ -404,24 +425,6 @@ a {
           background: black;
           }
         }
-      }
-    }
-
-    .show-more-btn {
-      border: none;
-      background-color: transparent;
-      width: 100%;
-      padding: 0.8rem 1rem;
-      color: rgb(29, 155, 240);
-      text-align: left;
-      cursor: pointer;
-      font-size: 0.9rem;
-
-      &:hover {
-        background-color: rgb(247, 249, 249);
-      }
-    }
-  }
 
             .name {
             font-weight: bold;
@@ -877,3 +880,4 @@ a {
     margin-top: 5px;
     margin-right: 5px;
 }
+

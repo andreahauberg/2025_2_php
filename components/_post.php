@@ -1,4 +1,5 @@
 <article class="post">
+    <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
     <img src="https://avatar.iran.liara.run/public/101" alt="Profile Picture" class="avatar">
     <div class="post-content">
         <div class="post-header">
@@ -27,6 +28,7 @@
                 </span>
             <?php endif; ?>
         </div>
+        </a>
         <!-- Kommentar-dialog (skjult som standard) -->
         <div class="comment-dialog" id="commentDialog_<?php _($post["post_pk"]); ?>" style="display: none;">
             <div class="comments-container" id="commentsContainer_<?php _($post["post_pk"]); ?>"></div>

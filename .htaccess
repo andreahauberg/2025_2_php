@@ -13,6 +13,7 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 RewriteRule ^$         /views/index.php [L]
 RewriteRule ^home$      /views/home.php [NC,L]
 RewriteRule ^profile$ /views/profile.php [NC,L]
+RewriteRule ^user$    /views/user.php [NC,L]
 
 RewriteRule ^person$   /views/person.php [NC,L]
 RewriteRule ^proxy$     /views/proxy.php [NC,L]
