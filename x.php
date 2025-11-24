@@ -64,7 +64,7 @@ function _validatePassword(){
 
 }
 
-define("userFullNameMin", 2);
+define("userFullNameMin", 1);
 define("userFullNameMax", 50);
 function _validateUserFullName(){
     $userFullName = trim($_POST["user_full_name"]);
@@ -77,7 +77,7 @@ function _validateUserFullName(){
     return $userFullName;
 }
 
-define("usernameMin", 2);
+define("usernameMin", 1);
 define("usernameMax", 50);
 function _validateUsername(){
     $username = trim($_POST["user_username"]);

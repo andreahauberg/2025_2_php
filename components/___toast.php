@@ -1,7 +1,5 @@
 <?php
 // toast component 
-// Start session, hvis den ikke allerede er aktiv
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 $message = '';
 $type = 'ok';
