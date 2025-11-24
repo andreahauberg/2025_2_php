@@ -18,7 +18,8 @@ function _validatePost() {
     $len = strlen($postMessage);
 
     if ($len < postMinLength || $len > postMaxLength) {
-        throw new Exception("Message must be between " . postMinLength . " and " . postMaxLength . " characters");
+        //throw new Exception("Message must be between " . postMinLength . " and " . postMaxLength . " characters");
+        throw new Exception("Post cannot be empty, must be at least ".postMinLength." characters long", 400);
     }
     return $postMessage;
 }
@@ -29,9 +30,13 @@ function _validateEmail(){
 
     $userEmail = $_POST["user_email"];
     if(strlen($userEmail) < emailMin){
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $_SESSION['toast'] = ['message' => "Email must be at least ".emailMin." characters long", 'type' => 'error'];
         throw new Exception("Email must be at least ".emailMin." characters long", 400);
     }
     if(strlen($userEmail) > emailMax){
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $_SESSION['toast'] = ['message' => "Email must be max ".emailMax." characters long", 'type' => 'error'];
         throw new Exception("Email must be max ".emailMax." characters long", 400);
     }
     return $userEmail;
@@ -45,9 +50,13 @@ function _validatePassword(){
 
     $userPassword = trim($_POST["user_password"]);
     if(strlen($userPassword) < passwordMin){
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $_SESSION['toast'] = ['message' => "Password must be at least ".passwordMin." characters long", 'type' => 'error'];
         throw new Exception("Password must be at least ".passwordMin." characters long", 400);
     }
     if(strlen($userPassword) > passwordMax){
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $_SESSION['toast'] = ['message' => "Password must be max ".passwordMax." characters long", 'type' => 'error'];
         throw new Exception("Password must be max ".passwordMax." characters long", 400);
     }
     return $userPassword;
@@ -55,7 +64,7 @@ function _validatePassword(){
 
 }
 
-define("userFullNameMin", 2);
+define("userFullNameMin", 1);
 define("userFullNameMax", 50);
 function _validateUserFullName(){
     $userFullName = trim($_POST["user_full_name"]);
@@ -68,7 +77,7 @@ function _validateUserFullName(){
     return $userFullName;
 }
 
-define("usernameMin", 2);
+define("usernameMin", 1);
 define("usernameMax", 50);
 function _validateUsername(){
     $username = trim($_POST["user_username"]);

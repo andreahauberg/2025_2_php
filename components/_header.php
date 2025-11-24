@@ -1,3 +1,6 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +15,12 @@
     </title>
 </head>
 <body>
+<?php
+require_once __DIR__ . '/___toast.php';
+?>
+
+
+
 <!-- 
 <nav>
     <a href="/">Home</a>

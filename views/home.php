@@ -108,6 +108,7 @@ $usersToFollow = $stmt->fetchAll();
 </head>
 
 <body>
+    <?php require_once __DIR__ . "/../components/___toast.php"; ?>
     <div id="container">
         <button class="burger" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
