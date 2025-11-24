@@ -1,4 +1,5 @@
 <?php
+// showing how to use OOP to create a new user
 class User {
     public static function create($db, $userPk, $username, $fullName, $email, $password) {
         $sql = "INSERT INTO users (user_pk, user_username, user_full_name, user_email, user_password, created_at) VALUES (:user_pk, :user_username, :full_name, :email, :password, NOW())";
