@@ -31,7 +31,6 @@
             </span>
         <?php endif; ?>
     </div>
-    <!-- Kommentar-dialog (skjult som standard) -->
     <div class="comment-dialog" id="commentDialog_<?php _($post["post_pk"]); ?>" style="display: none;">
         <div class="comments-container" id="commentsContainer_<?php _($post["post_pk"]); ?>"></div>
         <form class="comment-form" data-post-pk="<?php _($post["post_pk"]); ?>">
