@@ -29,13 +29,17 @@ $q = "
     posts.post_message,
     posts.post_image_path,
     posts.post_user_fk,
+    posts.created_at,
+    posts.updated_at,
+    posts.deleted_at,
     users.user_full_name,
     users.user_username,
     users.user_pk AS author_user_pk,
     (SELECT COUNT(*) FROM comments WHERE comment_post_fk = posts.post_pk) AS comment_count
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
-  ORDER BY RAND()
+    WHERE posts.deleted_at IS NULL
+  ORDER BY created_at DESC
   LIMIT 10
 ";
 $stmt = $_db->prepare($q);

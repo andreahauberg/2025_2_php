@@ -16,7 +16,7 @@ try {
     require_once __DIR__ . '/../db.php';
 
     // Tjek om posten tilhører brugeren
-    $checkSql = "SELECT * FROM posts WHERE post_pk = :postPk AND post_user_fk = :userPk";
+    $checkSql = "SELECT * FROM posts WHERE post_pk = :postPk AND post_user_fk = :userPk AND deleted_at IS NULL";
     $checkStmt = $_db->prepare($checkSql);
     $checkStmt->bindValue(':postPk', $postPk);
     $checkStmt->bindValue(':userPk', $_SESSION["user"]["user_pk"]);
@@ -27,7 +27,7 @@ try {
     }
 
     // Slet posten
-    $sql = "DELETE FROM posts WHERE post_pk = :postPk";
+    $sql = "UPDATE posts SET deleted_at = NOW() WHERE post_pk = :postPk";
     $stmt = $_db->prepare($sql);
     $stmt->bindParam(':postPk', $postPk);
     $stmt->execute();

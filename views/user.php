@@ -48,13 +48,14 @@ $q = "
     posts.post_message,
     posts.post_image_path,
     posts.post_user_fk,
+    posts.created_at,
     users.user_full_name,
     users.user_username,
     users.user_pk AS author_user_pk
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
-  WHERE posts.post_user_fk = :userPk
-  ORDER BY posts.post_pk DESC
+  WHERE posts.post_user_fk = :userPk AND posts.deleted_at IS NULL
+  ORDER BY posts.created_at DESC
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);

@@ -17,7 +17,7 @@ try {
     $postPk = bin2hex(random_bytes(25));
 
     require_once __DIR__."/../db.php";
-    $sql = "INSERT INTO posts (post_pk, post_message, post_image_path, post_user_fk) Values (:post_pk, :post_message, :post_image_path, :post_user_fk)";
+    $sql = "INSERT INTO posts (post_pk, post_message, post_image_path, post_user_fk, created_at) Values (:post_pk, :post_message, :post_image_path, :post_user_fk, NOW())";
 
     $stmt = $_db->prepare( $sql );
 

@@ -4,7 +4,27 @@
         <div class="post-content">
             <div class="post-header">
                 <span class="name"><?php _($post["user_full_name"]); ?></span>
-                <span class="handle"><?php _($post["user_username"]); ?></span> · <span class="time">1d</span>
+                <span class="handle">
+                    <?php
+                    $createdAt = new DateTime($post["created_at"]);
+                    $now = new DateTime();
+                    $interval = $now->diff($createdAt);
+
+                    if ($interval->days > 0) {
+                        echo $createdAt->format('j M'); // Vis datoen i formatet "25 nov"
+                    } else if ($interval->h > 0) {
+                        echo $interval->h . "h";
+                    } else if ($interval->i > 0) {
+                        echo $interval->i . "m";
+                    } else {
+                        echo "Just now";
+                    }
+
+                    if (!empty($post["updated_at"])) {
+                        echo " · Edited";
+                    }
+                    ?>
+                </span>
             </div>
     </a>
     <p class="text">
@@ -12,7 +32,7 @@
     </p>
     <?php if (!empty($post["post_image_path"])): ?>
         <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
-        <img src="<?php _($post["post_image_path"]); ?>" alt="Post image" class="post-image">
+            <img src="<?php _($post["post_image_path"]); ?>" alt="Post image" class="post-image">
         </a>
     <?php endif; ?>
     <div class="post-actions">
