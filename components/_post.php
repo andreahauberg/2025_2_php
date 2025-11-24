@@ -6,6 +6,7 @@
             <span class="name"><?php _($post["user_full_name"]); ?></span>
             <span class="handle"><?php _($post["user_username"]); ?></span> · <span class="time">1d</span>
         </div>
+            </a>
         <p class="text">
             <?php _($post["post_message"]); ?>
         </p>
@@ -28,7 +29,6 @@
                 </span>
             <?php endif; ?>
         </div>
-        </a>
         <!-- Kommentar-dialog (skjult som standard) -->
         <div class="comment-dialog" id="commentDialog_<?php _($post["post_pk"]); ?>" style="display: none;">
             <div class="comments-container" id="commentsContainer_<?php _($post["post_pk"]); ?>"></div>
