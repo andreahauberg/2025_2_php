@@ -2,6 +2,7 @@
 try{
 session_start(); 
     require_once __DIR__ . "/../x.php";
+    require_once __DIR__ . "/../classes/User.php";
 
     $userFullName = _validateUserFullName();
     $username = _validateUsername();
@@ -29,16 +30,8 @@ session_start();
         exit();
     }
 
-    $sql = "INSERT INTO users (user_pk, user_username, user_full_name, user_email, user_password) VALUES (:user_pk, :user_username, :full_name, :email, :password)";
-    $stmt = $_db->prepare( $sql );
-
-    $stmt->bindValue(":user_pk", $userPk);
-    $stmt->bindValue(":user_username", $username);
-    $stmt->bindValue(":full_name", $userFullName);
-    $stmt->bindValue(":email", $userEmail);
-    $stmt->bindValue(":password", $hashedPassword);
-
-    $stmt->execute();
+    // Use the User class to create a new user. Example of using OOP
+    User::create($_db, $userPk, $username, $userFullName, $userEmail, $hashedPassword);
 
     // success: vis toast og redirect to login
     $_SESSION['toast'] = ['message' => 'Account created successfully! Please login.', 'type' => 'ok'];
