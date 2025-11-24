@@ -16,7 +16,7 @@ try {
     $newFullName = _validateUserFullName();
 
     require_once __DIR__ . '/../db.php';
-    $sql = "UPDATE users SET user_email = :email, user_username = :username, user_full_name = :full_name WHERE user_pk = :pk";
+    $sql = "UPDATE users SET user_email = :email, user_username = :username, user_full_name = :full_name, updated_at = NOW() WHERE user_pk = :pk AND deleted_at IS NULL";
     $stmt = $_db->prepare($sql);
     $stmt->bindParam(':email', $newEmail);
     $stmt->bindParam(':username', $newUsername);

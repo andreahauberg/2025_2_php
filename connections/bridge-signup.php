@@ -11,7 +11,7 @@ try{
     $userPk = bin2hex(random_bytes(25));
 
     require_once __DIR__."/../db.php";
-    $sql = "INSERT INTO users (user_pk, user_username, user_full_name, user_email, user_password) VALUES (:user_pk, :user_username, :full_name, :email, :password)";
+    $sql = "INSERT INTO users (user_pk, user_username, user_full_name, user_email, user_password, created_at) VALUES (:user_pk, :user_username, :full_name, :email, :password, NOW())";
     $stmt = $_db->prepare( $sql );
 
     $stmt->bindValue(":user_pk", $userPk);

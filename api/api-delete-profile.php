@@ -15,7 +15,7 @@ try {
     session_destroy();
     $user_id = $_SESSION["user"]["user_pk"];
 
-    $sql = "DELETE FROM users WHERE user_pk = :user_pk";
+    $sql = "UPDATE users SET deleted_at = NOW() WHERE user_pk = :user_pk";
     $stmt = $_db->prepare($sql);
     $stmt->bindValue(":user_pk", $user_id);
     $stmt->execute();
