@@ -194,12 +194,12 @@ main {
   border-right: 1px solid rgb(230, 230, 230);
   border-left: 1px solid rgb(230, 230, 230);
 
-    .post {
-      display: flex;
-      gap: 1rem;
-      padding: 1rem;
-      border-bottom: 1px solid rgb(230, 230, 230);
-      transition: background-color 0.2s;
+  .post {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgb(230, 230, 230);
+    transition: background-color 0.2s;
 
     &:hover {
       background-color: rgb(247, 249, 249);
@@ -214,10 +214,10 @@ main {
     .post-content {
       flex: 1;
 
-        .post-header {
-          font-size: 0.9rem;
-          margin-bottom: 0.3rem;
-          cursor: pointer;
+      .post-header {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+        cursor: pointer;
 
         .name {
           font-weight: bold;
@@ -236,13 +236,13 @@ main {
         line-height: 1.4;
       }
 
-        .post-image {
-          margin-top: 0.6rem;
-          border-radius: 1rem;
-          max-width: 100%;
-          border: 1px solid rgb(230, 230, 230);
-          cursor: pointer;
-        }
+      .post-image {
+        margin-top: 0.6rem;
+        border-radius: 1rem;
+        max-width: 100%;
+        border: 1px solid rgb(230, 230, 230);
+        cursor: pointer;
+      }
 
       .post-actions {
         display: flex;
@@ -349,14 +349,13 @@ aside {
     }
   }
 
-    .follow-suggestion {
-      .profile-info {
-        display: flex;
-        align-items: center;
-        padding: 0.8rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-
+  .follow-suggestion {
+    .profile-info {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
 
       &:hover {
         background-color: rgb(247, 249, 249);
@@ -372,70 +371,66 @@ aside {
       .info-copy {
         display: flex;
         flex-direction: column;
-
-        }
-
-        
-      }
-    }
-
-
-    .show-more-btn {
-      border: none;
-      background-color: transparent;
-      width: 100%;
-      padding: 0.8rem 1rem;
-      color: rgb(29, 155, 240);
-      text-align: left;
-      cursor: pointer;
-      font-size: 0.9rem;
-
-      &:hover {
-        background-color: rgb(247, 249, 249);
       }
     }
   }
-      .follow-btn{
-          border: none;
+
+  .show-more-btn {
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    color: rgb(29, 155, 240);
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:hover {
+      background-color: rgb(247, 249, 249);
+    }
+  }
+}
+.follow-btn {
+  border: none;
   background: white;
   color: black;
   border: 1px solid #ccc;
-          padding: 0.4rem 1rem;
-          border-radius: 2rem;
-          margin-left: auto;
-          cursor: pointer;
-          font-size: 0.85rem;
-          font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
 
-        &:hover {
-          background: #f5f5f5;
-        }
-      }
-      .unfollow-btn {
-        border: none;
-        background-color: #333;
-        color: white;
-        padding: 0.4rem 1rem;
-        border-radius: 2rem;
-        margin-left: auto;
-        cursor: pointer;
-        font-size: 0.85rem;
-        font-weight: bold;
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+.unfollow-btn {
+  border: none;
+  background-color: #333;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
 
-        &:hover {
-          background: black;
-          }
-        }
+  &:hover {
+    background: black;
+  }
+}
 
-            .name {
-            font-weight: bold;
-            font-size: 0.9rem;
-          }
+.name {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
 
-          .handle {
-            font-size: 0.8rem;
-            color: rgb(110, 109, 109);
-          }
+.handle {
+  font-size: 0.8rem;
+  color: rgb(110, 109, 109);
+}
 
 /* LANDING PAGE */
 
@@ -780,105 +775,105 @@ aside {
 }
 
 .comment-dialog {
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #e1e8ed;
-    border-radius: 12px;
-    background: white;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  background: white;
 }
 .comments-container {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
 }
 .comment {
-    padding: 8px 0;
-    border-bottom: 1px solid #e1e8ed;
+  padding: 8px 0;
+  border-bottom: 1px solid #e1e8ed;
 }
 .comment:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 .comment-form textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e1e8ed;
-    border-radius: 8px;
-    resize: none;
-    margin-bottom: 8px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  resize: none;
+  margin-bottom: 8px;
 }
 .comment-form_btn {
-          border: none;
+  border: none;
   background: white;
   color: black;
   border: 1px solid #ccc;
-          padding: 0.4rem 1rem;
-          border-radius: 2rem;
-          margin-left: auto;
-          cursor: pointer;
-          font-size: 0.85rem;
-          font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
 
-          &:hover {
-              background: #f5f5f5;
-          }}
+  &:hover {
+    background: #f5f5f5;
+  }
+}
 
 /* Kommentar-styling */
 .comment {
-    padding: 12px 0;
-    border-bottom: 1px solid #e1e8ed;
+  padding: 12px 0;
+  border-bottom: 1px solid #e1e8ed;
 }
 
 .comment:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .comment-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
 
-    .name, .handle{
-      margin-right: 0.5rem;
-    }
-    
+  .name,
+  .handle {
+    margin-right: 0.5rem;
+  }
 }
 
 .comment-text {
-    margin: 10px 0 0;
-    color: #0f1419;
-    font-size: 15px;
-    line-height: 1.3125;
-    word-break: break-word;
+  margin: 10px 0 0;
+  color: #0f1419;
+  font-size: 15px;
+  line-height: 1.3125;
+  word-break: break-word;
 }
 
 .edit-comment-btn,
 .delete-comment-btn,
 .cancel-edit-btn {
-    background: transparent;
-    border: none;
-    color: #1d9bf0;
-    cursor: pointer;
-    font-size: 0.85rem;
-    margin-left: 8px;
-    padding: 4px 8px;
-    border-radius: 16px;
-    transition: background-color 0.2s;
+  background: transparent;
+  border: none;
+  color: #1d9bf0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 16px;
+  transition: background-color 0.2s;
 }
 
 .edit-comment-form textarea {
-    width: 90%;
-    padding: 8px;
-    border: 1px solid #e1e8ed;
-    border-radius: 8px;
-    resize: none;
-    margin-bottom: 8px;
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  resize: none;
+  margin-bottom: 8px;
 }
 
 .edit-comment-form button {
-    margin-top: 5px;
-    margin-right: 5px;
+  margin-top: 5px;
+  margin-right: 5px;
 }
-
 
 /********* toast *****************/
 .toast-container {
@@ -910,4 +905,62 @@ aside {
     transform: translateY(-10px);
     opacity: 0;
   }
+}
+/* confirm delete toast */
+.delete-confirm {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+  background: #fff;
+  display: none; /* skjult som default */
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+  width: 100%;
+}
+
+.delete-confirm--visible {
+  display: flex;
+}
+
+.delete-confirm span {
+  font-size: 15px;
+  color: #536471;
+}
+
+.delete-confirm__buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.delete-confirm__btn {
+  border-radius: 999px;
+  padding: 10px 20px;
+  border: 1px solid #cfd9de;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.delete-confirm__btn--secondary {
+  color: #0f1419;
+  background: #fff;
+}
+
+.delete-confirm__btn--danger {
+  background: #b00;
+  border-color: #b00;
+  color: #ffffff;
+}
+
+.delete-confirm__btn--danger:hover {
+  background: #d33;
+}
+
+/* responsive */
+.x-dialog__content .delete-confirm {
+  width: 100%;
 }

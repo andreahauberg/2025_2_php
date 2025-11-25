@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 // tjek om dialog boksen er aktiv 
 $updateActive  = !empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'update';
 $updatePk      = $_SESSION['old_update_post_pk']      ?? '';
@@ -30,10 +28,29 @@ if ($updateActive) {
       <textarea type="text" maxlength="300" name="post_message" id="postMessageInput" placeholder="Your post message here" required <?php echo $updateActive ? 'autofocus' : ''; ?>><?php echo htmlspecialchars($updateMessage, ENT_QUOTES, 'UTF-8'); ?></textarea>
     <button type="submit" class="x-dialog__btn">Update</button>
     <button type="button" class="x-dialog__btn_del" id="deletePostBtn">Delete</button>
-</form>
+
+ <!-- Toast confirm delete html -->
+      <div id="deleteConfirm" class="delete-confirm">
+        <span>Are you sure you want to delete this post?</span>
+        <div class="delete-confirm__buttons">
+          <button type="button"
+                  id="deleteCancel"
+                  class="delete-confirm__btn delete-confirm__btn--secondary">
+            No
+          </button>
+          <button type="button"
+                  id="deleteConfirmYes"
+                  class="delete-confirm__btn delete-confirm__btn--danger">
+            Yes
+          </button>
+        </div>
+      </div>
+      
+    </form>
 
   </div>
-</div>
+ </div>
+
 
 <!-- <script>
 document.getElementById("deletePostBtn").addEventListener("click", function() {

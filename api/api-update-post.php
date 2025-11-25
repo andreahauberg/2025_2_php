@@ -24,7 +24,7 @@ try {
 
     require_once __DIR__ . '/../db.php';
 
-    // Tjek om brugeren ejer posten og hent kun post_message så fetchColumn() returnerer selve teksten (så vi kan tjekke for ændringer ift toast)
+    // Tjek om brugeren ejer posten - hent kun post_message så fetchColumn() returnerer selve teksten (så vi kan tjekke for ændringer ift toast)
     $checkSql = "SELECT post_message FROM posts WHERE post_pk = :postPk AND post_user_fk = :userPk AND deleted_at IS NULL";
     $checkStmt = $_db->prepare($checkSql);
     $checkStmt->execute([':postPk' => $postPk, ':userPk' => $_SESSION['user']['user_pk']]);

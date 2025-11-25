@@ -104,6 +104,7 @@ $usersToFollow = $stmt->fetchAll();
     <script type="module" src="../public/js/app.js"></script>
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/comment.js"></script>
+    <script defer src="../public/js/confirm-delete.js"></script>
     <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
 </head>
 
