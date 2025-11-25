@@ -1,5 +1,5 @@
 <?php
-//session_start();
+session_start();
 
 // tjek om dialog boksen er aktiv 
 $updateActive  = !empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'update';
