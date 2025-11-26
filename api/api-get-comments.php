@@ -28,7 +28,7 @@ try {
     $stmt = $_db->prepare($sql);
     $stmt->bindValue(':postPk', $postPk);
     $stmt->execute();
-    $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $comments = $stmt->fetchAll();
     header('Content-Type: application/json');
     echo json_encode($comments);
 } catch (Exception $e) {

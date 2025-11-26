@@ -17,7 +17,7 @@ session_start();
     // tjek username og email er unikt
     $check = $_db->prepare('SELECT user_username, user_email FROM users WHERE user_username = :u OR user_email = :e LIMIT 1');
     $check->execute([':u' => $username, ':e' => $userEmail]);
-    $existing = $check->fetch(PDO::FETCH_ASSOC);
+    $existing = $check->fetch();
     if ($existing) {
         if (isset($existing['user_username']) && $existing['user_username'] === $username) {
             $_SESSION['toast'] = ['message' => 'Username is already taken', 'type' => 'error'];

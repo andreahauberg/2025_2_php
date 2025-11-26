@@ -19,7 +19,7 @@ $q = "SELECT * FROM users WHERE user_pk = :userPk";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = $stmt->fetch();
 
 if (!$user) {
     header("location: /home");
@@ -60,7 +60,7 @@ $q = "
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
-$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$posts = $stmt->fetchAll();
 
 // Tilføj like- og kommentar-data til posts
 foreach ($posts as &$post) {
@@ -101,7 +101,7 @@ $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->execute();
-$followers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$followers = $stmt->fetchAll();
 
 // 3. Hent forslag til brugere at følge
 $q = "
@@ -121,7 +121,7 @@ $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
-$usersToFollow = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$usersToFollow = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
