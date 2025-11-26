@@ -199,7 +199,10 @@ $initialFollowCount = count($usersToFollow);
                         id="trendingShowMore"
                         class="show-more-btn"
                         data-offset="<?= $initialTrendingCount ?>"
-                        data-limit="2">
+                        data-limit="2"
+                        data-initial="<?= $initialTrendingCount ?>"
+                        data-max="10"
+                    >
                         Show more
                     </button>
                 <?php endif; ?>
@@ -224,7 +227,10 @@ $initialFollowCount = count($usersToFollow);
                         id="followShowMore"
                         class="show-more-btn"
                         data-offset="<?= $initialFollowCount ?>"
-                        data-limit="3">
+                        data-limit="3"
+                        data-initial="<?= $initialFollowCount ?>"
+                        data-max="10"
+                    >
                         Show more
                     </button>
                 <?php endif; ?>

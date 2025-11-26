@@ -1,93 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("load-more-btn.js loaded");
-
-  function getIntDataset(el, key, fallback) {
-    return el ? parseInt(el.dataset[key], 10) || fallback : fallback;
-  }
-
-  async function fetchJson(url) {
-    const res = await fetch(url);
-    if (!res.ok) throw res;
-    return res.json();
-  }
-
-  // Append a trending item (keeps markup simple and consistent)
-  function appendTrendingItem(container, item) {
-    const div = document.createElement("div");
-    div.className = "trending-item";
-    div.innerHTML = `
-      <div class="trending-info">
-        <span class="item_title">Trending · ${item.post_count} posts</span>
-        <p>${item.topic}</p>
-      </div>
-      <span class="option">⋮</span>
-    `;
-    container.appendChild(div);
-  }
-
-  // Build the follow suggestion element matching `components/_follow_tag.php` structure
-  function buildFollowNode(user) {
-    const a = document.createElement("a");
-    a.href = `/user?user_pk=${user.user_pk}`;
-    a.className = "profile-info";
-    a.id = user.user_pk;
-
-    const seed = Math.abs((user.user_username || "").split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 100);
-
-    const img = document.createElement("img");
-    img.src = `https://avatar.iran.liara.run/public/${seed}`;
-    img.alt = "Profile Picture";
-
-    const info = document.createElement("div");
-    info.className = "info-copy";
-
-    const pName = document.createElement("p");
-    pName.className = "name";
-    pName.textContent = user.user_full_name || user.user_username || "";
-
-    const pHandle = document.createElement("p");
-    pHandle.className = "handle";
-    pHandle.textContent = `@${user.user_username || ""}`;
-
-    info.appendChild(pName);
-    info.appendChild(pHandle);
-
-    const btn = document.createElement("button");
-    btn.className = `follow-btn button-${user.user_pk}`;
-    btn.setAttribute("mix-get", `api-follow?user-pk=${user.user_pk}`);
-    btn.textContent = "Follow";
-
-    a.appendChild(img);
-    a.appendChild(info);
-    a.appendChild(btn);
-
-    return a;
-  }
-
-  // Generic loader for a section
-  function wireShowMore(buttonId, listId, endpoint, { limitDefault = 2, handle401 = false, onAppend } = {}) {
+  function setupLoadMore({ buttonId, listId, url, defaultLimit, handleNonOk, renderItem }) {
     const btn = document.getElementById(buttonId);
     const list = document.getElementById(listId);
     if (!btn || !list) return;
 
-    btn.addEventListener("click", async () => {
-      const offset = getIntDataset(btn, "offset", 0);
-      const limit = getIntDataset(btn, "limit", limitDefault);
-      const url = `${endpoint}?offset=${offset}&limit=${limit}`;
+    const initialCount = parseInt(btn.dataset.initial || list.children.length || "0", 10);
+    const maxItems = parseInt(btn.dataset.max || "10", 10);
 
-      console.log(`Click ${buttonId}, offset=${offset}, limit=${limit}`, url);
+    // default state
+    btn.dataset.mode = btn.dataset.mode || "more";
+    if (!btn.dataset.offset) {
+      btn.dataset.offset = initialCount;
+    }
+
+    btn.addEventListener("click", async () => {
+      const mode = btn.dataset.mode || "more";
+
+      // ---------- SHOW LESS ----------
+      if (mode === "less") {
+        // remove everything after the initial items
+        while (list.children.length > initialCount) {
+          list.removeChild(list.lastElementChild);
+        }
+        btn.dataset.mode = "more";
+        btn.textContent = "Show more";
+        btn.style.display = "";
+        return;
+      }
+
+      // ---------- SHOW MORE ----------
+      const offset = parseInt(btn.dataset.offset || String(initialCount), 10);
+      const limit = parseInt(btn.dataset.limit || String(defaultLimit), 10);
 
       try {
-        const res = await fetch(url);
-        console.log(`${buttonId} response status:`, res.status);
-
+        const res = await fetch(`${url}?offset=${offset}&limit=${limit}`);
         if (!res.ok) {
-          if (handle401 && res.status === 401) {
-            console.warn("Not logged in - hiding button");
-            btn.style.display = "none";
-            return;
-          }
-          throw new Error("Network response not ok: " + res.status);
+          if (handleNonOk && handleNonOk(res, btn) === false) return;
+          throw new Error(`Request failed with status ${res.status}`);
         }
 
         const data = await res.json();
@@ -96,28 +45,90 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        data.forEach((item) => {
-          onAppend(list, item);
-        });
+        data.forEach((item) => renderItem(item, list));
 
+        const total = list.children.length;
         btn.dataset.offset = offset + data.length;
-        if (data.length < limit) btn.style.display = "none";
+
+        // If we now have >= maxItems, switch button to "Show less"
+        if (total >= maxItems) {
+          btn.dataset.mode = "less";
+          btn.textContent = "Show less";
+          btn.style.display = "";
+        } else if (data.length < limit) {
+          // fewer than limit returned AND we didn't hit max -> no more data, hide
+          btn.style.display = "none";
+        }
       } catch (err) {
-        console.error(`Failed to load more for ${buttonId}`, err);
+        console.error("Load-more error:", err);
       }
     });
   }
 
-  // Wire trending (default limit 2)
-  wireShowMore("trendingShowMore", "trendingList", "/api/_api-get-trending.php", {
-    limitDefault: 2,
-    onAppend: appendTrendingItem,
+  // ---------- TRENDING ----------
+  setupLoadMore({
+    buttonId: "trendingShowMore",
+    listId: "trendingList",
+    // using existing underscore API endpoint
+    url: "/api/_api-get-trending.php",
+    defaultLimit: 2,
+    renderItem(item, list) {
+      const div = document.createElement("div");
+      div.className = "trending-item";
+      div.innerHTML = `
+        <div class="trending-info">
+          <span class="item_title">Trending · ${item.post_count} posts</span>
+          <p>${item.topic}</p>
+        </div>
+        <span class="option">⋮</span>
+      `;
+      list.appendChild(div);
+    },
   });
 
-  // Wire who-to-follow (default limit 3). Hide on 401.
-  wireShowMore("followShowMore", "whoToFollowList", "/api/_api-get-who-to-follow.php", {
-    limitDefault: 3,
-    handle401: true,
-    onAppend: (list, user) => list.appendChild(buildFollowNode(user)),
+  // ---------- WHO TO FOLLOW ----------
+  setupLoadMore({
+    buttonId: "followShowMore",
+    listId: "whoToFollowList",
+    // using existing underscore API endpoint
+    url: "/api/_api-get-who-to-follow.php",
+    defaultLimit: 3,
+    handleNonOk(res, btn) {
+      if (res.status === 401) {
+        console.warn("Not logged in");
+        btn.style.display = "none";
+        return false;
+      }
+      return true;
+    },
+    renderItem(user, list) {
+      const a = document.createElement("a");
+      a.href = `/user?user_pk=${user.user_pk}`;
+      a.className = "profile-info";
+      a.id = user.user_pk;
+
+      const img = document.createElement("img");
+      const seed = Math.abs((user.user_username || "").split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 100);
+      img.src = `https://avatar.iran.liara.run/public/${seed}`;
+      img.alt = "Profile Picture";
+
+      const info = document.createElement("div");
+      info.className = "info-copy";
+      const pName = document.createElement("p");
+      pName.className = "name";
+      pName.textContent = user.user_full_name;
+      const pHandle = document.createElement("p");
+      pHandle.className = "handle";
+      pHandle.textContent = `@${user.user_username}`;
+      info.append(pName, pHandle);
+
+      const btnFollow = document.createElement("button");
+      btnFollow.className = `follow-btn button-${user.user_pk}`;
+      btnFollow.setAttribute("mix-get", `api-follow?user-pk=${user.user_pk}`);
+      btnFollow.textContent = "Follow";
+
+      a.append(img, info, btnFollow);
+      list.appendChild(a);
+    },
   });
 });
