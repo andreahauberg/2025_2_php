@@ -12,7 +12,7 @@ function _noCache(){
 }
 
 define("postMinLength", 1);
-define("postMaxLength", 300);
+define("postMaxLength", 200);
 function _validatePost() {
     $postMessage = trim($_POST['post_message']);
     $len = strlen($postMessage);
@@ -65,7 +65,7 @@ function _validatePassword(){
 }
 
 define("userFullNameMin", 1);
-define("userFullNameMax", 50);
+define("userFullNameMax", 20);
 function _validateUserFullName(){
     $userFullName = trim($_POST["user_full_name"]);
     if(strlen($userFullName) < userFullNameMin){
@@ -78,7 +78,7 @@ function _validateUserFullName(){
 }
 
 define("usernameMin", 1);
-define("usernameMax", 50);
+define("usernameMax", 20);
 function _validateUsername(){
     $username = trim($_POST["user_username"]);
     if(strlen($username) < usernameMin){

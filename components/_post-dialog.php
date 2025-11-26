@@ -22,7 +22,7 @@ if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'post') {
     </div>
     <h2 id="signupPost">Create your post</h2>
     <form class="x-dialog__form" action="api-create-post" method="POST" autocomplete="off">
-        <textarea id="post-dialog-textarea" type="text" maxlength="300" name="post_message" placeholder="Your post message here"><?php echo isset($_SESSION['old_post_message']) ? htmlspecialchars($_SESSION['old_post_message']) : ''; ?></textarea>
+        <textarea id="post-dialog-textarea" type="text" maxlength="200" name="post_message" placeholder="Your post message here"><?php echo isset($_SESSION['old_post_message']) ? htmlspecialchars($_SESSION['old_post_message']) : ''; ?></textarea>
       <button type="submit" class="x-dialog__btn">Post</button>
     </form>
   </div>
