@@ -33,11 +33,23 @@ session_start();
     // Use the User class to create a new user. Example of using OOP
     User::create($_db, $userPk, $username, $userFullName, $userEmail, $hashedPassword);
 
-    // success: vis toast og redirect to login
-    $_SESSION['toast'] = ['message' => 'Account created successfully! Please login.', 'type' => 'ok'];
-    $_SESSION['open_dialog'] = 'login';
-    header('Location: /');
-    exit();
+    // ved succesfuld oprettelse, log brugeren ind automatisk
+    $fetch = $_db->prepare('SELECT * FROM users WHERE user_pk = :pk AND deleted_at IS NULL LIMIT 1');
+    $fetch->execute([':pk' => $userPk]);
+    $newUser = $fetch->fetch();
+    if ($newUser) {
+        unset($newUser['user_password']);
+        $_SESSION['user'] = $newUser;
+        $_SESSION['toast'] = ['message' => 'Welcome, ' . ($newUser['user_full_name'] ?? $username) . '!', 'type' => 'ok'];
+        header('Location: /home');
+        exit();
+    } else {
+        // fallback
+        $_SESSION['toast'] = ['message' => 'Account created successfully! Please login.', 'type' => 'ok'];
+        $_SESSION['open_dialog'] = 'login';
+        header('Location: /');
+        exit();
+    }
 
 }
 catch(Exception $e){
