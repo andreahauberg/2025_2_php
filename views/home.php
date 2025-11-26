@@ -11,6 +11,11 @@ if (!isset($_SESSION["user"])) {
 
 require_once __DIR__ . "/../db.php";
 
+$currentUser = $_SESSION["user"]["user_pk"];
+
+// ---------- TRENDING (første batch) ----------
+$trendingLimit = 4;
+
 $q = "
   SELECT 
     LEFT(post_message, 40) AS topic,
@@ -18,12 +23,15 @@ $q = "
   FROM posts
   GROUP BY topic
   ORDER BY post_count DESC
-  LIMIT 4
+  LIMIT :limit
 ";
 $stmt = $_db->prepare($q);
+$stmt->bindValue(':limit', $trendingLimit, PDO::PARAM_INT);
 $stmt->execute();
 $trending = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+$initialTrendingCount = count($trending);
 
+// ---------- POSTS (som før) ----------
 $q = "
   SELECT
     posts.post_pk,
@@ -39,16 +47,13 @@ $q = "
     (SELECT COUNT(*) FROM comments WHERE comment_post_fk = posts.post_pk) AS comment_count
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
-    WHERE posts.deleted_at IS NULL
+  WHERE posts.deleted_at IS NULL
   ORDER BY created_at DESC
   LIMIT 10
 ";
 $stmt = $_db->prepare($q);
 $stmt->execute();
 $posts = $stmt->fetchAll();
-
-
-$currentUser = $_SESSION["user"]["user_pk"];
 
 foreach ($posts as &$post) {
     // Hent like_count
@@ -68,28 +73,28 @@ foreach ($posts as &$post) {
 }
 unset($post);
 
-
+// ---------- WHO TO FOLLOW (første batch) ----------
+$followLimit = 3;
 
 $q = "
   SELECT users.*
   FROM users
   WHERE users.user_pk != :currentUser
-  AND users.user_pk NOT IN (
-    SELECT follow_user_fk
-    FROM follows
-    WHERE follower_user_fk = :currentUser
-  )
-  ORDER BY RAND()
-  LIMIT 3
+    AND users.user_pk NOT IN (
+      SELECT follow_user_fk
+      FROM follows
+      WHERE follower_user_fk = :currentUser
+    )
+  ORDER BY users.created_at DESC
+  LIMIT :limit
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUser", $currentUser);
+$stmt->bindValue(":limit", $followLimit, PDO::PARAM_INT);
 $stmt->execute();
 $usersToFollow = $stmt->fetchAll();
+$initialFollowCount = count($usersToFollow);
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -106,6 +111,7 @@ $usersToFollow = $stmt->fetchAll();
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/comment.js"></script>
     <script defer src="../public/js/confirm-delete.js"></script>
+    <script defer src="../public/js/load-more-btn.js"></script> 
     <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
 </head>
 
@@ -136,7 +142,6 @@ $usersToFollow = $stmt->fetchAll();
 
             <button class="post-btn" data-open="postDialog">Post</button>
 
-
             <div id="profile_tag" data-open="updateProfileDialog">
                 <img src="https://avatar.iran.liara.run/public/73" alt="Profile">
                 <div>
@@ -150,21 +155,19 @@ $usersToFollow = $stmt->fetchAll();
                 <i class="fa-solid fa-ellipsis option"></i>
             </div>
         </nav>
+
         <?php
         require_once __DIR__ . "/../components/_post-dialog.php";
         require_once __DIR__ . "/../components/_update-profile-dialog.php";
         require_once __DIR__ . "/../components/_update-post-dialog.php";
         ?>
 
-
         <main>
-            <?php
-            foreach ($posts as $post):
-                require __DIR__ . "/../components/_post.php";
-            endforeach
-            ?>
-
+            <?php foreach ($posts as $post): ?>
+                <?php require __DIR__ . "/../components/_post.php"; ?>
+            <?php endforeach; ?>
         </main>
+
         <aside>
             <form id="home-search-form">
                 <input
@@ -174,9 +177,10 @@ $usersToFollow = $stmt->fetchAll();
                     autocomplete="off">
                 <button type="submit">Search</button>
             </form>
+
             <div class="happening-now">
                 <h2>What's happening now</h2>
-                <div class="trending">
+                <div class="trending" id="trendingList">
                     <?php foreach ($trending as $item): ?>
                         <div class="trending-item">
                             <div class="trending-info">
@@ -188,25 +192,45 @@ $usersToFollow = $stmt->fetchAll();
                             <span class="option">⋮</span>
                         </div>
                     <?php endforeach; ?>
-                    <button class="show-more-btn">Show more</button>
                 </div>
+
+                <?php if ($initialTrendingCount === $trendingLimit): ?>
+                    <button
+                        id="trendingShowMore"
+                        class="show-more-btn"
+                        data-offset="<?= $initialTrendingCount ?>"
+                        data-limit="2">
+                        Show more
+                    </button>
+                <?php endif; ?>
             </div>
+
             <hr>
+
             <div class="who-to-follow">
                 <h2>Who to follow</h2>
                 <?php if (empty($usersToFollow)): ?>
                     <p>No more users to follow.</p>
                 <?php else: ?>
-                    <div class="follow-suggestion">
+                    <div class="follow-suggestion" id="whoToFollowList">
                         <?php foreach ($usersToFollow as $user): ?>
                             <?php require __DIR__ . "/../components/_follow_tag.php"; ?>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 
-                <button class="show-more-btn">Show more</button>
+                <?php if ($initialFollowCount === $followLimit): ?>
+                    <button
+                        id="followShowMore"
+                        class="show-more-btn"
+                        data-offset="<?= $initialFollowCount ?>"
+                        data-limit="3">
+                        Show more
+                    </button>
+                <?php endif; ?>
             </div>
         </aside>
+
         <div class="search-overlay" aria-hidden="true">
             <div class="search-overlay-box">
                 <button
@@ -227,8 +251,7 @@ $usersToFollow = $stmt->fetchAll();
                     <button type="submit" class="search-overlay-btn">Search</button>
                 </form>
 
-                <div id="searchOverlayResults" class="search-overlay-results">
-                </div>
+                <div id="searchOverlayResults" class="search-overlay-results"></div>
             </div>
         </div>
     </div>

@@ -202,7 +202,6 @@ $usersToFollow = $stmt->fetchAll();
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
-                    <button class="show-more-btn">Show more</button>
                 </div>
         </aside>
     
