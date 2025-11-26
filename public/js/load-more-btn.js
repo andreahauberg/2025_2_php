@@ -109,13 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Wire trending (default limit 2)
-  wireShowMore("trendingShowMore", "trendingList", "/api/api-get-trending.php", {
+  wireShowMore("trendingShowMore", "trendingList", "/api/_api-get-trending.php", {
     limitDefault: 2,
     onAppend: appendTrendingItem,
   });
 
   // Wire who-to-follow (default limit 3). Hide on 401.
-  wireShowMore("followShowMore", "whoToFollowList", "/api/api-get-who-to-follow.php", {
+  wireShowMore("followShowMore", "whoToFollowList", "/api/_api-get-who-to-follow.php", {
     limitDefault: 3,
     handle401: true,
     onAppend: (list, user) => list.appendChild(buildFollowNode(user)),
