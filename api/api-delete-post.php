@@ -15,6 +15,9 @@ try {
     // Accept POST (from fetch) or GET (fallback)
     $postPk = $_POST['post_pk'] ?? $_GET['post_pk'] ?? null;
 
+    // bestem hvor der skal redirectes hen via helper funktion i x.php
+    $redirect = _redirectPath('/home');
+
     if (!$postPk) {
         throw new Exception("Post ID is required", 400);
     }
@@ -47,13 +50,13 @@ try {
         'type'    => 'ok'
     ];
 
-    header("Location: /home");
+    header("Location: " . $redirect);
     exit;
 } catch (Exception $e) {
     $_SESSION['toast'] = [
         'message' => $e->getMessage(),
         'type'    => 'error'
     ];
-    header("Location: /home");
+    header("Location: " . ($redirect ?? '/home'));
     exit;
 }

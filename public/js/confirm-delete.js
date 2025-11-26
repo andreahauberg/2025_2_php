@@ -26,8 +26,9 @@ function initDeleteConfirm() {
     const pk = postPkInput.value;
     if (!pk) return;
 
-    // lad browseren navigere – helt normalt
-    window.location.href = "api-delete-post?post_pk=" + encodeURIComponent(pk);
+    // lad browseren navigere – inklusiv redirect tilbage til nuværende side
+    const redirect = window.location.pathname + window.location.search;
+    window.location.href = "api-delete-post?post_pk=" + encodeURIComponent(pk) + "&redirect_to=" + encodeURIComponent(redirect);
   });
 }
 

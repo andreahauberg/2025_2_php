@@ -97,6 +97,7 @@ $usersToFollow = $stmt->fetchAll();
     <title>Profile: <?php echo htmlspecialchars($currentUser["user_full_name"]); ?></title>
 </head>
 <body>
+    <?php require_once __DIR__ . "/../components/___toast.php"; ?>
     <div id="container">
         <button class="burger" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>

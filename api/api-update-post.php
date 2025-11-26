@@ -35,6 +35,10 @@ try {
         throw new Exception("You do not have permission to update this post.", 403);
     }
 
+    // bestem hvor der skal redirectes hen via helper funktion i x.php
+    $redirect = _redirectPath('/home');
+
+
     // ingen ændring -> toast + genåbn dialog
     if (trim((string)$dbMessage) === trim((string)$postMessage)) {
         $_SESSION['toast'] = [
@@ -45,7 +49,7 @@ try {
         $_SESSION['old_update_post_pk']      = $postPk;
         $_SESSION['old_update_post_message'] = $postMessage;
 
-        header("Location: /home");
+        header("Location: " . $redirect);
         exit();
     }
 
@@ -62,7 +66,7 @@ try {
         'type'    => 'ok'
     ];
 
-    header("Location: /home");
+    header("Location: " . $redirect);
     exit();
 
 } catch (Exception $e) {
@@ -73,6 +77,6 @@ try {
         'type'    => 'error'
     ];
 
-    header("Location: /home");
+    header("Location: " . ($redirect ?? '/home'));
     exit();
 }
