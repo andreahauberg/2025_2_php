@@ -15,10 +15,14 @@ function initDeleteConfirm() {
 
   deleteBtn.addEventListener("click", () => {
     confirmBox.classList.add("delete-confirm--visible");
+    // hide the original delete button while the confirmation is visible
+    deleteBtn.style.display = "none";
   });
 
   cancelBtn.addEventListener("click", () => {
     confirmBox.classList.remove("delete-confirm--visible");
+    // restore the delete button when cancelling
+    deleteBtn.style.display = "";
   });
 
   // ⬇⬇⬇ ændr DENNE del ⬇⬇⬇
