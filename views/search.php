@@ -13,14 +13,14 @@
                         <div>
                             <span
                                 class="search-results-user-name"
-                                data-search-text="<?php echo htmlspecialchars($user["user_full_name"]); ?>">
-                                <?php echo htmlspecialchars($user["user_full_name"]); ?>
+                                data-search-text="<?php _($user["user_full_name"]); ?>">
+                                <?php _($user["user_full_name"]); ?>
                             </span>
 
                             <span
                                 class="search-results-user-handle"
-                                data-search-text="@<?php echo htmlspecialchars($user["user_username"]); ?>">
-                                @<?php echo htmlspecialchars($user["user_username"]); ?>
+                                data-search-text="@<?php _($user["user_username"]); ?>">
+                                @<?php _($user["user_username"]); ?>
                             </span>
                         </div>
 
@@ -43,7 +43,7 @@
 
         <?php if (!empty($post["post_image_path"])): ?>
             <div class="search-results-post-image-wrapper">
-                <img src="<?php echo htmlspecialchars($post["post_image_path"]); ?>"
+                <img src="<?php _($post["post_image_path"]); ?>"
                      class="search-results-post-image">
             </div>
         <?php endif; ?>
@@ -53,16 +53,16 @@
             <div class="search-results-post-auhtor">
 
 <span
-    data-search-text="@<?php echo htmlspecialchars($post["user_username"]); ?>">
-    @<?php echo htmlspecialchars($post["user_username"]); ?>
+    data-search-text="@<?php _($post["user_username"]); ?>">
+    @<?php _($post["user_username"]); ?>
 </span>
 
             </div>
 
             <p
                 class="search-results-post-text"
-                data-search-text="<?php echo htmlspecialchars($post["post_message"]); ?>">
-                <?php echo htmlspecialchars($post["post_message"]); ?>
+                data-search-text="<?php _($post["post_message"]); ?>">
+                <?php _($post["post_message"]); ?>
             </p>
 
         </div>

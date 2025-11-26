@@ -94,7 +94,7 @@ $usersToFollow = $stmt->fetchAll();
     <script defer src="../public/js/flip-btn.js"></script>
     <script defer src="../public/js/comment.js"></script>
     <script defer src="../public/js/confirm-delete.js"></script>
-    <title>Profile: <?php echo htmlspecialchars($currentUser["user_full_name"]); ?></title>
+    <title>Profile: <?php _($currentUser["user_full_name"]); ?></title>
 </head>
 <body>
     <?php require_once __DIR__ . "/../components/___toast.php"; ?>
@@ -125,10 +125,10 @@ $usersToFollow = $stmt->fetchAll();
                 <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile">
                 <div>
                     <div class="name">
-                        <?php echo htmlspecialchars($currentUser["user_full_name"]); ?>
+                        <?php _($currentUser["user_full_name"]); ?>
                     </div>
                     <div class="handle">
-                        <?php echo htmlspecialchars("@" . $currentUser["user_username"]); ?>
+                        <?php _("@" . $currentUser["user_username"]); ?>
                     </div>
                 </div>
                 <i class="fa-solid fa-ellipsis option"></i>
@@ -151,8 +151,8 @@ $usersToFollow = $stmt->fetchAll();
                 <div class="profile-page-info">
                     <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
                     <div class="profile-details">
-                        <h1><?php echo htmlspecialchars($currentUser["user_full_name"]); ?></h1>
-                        <p>@<?php echo htmlspecialchars($currentUser["user_username"]); ?></p>
+                        <h1><?php _($currentUser["user_full_name"]); ?></h1>
+                        <p>@<?php _($currentUser["user_username"]); ?></p>
                         <div class="profile-stats">
                             <span><strong><?php echo count($posts); ?></strong> Posts</span>
                             <span><strong><?php echo count($following); ?></strong> Following</span>

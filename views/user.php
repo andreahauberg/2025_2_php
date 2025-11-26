@@ -136,7 +136,7 @@ $usersToFollow = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/flip-btn.js"></script>
     <script defer src="../public/js/comment.js"></script>
-    <title><?php echo htmlspecialchars($user["user_full_name"]); ?> (@<?php echo htmlspecialchars($user["user_username"]); ?>)</title>
+    <title><?php _($user["user_full_name"]); ?> (@<?php _($user["user_username"]); ?>)</title>
 </head>
 <body>
     <div id="container">
@@ -166,10 +166,10 @@ $usersToFollow = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile">
                 <div>
                     <div class="name">
-                        <?php echo htmlspecialchars($currentUser["user_full_name"]); ?>
+                        <?php _($currentUser["user_full_name"]); ?>
                     </div>
                     <div class="handle">
-                        <?php echo htmlspecialchars("@" . $currentUser["user_username"]); ?>
+                        <?php _("@" . $currentUser["user_username"]); ?>
                     </div>
                 </div>
                 <i class="fa-solid fa-ellipsis option"></i>
@@ -187,8 +187,8 @@ $usersToFollow = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="profile-page-info">
                     <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
                     <div class="profile-details">
-                        <h1><?php echo htmlspecialchars($user["user_full_name"]); ?></h1>
-                        <p>@<?php echo htmlspecialchars($user["user_username"]); ?></p>
+                        <h1><?php _($user["user_full_name"]); ?></h1>
+                        <p>@<?php _($user["user_username"]); ?></p>
                         <div class="profile-stats">
                             <span><strong><?php echo count($posts); ?></strong> Posts</span>
                             <span><strong><?php echo count($followers); ?></strong> Followers</span>
