@@ -236,6 +236,17 @@ main {
         line-height: 1.4;
       }
 
+      /* fix to text overflowing the post/image width */
+      .text,
+      .post-content p,
+      .post-content a {
+        white-space: normal;
+        /* allow breaks anywhere if needed also be agressive w breaks */
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
+      }
+
       .post-image {
         margin-top: 0.6rem;
         border-radius: 1rem;

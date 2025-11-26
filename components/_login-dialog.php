@@ -20,8 +20,8 @@ if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'login') {
     </div>
     <h2 id="loginTitle">Log in to X</h2>
     <form class="x-dialog__form" action="bridge-login" method="POST" autocomplete="off">
-      <input name="user_email" type="text" placeholder="Email" required <?php if ($__login_active) echo 'autofocus'; ?> >
-      <input name="user_password" type="password" placeholder="Password" required>
+      <input name="user_email" type="text" maxlength="50" placeholder="Email" required <?php if ($__login_active) echo 'autofocus'; ?> >
+      <input name="user_password" type="password" maxlength="50" placeholder="Password" required>
       <button class="x-dialog__btn">Next</button>
     </form>
     <p class="x-dialog__alt">Don't have an account? <a href="#" data-open="signupDialog">Sign up</a></p>
