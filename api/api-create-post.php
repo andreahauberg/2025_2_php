@@ -33,7 +33,8 @@ try {
     $_SESSION['toast'] = ['message' => 'Post created!', 'type' => 'ok'];
     // success: åben ikke dialog boksen igen 
     unset($_SESSION['old_post_message']);
-    header("Location: /home");
+    $redirect = _redirectPath('/home');
+    header("Location: " . $redirect);
     exit();
 }
 catch(Exception $e){
@@ -43,6 +44,7 @@ catch(Exception $e){
     if (!empty($_POST['post_message'])) {
         $_SESSION['old_post_message'] = $_POST['post_message'];
     }
-    header('Location: /home');
+    $redirect = _redirectPath('/home');
+    header('Location: ' . $redirect);
     exit();
 }

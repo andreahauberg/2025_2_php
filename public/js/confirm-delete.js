@@ -25,7 +25,6 @@ function initDeleteConfirm() {
     deleteBtn.style.display = "";
   });
 
-  // ⬇⬇⬇ ændr DENNE del ⬇⬇⬇
   confirmYes.addEventListener("click", () => {
     const pk = postPkInput.value;
     if (!pk) return;
