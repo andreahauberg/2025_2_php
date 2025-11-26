@@ -20,7 +20,7 @@ try{
     // echo json_encode($user);
     if(!$user || !password_verify($userPassword, $user["user_password"])){
         // hvis brugeren ikke eksisterer eller adgangskoden/email er forkert 
-        $_SESSION['toast'] = [ 'message' => 'Wrong email or password', 'type' => 'error' ];
+        _toastError('Wrong email or password');
         // hold dialog boksen åben 
         $_SESSION['open_dialog'] = 'login'; 
         header("Location: /");
@@ -32,7 +32,7 @@ try{
     header("Location: /home");
 
 }catch(Exception $e){
-    $_SESSION['toast'] = ['message' => $e->getMessage(), 'type' => 'error'];
+    _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'login';
     header('Location: /');
     exit();

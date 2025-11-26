@@ -1,15 +1,11 @@
 <?php
 
 session_start();
-$user = $_SESSION["user"];
-
-if (!$user) {
-    header("Location: /?message=Please login to update your profile");
-    exit;
-}
+require_once __DIR__ . '/../x.php';
+_ensureLogin('/');
 
 try {
-    require_once __DIR__ . '/../x.php';
+    $user = $_SESSION["user"];
 
     $newEmail = _validateEmail();
     $newUsername = _validateUsername();

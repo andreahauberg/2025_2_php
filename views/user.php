@@ -2,7 +2,8 @@
 require_once __DIR__ . "/../x.php";
 session_start();
 if (!isset($_SESSION["user"])) {
-    header("location: /?message=not logged in, please login first");
+    _toastError('Not logged in, please login first');
+    header('Location: /');
     exit();
 }
 require_once __DIR__ . "/../db.php";

@@ -22,7 +22,7 @@ session_start();
         if (isset($existing['user_username']) && $existing['user_username'] === $username) {
             $_SESSION['toast'] = ['message' => 'Username is already taken', 'type' => 'error'];
         } else {
-            $_SESSION['toast'] = ['message' => 'You already have an account with this email', 'type' => 'error'];
+            _toastError('You already have an account with this email');
         }
         // keep signup dialog open when toast is shown
         $_SESSION['open_dialog'] = 'signup';
@@ -40,12 +40,12 @@ session_start();
     if ($newUser) {
         unset($newUser['user_password']);
         $_SESSION['user'] = $newUser;
-        $_SESSION['toast'] = ['message' => 'Welcome, ' . ($newUser['user_full_name'] ?? $username) . '!', 'type' => 'ok'];
+        _toastOk('Welcome, ' . ($newUser['user_full_name'] ?? $username) . '!');
         header('Location: /home');
         exit();
     } else {
         // fallback
-        $_SESSION['toast'] = ['message' => 'Account created successfully! Please login.', 'type' => 'ok'];
+        _toastOk('Account created successfully! Please login.');
         $_SESSION['open_dialog'] = 'login';
         header('Location: /');
         exit();
@@ -53,7 +53,7 @@ session_start();
 
 }
 catch(Exception $e){
-    $_SESSION['toast'] = ['message' => $e->getMessage(), 'type' => 'error'];
+    _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'signup';
     header('Location: /');
     exit();

@@ -1,17 +1,10 @@
 <?php
 session_start();
-// user skal være logged in for at delete en post
-if (!isset($_SESSION["user"])) {
-    $_SESSION['toast'] = [
-        'message' => 'Please login to delete your post',
-        'type'    => 'error'
-    ];
-    header("Location: /");
-    exit();
-}
+require_once __DIR__ . '/../x.php';
+// sørg for at brugeren er logget ind
+_ensureLogin('/');
 
 try {
-    require_once __DIR__ . '/../x.php';
     // Accept POST (from fetch) or GET (fallback)
     $postPk = $_POST['post_pk'] ?? $_GET['post_pk'] ?? null;
 
@@ -45,18 +38,11 @@ try {
     $stmt = $_db->prepare($sql);
     $stmt->execute([':postPk' => $postPk]);
 
-    $_SESSION['toast'] = [
-        'message' => 'Post deleted',
-        'type'    => 'ok'
-    ];
-
+    _toastOk('Post deleted');
     header("Location: " . $redirect);
     exit;
 } catch (Exception $e) {
-    $_SESSION['toast'] = [
-        'message' => $e->getMessage(),
-        'type'    => 'error'
-    ];
+    _toastError($e->getMessage());
     header("Location: " . ($redirect ?? '/home'));
     exit;
 }

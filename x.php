@@ -11,6 +11,8 @@ function _noCache(){
     header('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
 }
 
+
+
 define("postMinLength", 1);
 define("postMaxLength", 200);
 function _validatePost() {
@@ -30,13 +32,11 @@ function _validateEmail(){
 
     $userEmail = $_POST["user_email"];
     if(strlen($userEmail) < emailMin){
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $_SESSION['toast'] = ['message' => "Email must be at least ".emailMin." characters long", 'type' => 'error'];
+        _toastError("Email must be at least ".emailMin." characters long");
         throw new Exception("Email must be at least ".emailMin." characters long", 400);
     }
     if(strlen($userEmail) > emailMax){
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $_SESSION['toast'] = ['message' => "Email must be max ".emailMax." characters long", 'type' => 'error'];
+        _toastError("Email must be max ".emailMax." characters long");
         throw new Exception("Email must be max ".emailMax." characters long", 400);
     }
     return $userEmail;
@@ -50,13 +50,11 @@ function _validatePassword(){
 
     $userPassword = trim($_POST["user_password"]);
     if(strlen($userPassword) < passwordMin){
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $_SESSION['toast'] = ['message' => "Password must be at least ".passwordMin." characters long", 'type' => 'error'];
+        _toastError("Password must be at least ".passwordMin." characters long");
         throw new Exception("Password must be at least ".passwordMin." characters long", 400);
     }
     if(strlen($userPassword) > passwordMax){
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $_SESSION['toast'] = ['message' => "Password must be max ".passwordMax." characters long", 'type' => 'error'];
+        _toastError("Password must be max ".passwordMax." characters long");
         throw new Exception("Password must be max ".passwordMax." characters long", 400);
     }
     return $userPassword;
@@ -128,4 +126,46 @@ function _redirectPath(string $fallback = '/home'): string {
     }
 
     return $redirect;
+}
+
+
+//  TOAST helper funktion  
+
+function _setToast(string $message, string $type = 'ok'): void {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    $_SESSION['toast'] = [
+        'message' => $message,
+        'type'    => $type
+    ];
+}
+
+function _toastOk(string $message): void {
+    _setToast($message, 'ok');
+}
+
+function _toastError(string $message): void {
+    _setToast($message, 'error');
+}
+
+//  toast + redirect + exit i én funktion
+function _toastRedirect(string $message, string $type, string $location): void {
+    _setToast($message, $type);
+    header("Location: $location");
+    exit();
+}
+
+// LOGIN HELPER 
+
+function _ensureLogin(string $redirect = '/'): void {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['user'])) {
+        _toastError('Not logged in, please login first');
+        header("Location: $redirect");
+        exit();
+    }
 }

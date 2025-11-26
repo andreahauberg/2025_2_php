@@ -1,18 +1,10 @@
 <?php
 session_start();
-
-// user skal være logged in for at opdatere en post
-if (!isset($_SESSION["user"])) {
-    $_SESSION['toast'] = [
-        'message' => 'Please login to update your post',
-        'type'    => 'error'
-    ];
-    header("Location: /");
-    exit();
-}
+require_once __DIR__ . '/../x.php';
+// ensure user is logged in
+_ensureLogin('/');
 
 try {
-    require_once __DIR__ . '/../x.php';
 
     // valider input
     $postPk      = $_POST['post_pk'] ?? null;
@@ -41,10 +33,7 @@ try {
 
     // ingen ændring -> toast + genåbn dialog
     if (trim((string)$dbMessage) === trim((string)$postMessage)) {
-        $_SESSION['toast'] = [
-            'message' => 'Please change something to update your post',
-            'type'    => 'error'
-        ];
+        _toastError('Please change something to update your post');
         $_SESSION['open_dialog']             = 'update';
         $_SESSION['old_update_post_pk']      = $postPk;
         $_SESSION['old_update_post_message'] = $postMessage;
@@ -61,22 +50,14 @@ try {
     $stmt->execute();
     
     // Success toast
-    $_SESSION['toast'] = [
-        'message' => 'Post updated!',
-        'type'    => 'ok'
-    ];
-
+    _toastOk('Post updated!');
     header("Location: " . $redirect);
     exit();
 
 } catch (Exception $e) {
 
     // Error toast
-    $_SESSION['toast'] = [
-        'message' => $e->getMessage(),
-        'type'    => 'error'
-    ];
-
+    _toastError($e->getMessage());
     header("Location: " . ($redirect ?? '/home'));
     exit();
 }

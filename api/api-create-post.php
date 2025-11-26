@@ -1,15 +1,12 @@
 <?php 
 session_start();
-
 require_once __DIR__."/../x.php";
 
-$user = $_SESSION["user"];
+// ensure user logged in
+_ensureLogin('/');
 
-if (!$user) {
-    $_SESSION['toast'] = ['message' => 'Not logged in, please login first', 'type' => 'error'];
-    header("Location: /");
-    exit();
-} 
+// current user from session
+$user = $_SESSION["user"];
 
 try {
     $postMessage = _validatePost();
@@ -30,15 +27,13 @@ try {
     $stmt->execute();
 
     
-    $_SESSION['toast'] = ['message' => 'Post created!', 'type' => 'ok'];
     // success: åben ikke dialog boksen igen 
     unset($_SESSION['old_post_message']);
     $redirect = _redirectPath('/home');
-    header("Location: " . $redirect);
-    exit();
+    _toastRedirect('Post created!', 'ok', $redirect);
 }
 catch(Exception $e){
-    $_SESSION['toast'] = ['message' => $e->getMessage(), 'type' => 'error'];
+    _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'post';
     // behold den gamle post besked 
     if (!empty($_POST['post_message'])) {
