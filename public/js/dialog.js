@@ -21,18 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const pkInput = dialog.querySelector("#postPkInput");
         const msgInput = dialog.querySelector("#postMessageInput");
-        const redirectInput = dialog.querySelector("#redirectToInput");
+
         if (pkInput) pkInput.value = postPk || "";
         if (msgInput) msgInput.value = postMessage || "";
-        // ensure redirect_to is set so server can redirect back to this page
-        const redirectValue = window.location.pathname + window.location.search;
-        if (redirectInput) redirectInput.value = redirectValue;
-        // also set form action query as a fallback (in case hidden input doesn't submit)
-        const form = dialog.querySelector("form");
-        if (form) {
-          const base = (form.getAttribute("action") || "api-update-post").split("?")[0];
-          form.setAttribute("action", base + "?redirect_to=" + encodeURIComponent(redirectValue));
-        }
+        // redirect_to lader vi PHP styre (hidden input med $_SERVER['REQUEST_URI'])
       }
 
       dialog.classList.add("active");

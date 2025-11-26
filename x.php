@@ -105,21 +105,26 @@ function _validatePk($fieldName) {
 }
 
 // Helper funktion til at bestemme redirect path
-function _redirectPath($default = '/home') {
-    $redirect = $_POST['redirect_to']
-        ?? $_GET['redirect_to']
-        ?? $_SERVER['HTTP_REFERER']
-        ?? $default;
+function _redirectPath(string $fallback = '/home'): string {
+    // prefer non-empty POST, then non-empty GET, then REFERER, then fallback
+    if (!empty($_POST['redirect_to'])) {
+        $redirect = $_POST['redirect_to'];
+    } elseif (!empty($_GET['redirect_to'])) {
+        $redirect = $_GET['redirect_to'];
+    } elseif (!empty($_SERVER['HTTP_REFERER'])) {
+        $redirect = $_SERVER['HTTP_REFERER'];
+    } else {
+        $redirect = $fallback;
+    }
 
     $parsed = parse_url($redirect);
-
-    $path  = $parsed['path'] ?? $default;
-    $query = isset($parsed['query']) ? ('?' . $parsed['query']) : '';
+    $path   = $parsed['path'] ?? $fallback;
+    $query  = isset($parsed['query']) ? ('?' . $parsed['query']) : '';
 
     $redirect = $path . $query;
 
     if (strpos($redirect, '/') !== 0) {
-        $redirect = $default;
+        $redirect = $fallback;
     }
 
     return $redirect;
