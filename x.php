@@ -102,6 +102,32 @@ function _validatePk($fieldName) {
     return $pk;
 }
 
+define("commentMinLength", 1);
+define("commentMaxLength", 200);
+function _validateComment($text = null){
+    // validere at det er tekst og ellers brug det fra post feltet
+    if ($text === null) {
+        $text = $_POST['comment_message'] ?? '';
+    }
+
+    $comment = trim((string)$text);
+
+    
+    $len = strlen($comment);
+
+    if ($len < commentMinLength) {
+        throw new Exception("Comment cannot be empty, must be at least " . commentMinLength . " characters long", 400);
+    }
+    if ($len > commentMaxLength) {
+        throw new Exception("Comment must be at most " . commentMaxLength . " characters long", 400);
+    }
+
+
+    return $comment;
+}
+
+
+
 // Helper funktion til at bestemme redirect path
 function _redirectPath(string $fallback = '/home'): string {
     // prefer non-empty POST, then non-empty GET, then REFERER, then fallback
