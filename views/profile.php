@@ -33,20 +33,29 @@ $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->execute();
 $posts = $stmt->fetchAll();
 
-// Tilføj like-data til posts
+// Tilføj comment-og like data til posts
+require_once __DIR__ . '/../models/CommentModel.php';
+$commentModel = new CommentModel();
+// Tilføj comment_count via modellen så view får server-side værdi
 foreach ($posts as &$post) {
     $q = "SELECT COUNT(*) AS like_count FROM likes WHERE like_post_fk = :postPk";
     $stmt = $_db->prepare($q);
     $stmt->bindValue(':postPk', $post['post_pk']);
     $stmt->execute();
-    $post['like_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['like_count'];
+    $post['like_count'] = $stmt->fetch()['like_count'];
 
     $q = "SELECT COUNT(*) AS is_liked FROM likes WHERE like_post_fk = :postPk AND like_user_fk = :userPk";
     $stmt = $_db->prepare($q);
     $stmt->bindValue(':postPk', $post['post_pk']);
     $stmt->bindValue(':userPk', $currentUserPk);
     $stmt->execute();
-    $post['is_liked_by_user'] = $stmt->fetch(PDO::FETCH_ASSOC)['is_liked'] > 0;
+    $post['is_liked_by_user'] = $stmt->fetch()['is_liked'] > 0;
+    // server-side comment count
+    try {
+        $post['comment_count'] = $commentModel->countForPost($post['post_pk']);
+    } catch (Exception $_) {
+        $post['comment_count'] = 0;
+    }
 }
 unset($post);
 
