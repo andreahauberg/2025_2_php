@@ -28,8 +28,16 @@
             </div>
     </a>
     <p class="text">
-        <?php _($post["post_message"]); ?>
-    </p>
+<?php
+    $message = htmlspecialchars($post["post_message"]);
+    $message = preg_replace(
+        '/#(\w+)/',
+        '<a class="hashtag-link" href="/hashtag/$1">#$1</a>',
+        $message
+    );
+    echo $message;
+?>
+</p>
     <?php if (!empty($post["post_image_path"])): ?>
         <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
             <img src="<?php _($post["post_image_path"]); ?>" alt="Post image" class="post-image">
