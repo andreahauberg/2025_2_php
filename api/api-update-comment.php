@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-_ensureLogin('/');  
+_ensureLogin(); 
 
 try {
     require_once __DIR__ . '/../x.php';

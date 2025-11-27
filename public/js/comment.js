@@ -100,83 +100,85 @@ async function loadComments(postPk, userPk) {
   if (!container) return;
 
   container.innerHTML = "";
-
   comments.forEach((comment) => {
-    const commentDiv = document.createElement("div");
-    commentDiv.className = "comment";
-    commentDiv.dataset.commentPk = comment.comment_pk;
-
-    const header = document.createElement("div");
-    header.className = "comment-header";
-
-    const name = document.createElement("span");
-    name.className = "name";
-    name.textContent = comment.user_full_name;
-
-    const handle = document.createElement("span");
-    handle.className = "handle";
-    const dateStr = new Date(comment.comment_created_at).toLocaleDateString("da-DK", {
-      day: "numeric",
-      month: "short",
-    });
-    handle.textContent = dateStr + (comment.updated_at ? " · Redigeret" : "");
-
-    header.appendChild(name);
-    header.appendChild(handle);
-
-    if (comment.comment_user_fk == userPk) {
-      const actions = document.createElement("div");
-      actions.className = "comment-actions";
-
-      const editBtn = document.createElement("button");
-      editBtn.className = "edit-comment-btn";
-      editBtn.dataset.commentPk = comment.comment_pk;
-      editBtn.textContent = "Edit";
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "delete-comment-btn";
-      delBtn.dataset.commentPk = comment.comment_pk;
-      delBtn.textContent = "Delete";
-
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
-      header.appendChild(actions);
-    }
-
-    const textP = document.createElement("p");
-    textP.className = "comment-text";
-    textP.textContent = comment.comment_message;
-
-    const form = document.createElement("form");
-    form.className = "edit-comment-form";
-    form.dataset.commentPk = comment.comment_pk;
-    form.style.display = "none";
-
-    const ta = document.createElement("textarea");
-    ta.name = "comment_message";
-    ta.className = "edit-comment-textarea";
-    ta.value = comment.comment_message;
-
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "submit";
-    saveBtn.className = "edit-comment-btn";
-    saveBtn.textContent = "Save";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.type = "button";
-    cancelBtn.className = "cancel-edit-btn";
-    cancelBtn.textContent = "Cancel";
-
-    form.appendChild(ta);
-    form.appendChild(saveBtn);
-    form.appendChild(cancelBtn);
-
-    commentDiv.appendChild(header);
-    commentDiv.appendChild(textP);
-    commentDiv.appendChild(form);
-
-    container.appendChild(commentDiv);
+    const node = createCommentElement(comment, userPk);
+    container.appendChild(node);
   });
+}
+
+// helper: build a comment DOM node from a comment object
+function createCommentElement(comment, userPk) {
+  const commentDiv = document.createElement("div");
+  commentDiv.className = "comment";
+  commentDiv.dataset.commentPk = comment.comment_pk;
+
+  const header = document.createElement("div");
+  header.className = "comment-header";
+
+  const name = document.createElement("span");
+  name.className = "name";
+  name.textContent = comment.user_full_name || "";
+
+  const handle = document.createElement("span");
+  handle.className = "handle";
+  const dateStr = comment.comment_created_at ? new Date(comment.comment_created_at).toLocaleDateString("da-DK", { day: "numeric", month: "short" }) : "";
+  handle.textContent = dateStr + (comment.updated_at ? " · Redigeret" : "");
+
+  header.appendChild(name);
+  header.appendChild(handle);
+
+  if (comment.comment_user_fk == userPk) {
+    const actions = document.createElement("div");
+    actions.className = "comment-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-comment-btn";
+    editBtn.dataset.commentPk = comment.comment_pk;
+    editBtn.textContent = "Edit";
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "delete-comment-btn";
+    delBtn.dataset.commentPk = comment.comment_pk;
+    delBtn.textContent = "Delete";
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    header.appendChild(actions);
+  }
+
+  const textP = document.createElement("p");
+  textP.className = "comment-text";
+  textP.textContent = comment.comment_message || "";
+
+  const form = document.createElement("form");
+  form.className = "edit-comment-form";
+  form.dataset.commentPk = comment.comment_pk;
+  form.style.display = "none";
+
+  const ta = document.createElement("textarea");
+  ta.name = "comment_message";
+  ta.className = "edit-comment-textarea";
+  ta.value = comment.comment_message || "";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "submit";
+  saveBtn.className = "edit-comment-btn";
+  saveBtn.textContent = "Save";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "cancel-edit-btn";
+  cancelBtn.textContent = "Cancel";
+
+  form.appendChild(ta);
+  form.appendChild(saveBtn);
+  form.appendChild(cancelBtn);
+
+  commentDiv.appendChild(header);
+  commentDiv.appendChild(textP);
+  commentDiv.appendChild(form);
+
+  return commentDiv;
 }
 
 // ------------- ÅBN/LUK KOMMENTAR-DIALOG -------------
@@ -299,6 +301,7 @@ document.addEventListener("click", async (e) => {
 });
 
 // ------------- OPRET NY KOMMENTAR -------------
+
 document.addEventListener("submit", async (e) => {
   if (!e.target.classList.contains("comment-form")) return;
   e.preventDefault();
@@ -313,26 +316,24 @@ document.addEventListener("submit", async (e) => {
       comment_message: message,
     });
 
-    if (!response.ok || data.success === false) {
-      const msg = (data && (data.error || data.message)) || "somethign went wrong";
+    // Kun succes hvis success === true
+    if (!response.ok || !data || data.success !== true) {
+      const msg = (data && (data.error || data.message)) || "Noget gik galt ved oprettelse";
       showToast(msg, "error");
       return;
     }
 
-    showToast((data && data.message) || "Kommentar oprettet", "ok");
+    // Succes-toast
+    showToast(data.message || "Kommentar oprettet", "ok");
 
+    // Reload comments
     const commentBtn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
     const userPk = commentBtn ? commentBtn.getAttribute("data-user-pk") : null;
-    loadComments(postPk, userPk).catch(console.error);
+    await loadComments(postPk, userPk);
 
     form.reset();
-
-    const countSpan = document.querySelector(`.comment-btn[data-post-pk="${postPk}"] .comment-count`);
-    if (countSpan) {
-      countSpan.textContent = parseInt(countSpan.textContent, 10) + 1;
-    }
   } catch (err) {
     console.error("Error creating comment:", err);
-    showToast("something went wrong", "error");
+    showToast("Noget gik galt ved oprettelse", "error");
   }
 });
