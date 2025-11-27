@@ -73,16 +73,25 @@ document.addEventListener("DOMContentLoaded", () => {
     url: "/api/_api-get-trending.php",
     defaultLimit: 2,
     renderItem(item, list) {
+      const raw = item.topic || "";
+      const tag = raw.trim();
+      const clean = tag.startsWith("#") ? tag.slice(1) : tag;
+    
       const div = document.createElement("div");
       div.className = "trending-item";
+    
       div.innerHTML = `
         <div class="trending-info">
           <span class="item_title">Trending · ${item.post_count} posts</span>
-          <p>${item.topic}</p>
+          <p>
+            <a href="/hashtag/${clean}" class="hashtag-link">${tag}</a>
+          </p>
         </div>
         <span class="option">⋮</span>
       `;
+    
       list.appendChild(div);
+  
     },
   });
 
