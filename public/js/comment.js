@@ -104,6 +104,15 @@ async function loadComments(postPk, userPk) {
     const node = createCommentElement(comment, userPk);
     container.appendChild(node);
   });
+
+  // OPDATÉR COMMENT-COUNT
+  const btn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
+  if (btn) {
+    const countSpan = btn.querySelector(".comment-count");
+    if (countSpan) {
+      countSpan.textContent = comments.length;
+    }
+  }
 }
 
 // helper: build a comment DOM node from a comment object
@@ -121,7 +130,12 @@ function createCommentElement(comment, userPk) {
 
   const handle = document.createElement("span");
   handle.className = "handle";
-  const dateStr = comment.comment_created_at ? new Date(comment.comment_created_at).toLocaleDateString("da-DK", { day: "numeric", month: "short" }) : "";
+  const dateStr = comment.comment_created_at
+    ? new Date(comment.comment_created_at).toLocaleDateString("da-DK", {
+        day: "numeric",
+        month: "short",
+      })
+    : "";
   handle.textContent = dateStr + (comment.updated_at ? " · Redigeret" : "");
 
   header.appendChild(name);
@@ -270,6 +284,8 @@ document.addEventListener("click", async (e) => {
   if (!ok) return;
 
   const commentPk = commentDiv.dataset.commentPk;
+  const commentsContainer = commentDiv.closest(".comments-container");
+  const postPk = commentsContainer.id.split("_")[1];
 
   try {
     const { response, data } = await sendForm("/api-delete-comment", {
@@ -282,16 +298,10 @@ document.addEventListener("click", async (e) => {
       return;
     }
 
-    const postPk = commentDiv.closest(".comments-container").id.split("_")[1];
-    commentDiv.remove();
-
-    const btn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
-    if (btn) {
-      const countSpan = btn.querySelector(".comment-count");
-      if (countSpan) {
-        countSpan.textContent = parseInt(countSpan.textContent, 10) - 1;
-      }
-    }
+    //LAD loadComments RYDDE & GENBYGGE + OPDATERE TÆLLER
+    const commentBtn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
+    const userPk = commentBtn ? commentBtn.getAttribute("data-user-pk") : null;
+    await loadComments(postPk, userPk);
 
     showToast((data && data.message) || "Kommentar slettet", "ok");
   } catch (err) {
@@ -301,7 +311,6 @@ document.addEventListener("click", async (e) => {
 });
 
 // ------------- OPRET NY KOMMENTAR -------------
-
 document.addEventListener("submit", async (e) => {
   if (!e.target.classList.contains("comment-form")) return;
   e.preventDefault();
@@ -323,14 +332,12 @@ document.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Succes-toast
     showToast(data.message || "Kommentar oprettet", "ok");
 
-    // Reload comments
     const commentBtn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
     const userPk = commentBtn ? commentBtn.getAttribute("data-user-pk") : null;
-    await loadComments(postPk, userPk);
 
+    await loadComments(postPk, userPk);
     form.reset();
   } catch (err) {
     console.error("Error creating comment:", err);
