@@ -255,6 +255,15 @@ main {
         cursor: pointer;
       }
 
+      .hashtag-link {
+        color: black;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .hashtag-link:hover {
+      text-decoration:underline;
+    }
+
       .post-actions {
         display: flex;
         justify-content: space-between;
@@ -319,40 +328,49 @@ aside {
     border-radius: 1rem;
     margin: 1rem 0;
     overflow: hidden;
-
+  
     h2 {
       font-size: 1.2rem;
       font-weight: bold;
       padding: 1rem;
     }
   }
-
+  
   .trending-item {
     padding: 0.8rem 1rem;
     display: flex;
     cursor: pointer;
     transition: background-color 0.2s;
-
+  
     &:hover {
       background-color: rgb(247, 249, 249);
     }
-
+  
     .trending-info {
       display: flex;
       flex-direction: column;
-
+  
       .item_title {
         font-size: 0.8rem;
         color: rgb(110, 109, 109);
       }
-
+  
       p {
         font-size: 0.9rem;
         font-weight: bold;
         margin-top: 0.2rem;
+  
+        a.hashtag-link {
+          color: black;
+          cursor: pointer;
+  
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
-
+  
     .option {
       margin-left: auto;
       font-size: 1.3rem;
