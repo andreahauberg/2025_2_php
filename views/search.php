@@ -9,21 +9,21 @@
             <ul class="search-results-list">
                 <?php foreach ($users as $user): ?>
                     <li class="search-results-user">
+                        <a href="/profile?user_pk=<?php _($user['user_pk']); ?>">
+                            <div>
+                                <span
+                                    class="search-results-user-name"
+                                    data-search-text="<?php _($user["user_full_name"]); ?>">
+                                    <?php _($user["user_full_name"]); ?>
+                                </span>
 
-                        <div>
-                            <span
-                                class="search-results-user-name"
-                                data-search-text="<?php _($user["user_full_name"]); ?>">
-                                <?php _($user["user_full_name"]); ?>
-                            </span>
-
-                            <span
-                                class="search-results-user-handle"
-                                data-search-text="@<?php _($user["user_username"]); ?>">
-                                @<?php _($user["user_username"]); ?>
-                            </span>
-                        </div>
-
+                                <span
+                                    class="search-results-user-handle"
+                                    data-search-text="@<?php _($user["user_username"]); ?>">
+                                    @<?php _($user["user_username"]); ?>
+                                </span>
+                            </div>
+                        </a>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -38,37 +38,49 @@
         <?php else: ?>
             <div class="search-results-grid">
 
-<?php foreach ($posts as $post): ?>
-    <article class="search-results-post-card">
+                <?php foreach ($posts as $post): ?>
+                    <article class="search-results-post-card">
+                    <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
 
-        <?php if (!empty($post["post_image_path"])): ?>
-            <div class="search-results-post-image-wrapper">
-                <img src="<?php _($post["post_image_path"]); ?>"
-                     class="search-results-post-image">
-            </div>
-        <?php endif; ?>
+                            <?php if (!empty($post["post_image_path"])): ?>
+                                <div class="search-results-post-image-wrapper">
+                                    <img
+                                        src="<?php _($post["post_image_path"]); ?>"
+                                        class="search-results-post-image">
+                                </div>
+                            <?php endif; ?>
 
-        <div class="search-results-post-body">
+                            <div class="search-results-post-body">
 
-            <div class="search-results-post-auhtor">
+                                <div class="search-results-post-auhtor">
+                                    <span
+                                        data-search-text="@<?php _($post["user_username"]); ?>">
+                                        @<?php _($post["user_username"]); ?>
+                                    </span>
+                                </div>
 
-<span
-    data-search-text="@<?php _($post["user_username"]); ?>">
-    @<?php _($post["user_username"]); ?>
-</span>
+                                <?php
+                                $originalMessage = $post["post_message"];
 
-            </div>
+                                $safeMessage = htmlspecialchars($originalMessage);
+                                $safeMessage = preg_replace(
+                                    '/#(\w+)/',
+                                    '<a class="hashtag-link" href="/hashtag/$1">#$1</a>',
+                                    $safeMessage
+                                );
+                                ?>
 
-            <p
-                class="search-results-post-text"
-                data-search-text="<?php _($post["post_message"]); ?>">
-                <?php _($post["post_message"]); ?>
-            </p>
+                                <p
+                                    class="search-results-post-text"
+                                    data-search-text="<?php _($originalMessage); ?>">
+                                    <?= $safeMessage ?>
+                                </p>
 
-        </div>
+                            </div>
 
-    </article>
-<?php endforeach; ?>
+                        </a>
+                    </article>
+                <?php endforeach; ?>
 
             </div>
         <?php endif; ?>
