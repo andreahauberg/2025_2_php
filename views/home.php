@@ -10,89 +10,26 @@ if (!isset($_SESSION["user"])) {
 }
 
 require_once __DIR__ . "/../db.php";
+require_once __DIR__ . '/../models/PostModel.php';
+require_once __DIR__ . '/../models/TrendingModel.php';
+require_once __DIR__ . '/../models/FollowModel.php';
+
+$postModel     = new PostModel();
+$trendingModel = new TrendingModel();
+$followModel   = new FollowModel();
 
 $currentUser = $_SESSION["user"]["user_pk"];
 
-// ---------- TRENDING (første batch) ----------
-$trendingLimit = 4;
+$posts = $postModel->getPostsForFeed(50);
 
-$q = "
-  SELECT 
-    LEFT(post_message, 40) AS topic,
-    COUNT(*) AS post_count
-  FROM posts
-  GROUP BY topic
-  ORDER BY post_count DESC
-  LIMIT :limit
-";
-$stmt = $_db->prepare($q);
-$stmt->bindValue(':limit', $trendingLimit, PDO::PARAM_INT);
-$stmt->execute();
-$trending = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-$initialTrendingCount = count($trending);
+$limit    = 4;
+$offset   = 0;
+$maxItems = 10;
 
-// ---------- POSTS (som før) ----------
-$q = "
-  SELECT
-    posts.post_pk,
-    posts.post_message,
-    posts.post_image_path,
-    posts.post_user_fk,
-    posts.created_at,
-    posts.updated_at,
-    posts.deleted_at,
-    users.user_full_name,
-    users.user_username,
-    users.user_pk AS author_user_pk,
-    (SELECT COUNT(*) FROM comments WHERE comment_post_fk = posts.post_pk) AS comment_count
-  FROM posts
-  JOIN users ON posts.post_user_fk = users.user_pk
-  WHERE posts.deleted_at IS NULL
-  ORDER BY created_at DESC
-  LIMIT 10
-";
-$stmt = $_db->prepare($q);
-$stmt->execute();
-$posts = $stmt->fetchAll();
+$trending = $trendingModel->getTrending($limit, $offset);
 
-foreach ($posts as &$post) {
-    // Hent like_count
-    $q = "SELECT COUNT(*) AS like_count FROM likes WHERE like_post_fk = :postPk";
-    $stmt = $_db->prepare($q);
-    $stmt->bindValue(':postPk', $post['post_pk']);
-    $stmt->execute();
-    $post['like_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['like_count'];
-
-    // Hent om brugeren har liket posten
-    $q = "SELECT COUNT(*) AS is_liked FROM likes WHERE like_post_fk = :postPk AND like_user_fk = :userPk";
-    $stmt = $_db->prepare($q);
-    $stmt->bindValue(':postPk', $post['post_pk']);
-    $stmt->bindValue(':userPk', $currentUser);
-    $stmt->execute();
-    $post['is_liked_by_user'] = $stmt->fetch(PDO::FETCH_ASSOC)['is_liked'] > 0;
-}
-unset($post);
-
-// ---------- WHO TO FOLLOW (første batch) ----------
 $followLimit = 3;
-
-$q = "
-  SELECT users.*
-  FROM users
-  WHERE users.user_pk != :currentUser
-    AND users.user_pk NOT IN (
-      SELECT follow_user_fk
-      FROM follows
-      WHERE follower_user_fk = :currentUser
-    )
-  ORDER BY users.created_at DESC
-  LIMIT :limit
-";
-$stmt = $_db->prepare($q);
-$stmt->bindValue(":currentUser", $currentUser);
-$stmt->bindValue(":limit", $followLimit, PDO::PARAM_INT);
-$stmt->execute();
-$usersToFollow = $stmt->fetchAll();
+$usersToFollow = $followModel->getSuggestions($currentUser, $followLimit, 0);
 $initialFollowCount = count($usersToFollow);
 ?>
 
@@ -111,7 +48,7 @@ $initialFollowCount = count($usersToFollow);
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/comment.js"></script>
     <script defer src="../public/js/confirm-delete.js"></script>
-    <script defer src="../public/js/load-more-btn.js"></script> 
+    <script defer src="../public/js/load-more-btn.js"></script>
     <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
 </head>
 
@@ -126,7 +63,8 @@ $initialFollowCount = count($usersToFollow);
             <ul>
                 <li><a href="#"><i class="fab fa-twitter"></i></a></li>
                 <li><a href="#"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
-                <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
+                <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a>
+                </li>
                 <li><a href="#"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
                 <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
@@ -136,7 +74,8 @@ $initialFollowCount = count($usersToFollow);
                 <li><a href="#"><i class="fa-solid fa-star"></i><span>Premium</span></a></li>
                 <li><a href="#"><i class="fa-solid fa-bolt"></i><span>Verified Orgs</span></a></li>
                 <li><a href="/profile"><i class="fa-regular fa-user"></i><span>Profile</span></a></li>
-                <li><a href="#" data-open="updateProfileDialog"><i class="fa-solid fa-ellipsis"></i><span>More</span></a></li>
+                <li><a href="#" data-open="updateProfileDialog"><i
+                            class="fa-solid fa-ellipsis"></i><span>More</span></a></li>
                 <li><a href="bridge-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
             </ul>
 
@@ -164,7 +103,7 @@ $initialFollowCount = count($usersToFollow);
 
         <main>
             <?php foreach ($posts as $post): ?>
-                <?php require __DIR__ . "/../components/_post.php"; ?>
+            <?php require __DIR__ . "/../components/_post.php"; ?>
             <?php endforeach; ?>
         </main>
 
@@ -180,31 +119,17 @@ $initialFollowCount = count($usersToFollow);
 
             <div class="happening-now">
                 <h2>What's happening now</h2>
-                <div class="trending" id="trendingList">
-                    <?php foreach ($trending as $item): ?>
-                        <div class="trending-item">
-                            <div class="trending-info">
-                                <span class="item_title">
-                                    Trending · <?= htmlspecialchars($item["post_count"]) ?> posts
-                                </span>
-                                <p><?= htmlspecialchars($item["topic"]) ?></p>
-                            </div>
-                            <span class="option">⋮</span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
 
-                <?php if ($initialTrendingCount === $trendingLimit): ?>
-                    <button
-                        id="trendingShowMore"
-                        class="show-more-btn"
-                        data-offset="<?= $initialTrendingCount ?>"
-                        data-limit="2"
-                        data-initial="<?= $initialTrendingCount ?>"
-                        data-max="10"
-                    >
-                        Show more
-                    </button>
+                <?php
+    $trending = $trendingModel->getTrending($limit, $offset);
+    require __DIR__ . '/../components/_trending.php';
+    ?>
+
+                <?php if ($limit < $maxItems): ?>
+                <button id="trendingShowMore" class="show-more-btn" data-offset="<?= $limit ?>" data-limit="2"
+                    data-initial="<?= $limit ?>" data-max="<?= $maxItems ?>">
+                    Show more
+                </button>
                 <?php endif; ?>
             </div>
 
@@ -215,11 +140,11 @@ $initialFollowCount = count($usersToFollow);
                 <?php if (empty($usersToFollow)): ?>
                     <p>No more users to follow.</p>
                 <?php else: ?>
-                    <div class="follow-suggestion" id="whoToFollowList">
-                        <?php foreach ($usersToFollow as $user): ?>
-                            <?php require __DIR__ . "/../components/_follow_tag.php"; ?>
-                        <?php endforeach; ?>
-                    </div>
+                <div class="follow-suggestion" id="whoToFollowList">
+                    <?php foreach ($usersToFollow as $user): ?>
+                    <?php require __DIR__ . "/../components/_follow_tag.php"; ?>
+                    <?php endforeach; ?>
+                </div>
                 <?php endif; ?>
 
                 <?php if ($initialFollowCount === $followLimit): ?>
@@ -247,13 +172,8 @@ $initialFollowCount = count($usersToFollow);
                 </button>
 
                 <form id="searchOverlayForm" class="search-overlay-form">
-                    <input
-                        id="searchOverlayInput"
-                        type="text"
-                        name="query"
-                        placeholder="Search"
-                        class="search-overlay-input"
-                        autocomplete="off">
+                    <input id="searchOverlayInput" type="text" name="query" placeholder="Search"
+                        class="search-overlay-input" autocomplete="off">
                     <button type="submit" class="search-overlay-btn">Search</button>
                 </form>
 
