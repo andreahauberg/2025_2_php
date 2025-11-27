@@ -14,6 +14,7 @@ RewriteRule ^$         /views/index.php [L]
 RewriteRule ^home$      /views/home.php [NC,L]
 RewriteRule ^profile$ /views/profile.php [NC,L]
 RewriteRule ^user$    /views/user.php [NC,L]
+RewriteRule ^hashtag/([^/]+)$ /views/hashtag.php?tag=$1 [NC,L,QSA]
 
 RewriteRule ^person$   /views/person.php [NC,L]
 RewriteRule ^proxy$     /views/proxy.php [NC,L]
