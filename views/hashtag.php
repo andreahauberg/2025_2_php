@@ -39,6 +39,7 @@ $currentUser = $_SESSION["user"]["user_pk"];
     <script defer src="/public/js/comment.js"></script>
     <script defer src="/public/js/confirm-delete.js"></script>
     <script defer src="/public/js/load-more-btn.js"></script>
+    <script defer src="/public/js/notifications.js"></script>
 
     <title><?= $hashtag ?></title>
 </head>
@@ -57,7 +58,7 @@ $currentUser = $_SESSION["user"]["user_pk"];
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a>
                 </li>
-                <li><a href="#"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
+                <li><a href="/notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
                 <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-bookmark"></i><span>Bookmarks</span></a></li>

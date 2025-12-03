@@ -1006,11 +1006,12 @@ aside {
   right: -6px;
   background: #e0245e;
   color: #fff;
-  border-radius: 999px;
+  border-radius: 50%;
   padding: 0.12rem 0.45rem;
   font-size: 0.72rem;
   line-height: 1;
   min-width: 18px;
+  height: 18px;
   text-align: center;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   display: none; /* shown only when >0 */

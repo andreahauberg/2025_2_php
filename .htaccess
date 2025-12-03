@@ -12,6 +12,7 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
 RewriteRule ^$         /views/index.php [L]
 RewriteRule ^home$      /views/home.php [NC,L]
+RewriteRule ^notifications$ /views/notifications.php [NC,L]
 RewriteRule ^profile$ /views/profile.php [NC,L]
 RewriteRule ^user$    /views/user.php [NC,L]
 RewriteRule ^hashtag/([^/]+)$ /views/hashtag.php?tag=$1 [NC,L,QSA]
@@ -24,6 +25,7 @@ RewriteRule ^bridge-login$ /connections/bridge-login.php [NC,L]
 RewriteRule ^bridge-signup$ /connections/bridge-signup.php [NC,L]
 RewriteRule ^bridge-logout$ /connections/bridge-logout.php [NC,L]
 RewriteRule ^bridge-search$ /connections/bridge-search.php [NC,L]
+
 
 RewriteRule ^api-follow$     /api/api-follow.php [NC,L]
 RewriteRule ^api-unfollow$   /api/api-unfollow.php [NC,L]

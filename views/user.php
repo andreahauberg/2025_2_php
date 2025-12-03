@@ -137,6 +137,7 @@ $usersToFollow = $stmt->fetchAll();
     <script defer src="../public/js/dialog.js"></script>
     <script defer src="../public/js/flip-btn.js"></script>
     <script defer src="../public/js/comment.js"></script>
+    <script defer src="../public/js/notifications.js"></script>
     <title><?php _($user["user_full_name"]); ?> (@<?php _($user["user_username"]); ?>)</title>
 </head>
 <body>
@@ -151,7 +152,7 @@ $usersToFollow = $stmt->fetchAll();
                 <li><a href="/home"><i class="fab fa-twitter"></i></a></li>
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
-                <li><a href="#"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
+                <li><a href="/notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
                 <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
                 <li><a href="#"><i class="fa-regular fa-bookmark"></i><span>Bookmarks</span></a></li>
