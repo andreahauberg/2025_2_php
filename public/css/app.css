@@ -1001,9 +1001,6 @@ aside {
   align-items: center;
 }
 .notif-flag {
-  position: absolute;
-  top: -6px;
-  right: -6px;
   background: #e0245e;
   color: #fff;
   border-radius: 50%;
@@ -1018,4 +1015,97 @@ aside {
 }
 .notif-flag--visible {
   display: inline-block;
+}
+
+/* Notifications list styling */
+.notifications-list .post {
+  position: relative;
+}
+.notifications-list .post .post-content {
+  padding-right: 6rem;
+}
+.notifications-list .post .notif-actions {
+  position: absolute;
+  right: 0.8rem;
+  top: 1rem;
+  display: flex;
+  gap: 0.4rem;
+}
+.notifications-list .post .notif-mark-btn {
+  border: 1px solid #cfd9de;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.notifications-list .post.notification--unread {
+  background: rgba(16, 24, 32, 0.04);
+}
+.notifications-list .post.notification--unread .text {
+  color: #0f1419;
+  font-weight: 600;
+}
+
+/* allow scrolling to posts without being hidden under fixed nav */
+.post {
+  scroll-margin-top: 90px;
+}
+
+/* highlight when navigated-to */
+.post--highlight,
+.post:target {
+  background-color: rgba(29, 155, 240, 0.08);
+  transition: background-color 0.4s ease;
+}
+
+.notifications-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: space-between;
+}
+.notifications-header .mark-all-btn {
+  border: 1px solid #cfd9de;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.notif-delete-btn {
+  border: 1px solid transparent;
+  background: #fff;
+  color: #b00;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.notif-delete-btn:hover {
+  background: #fff0f0;
+  border-color: #e6a3a3;
+}
+
+/* Notification row layout */
+.notification-row {
+  display: flex;
+  align-items: center;
+}
+
+.notifications-list .notif-link--row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.notifications-list .notif-actions {
+  /* keep actions on the right; ensure they don't overlap delete btn and mark btn */
+  position: absolute;
+  right: 0.8rem;
+  top: 1rem;
+  display: flex;
+  gap: 0.4rem;
 }

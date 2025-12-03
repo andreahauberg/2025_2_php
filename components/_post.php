@@ -1,4 +1,4 @@
-<article class="post">
+<article class="post" id="post-<?php _($post["post_pk"]); ?>" data-post-pk="<?php _($post["post_pk"]); ?>">
     <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
         <img src="https://avatar.iran.liara.run/public/101" alt="Profile Picture" class="avatar">
         <div class="post-content">
