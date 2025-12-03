@@ -49,6 +49,7 @@ $initialFollowCount = count($usersToFollow);
     <script defer src="../public/js/comment.js"></script>
     <script defer src="../public/js/confirm-delete.js"></script>
     <script defer src="../public/js/load-more-btn.js"></script>
+    <script defer src="../public/js/notifications.js"></script>
     <title>Welcome home <?php echo $_SESSION["user"]["user_username"]; ?></title>
 </head>
 

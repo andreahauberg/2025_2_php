@@ -259,10 +259,10 @@ main {
         color: black;
         font-weight: 600;
         cursor: pointer;
-    }
-    .hashtag-link:hover {
-      text-decoration:underline;
-    }
+      }
+      .hashtag-link:hover {
+        text-decoration: underline;
+      }
 
       .post-actions {
         display: flex;
@@ -328,49 +328,49 @@ aside {
     border-radius: 1rem;
     margin: 1rem 0;
     overflow: hidden;
-  
+
     h2 {
       font-size: 1.2rem;
       font-weight: bold;
       padding: 1rem;
     }
   }
-  
+
   .trending-item {
     padding: 0.8rem 1rem;
     display: flex;
     cursor: pointer;
     transition: background-color 0.2s;
-  
+
     &:hover {
       background-color: rgb(247, 249, 249);
     }
-  
+
     .trending-info {
       display: flex;
       flex-direction: column;
-  
+
       .item_title {
         font-size: 0.8rem;
         color: rgb(110, 109, 109);
       }
-  
+
       p {
         font-size: 0.9rem;
         font-weight: bold;
         margin-top: 0.2rem;
-  
+
         a.hashtag-link {
           color: black;
           cursor: pointer;
-  
+
           &:hover {
             text-decoration: underline;
           }
         }
       }
     }
-  
+
     .option {
       margin-left: auto;
       font-size: 1.3rem;
@@ -992,4 +992,29 @@ aside {
 /* responsive */
 .x-dialog__content .delete-confirm {
   width: 100%;
+}
+
+/* Notifications flag */
+.notif-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.notif-flag {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e0245e;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.72rem;
+  line-height: 1;
+  min-width: 18px;
+  text-align: center;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  display: none; /* shown only when >0 */
+}
+.notif-flag--visible {
+  display: inline-block;
 }
