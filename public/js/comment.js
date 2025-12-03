@@ -35,8 +35,8 @@ function showDeleteConfirmInline(containerElement, message) {
     dialog.innerHTML = `
       <span class="delete-confirm__message"></span>
       <div class="delete-confirm__buttons">
-        <button class="delete-confirm__btn delete-confirm__btn--secondary">Annuller</button>
-        <button class="delete-confirm__btn delete-confirm__btn--danger">OK</button>
+        <button class="delete-confirm__btn delete-confirm__btn--secondary">Cancel</button>
+        <button class="delete-confirm__btn delete-confirm__btn--danger">Yes</button>
       </div>
     `;
 
@@ -280,7 +280,7 @@ document.addEventListener("click", async (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  const ok = await showDeleteConfirmInline(commentDiv, "Er du sikker på, at du vil slette denne kommentar?");
+  const ok = await showDeleteConfirmInline(commentDiv, "Are you sure you want to delete this comment?");
   if (!ok) return;
 
   const commentPk = commentDiv.dataset.commentPk;
