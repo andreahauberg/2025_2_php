@@ -25,8 +25,18 @@ try {
     $stmt->bindValue(":post_user_fk", $user["user_pk"]);
 
     $stmt->execute();
-
     
+    // try to create notifications for followers (do not fail post on notif errors)
+    try {
+        require_once __DIR__ . '/../models/NotificationModel.php';
+        $nm = new NotificationModel();
+        // use post message as notification message (shorten if necessary)
+        $notifMessage = mb_strimwidth(strip_tags($postMessage), 0, 200, '...');
+        $nm->createForFollowers($user['user_pk'], $postPk, $notifMessage);
+    } catch (Exception $e) {
+        error_log('[api-create-post] Notification create failed: ' . $e->getMessage());
+    }
+
     // success: åben ikke dialog boksen igen 
     unset($_SESSION['old_post_message']);
     $redirect = _redirectPath('/home');
