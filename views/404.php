@@ -30,10 +30,15 @@ $title = "404";
   </div>
 
   <div class="x-landing__right">
-    <h1 class="x-landing__title">404</h1>
-    <h2 class="x-landing__subtitle">OOOOOOOOOPS AN ERROR OCCOURED</h2>
+  <h1 class="x-landing__title">
+    <?php
+        $e = error_get_last();
+        echo $e ? htmlspecialchars($e['message']) : "Unexpected error";
+    ?>
+</h1>
+    <h2 class="x-landing__subtitle">We were unable to load this page.</h2>
 
-    <a class="x-landing__btn x-landing__btn--signup" href="<?= htmlspecialchars($redirectUrl) ?>">go back</a>
+    <a class="x-landing__btn x-landing__btn--signup" href="<?= htmlspecialchars($redirectUrl) ?>">Go back here</a>
   </div>
 
 
