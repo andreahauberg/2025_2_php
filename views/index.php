@@ -21,13 +21,7 @@ $title = "Welcome";
 <main class="x-landing">
   <div class="x-landing__left">
       <div class="x-landing__logo" aria-hidden="true">
-        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="xLogoTitle">
-          <title id="xLogoTitle">X logo</title>
-          <g fill="none" stroke="#0b0f11" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="44">
-            <line x1="40"  y1="40"  x2="260" y2="260"></line>
-            <line x1="260" y1="40"  x2="40"  y2="260"></line>
-          </g>
-        </svg>
+      <img src="/public/img/weave-logo.png" alt="Weave logo" class="logo">
       </div>
   </div>
 

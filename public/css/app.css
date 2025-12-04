@@ -4,7 +4,10 @@
   box-sizing: border-box;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
-
+.nav-logo {
+  width: 28px;
+  height: 28px;
+}
 body {
   width: 100vw;
   height: 100%;
