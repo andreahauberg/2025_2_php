@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialCount = parseInt(btn.dataset.initial || list.children.length || "0", 10);
     const maxItems = parseInt(btn.dataset.max || "10", 10);
 
-    // default state
     btn.dataset.mode = btn.dataset.mode || "more";
     if (!btn.dataset.offset) {
       btn.dataset.offset = initialCount;
@@ -16,9 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", async () => {
       const mode = btn.dataset.mode || "more";
 
-      // ---------- SHOW LESS ----------
+
       if (mode === "less") {
-        // remove everything after the initial items
         while (list.children.length > initialCount) {
           list.removeChild(list.lastElementChild);
         }
@@ -28,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // ---------- SHOW MORE ----------
       const offset = parseInt(btn.dataset.offset || String(initialCount), 10);
       const limit = parseInt(btn.dataset.limit || String(defaultLimit), 10);
 
@@ -50,13 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = list.children.length;
         btn.dataset.offset = offset + data.length;
 
-        // If we now have >= maxItems, switch button to "Show less"
         if (total >= maxItems) {
           btn.dataset.mode = "less";
           btn.textContent = "Show less";
           btn.style.display = "";
         } else if (data.length < limit) {
-          // fewer than limit returned AND we didn't hit max -> no more data, hide
           btn.style.display = "none";
         }
       } catch (err) {
@@ -93,11 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  // ---------- WHO TO FOLLOW ----------
   setupLoadMore({
     buttonId: "followShowMore",
     listId: "whoToFollowList",
-    // using existing underscore API endpoint
     url: "/api/_api-get-who-to-follow.php",
     defaultLimit: 3,
     handleNonOk(res, btn) {
