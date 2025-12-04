@@ -7,9 +7,6 @@ require_once __DIR__ . '/../db.php';
 $currentUser = $_SESSION["user"];
 $userPk = $currentUser["user_pk"];
 
-// ----------------------------------------
-// 1. VALIDATE FILE
-// ----------------------------------------
 if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
     _toastError("No file uploaded");
     header("Location: /profile");
@@ -25,9 +22,6 @@ if (!in_array($file['type'], $allowed)) {
     exit();
 }
 
-// ----------------------------------------
-// 2. PREPARE STORAGE PATH
-// ----------------------------------------
 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 $newName = bin2hex(random_bytes(12)) . "." . $ext;
 
@@ -38,30 +32,19 @@ if (!is_dir($uploadDir)) {
 
 $targetPath = $uploadDir . $newName;
 
-// ----------------------------------------
-// 3. MOVE FILE
-// ----------------------------------------
 if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
     _toastError("Upload failed");
     header("Location: /profile");
     exit();
 }
 
-// Public URL used by the front-end
 $publicPath = "/public/uploads/avatars/" . $newName;
 
-// ----------------------------------------
-// 4. UPDATE DATABASE
-// ----------------------------------------
 $q = "UPDATE users SET user_avatar = :avatar WHERE user_pk = :pk LIMIT 1";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(':avatar', $publicPath);
 $stmt->bindValue(':pk', $userPk);
 $stmt->execute();
-
-// ----------------------------------------
-// 5. UPDATE SESSION
-// ----------------------------------------
 $_SESSION["user"]["user_avatar"] = $publicPath;
 
 _toastRedirect("Profile picture updated!", "ok", "/profile");
