@@ -48,4 +48,3 @@ require_once __DIR__."/../components/_signup-dialog.php";
 
 </main>
 
-<?php require_once __DIR__."/../components/_footer.php"; ?>
