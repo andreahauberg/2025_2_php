@@ -31,9 +31,7 @@ require __DIR__ . '/../components/_header.php';
 ?>
 
         <main class="feed-column">
-        <main class="feed-column">
 
-            <h2 style="padding:15px;">Showing posts for <?= $hashtag ?></h2>
             <h2 style="padding:15px;">Showing posts for <?= $hashtag ?></h2>
 
             <?php if (empty($posts)): ?>
