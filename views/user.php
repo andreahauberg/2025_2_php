@@ -263,30 +263,6 @@ $usersToFollow = $stmt->fetchAll();
     </div>
     <?php require_once __DIR__ . "/../components/_search.php"; ?>
     <script src="../public/js/mixhtml.js"></script>
-    <script>
-    // If URL contains post_pk query param or a fragment like #post-<pk>, scroll to that post
-    (function(){
-        function scrollToPost(postId){
-            if(!postId) return;
-            var el = document.getElementById('post-' + postId);
-            if(!el) return;
-            try{
-                el.scrollIntoView({behavior:'smooth', block:'center'});
-                el.classList.add('post--highlight');
-                setTimeout(function(){ el.classList.remove('post--highlight'); }, 2500);
-            }catch(e){ console.error('scrollToPost', e); }
-        }
-
-        document.addEventListener('DOMContentLoaded', function(){
-            var params = new URLSearchParams(window.location.search);
-            var postPk = params.get('post_pk');
-            if(postPk){ scrollToPost(postPk); return; }
-            if(window.location.hash && window.location.hash.indexOf('#post-')===0){
-                var id = window.location.hash.replace('#post-','');
-                scrollToPost(id);
-            }
-        });
-    })();
-    </script>
+    <script defer src="/public/js/scroll-to-post.js"></script>
 </body>
 </html>
