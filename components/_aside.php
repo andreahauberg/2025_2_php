@@ -33,7 +33,8 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
             id="home-search-input"
             type="text"
             placeholder="Search Twitter"
-            autocomplete="off">
+            autocomplete="off"
+        >
         <button type="submit">Search</button>
     </form>
 <!-- added a check if on profile page we show following instead of trending -->
@@ -51,7 +52,7 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
             <p>Not following anyone yet.</p>
         <?php endif; ?>
     </div>
-<!-- if users page or profile page show following instead of whats happening now -->
+
     <?php elseif (!empty($currentPage) && $currentPage === 'user'): ?>
     <div class="following">
         <h2>Followers</h2>
