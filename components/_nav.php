@@ -36,7 +36,7 @@ if ($notifCount === 0 && $user) {
                 <li><a href="#"><i class="fa-solid fa-star"></i><span>Premium</span></a></li>
                 <li><a href="/profile"><i class="fa-regular fa-user"></i><span>Profile</span></a></li>
                 <li><a href="#" data-open="updateProfileDialog"><i class="fa-solid fa-ellipsis"></i><span>More</span></a></li>
-                <li><a href="bridge-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+                <li><a href="/bridge-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
         </ul>
 
     <?php if ($user): ?>
