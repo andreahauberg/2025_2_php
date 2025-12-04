@@ -118,8 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const img = document.createElement("img");
       const seed = Math.abs((user.user_username || "").split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 100);
-      img.src = `https://avatar.iran.liara.run/public/${seed}`;
-      img.alt = "Profile Picture";
+      img.src = "/public/img/avatar.jpg";
 
       const info = document.createElement("div");
       info.className = "info-copy";

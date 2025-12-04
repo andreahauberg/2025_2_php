@@ -79,7 +79,7 @@ $currentUser = $_SESSION["user"]["user_pk"];
             <button class="post-btn" data-open="postDialog">Post</button>
 
             <div id="profile_tag" data-open="updateProfileDialog">
-                <img src="https://avatar.iran.liara.run/public/73" alt="Profile">
+            <img src="/public/img/avatar.jpg" alt="Profile">
                 <div>
                     <div class="name">
                         <?php _($_SESSION["user"]["user_full_name"]); ?>

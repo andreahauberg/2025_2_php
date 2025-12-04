@@ -137,7 +137,7 @@ $usersToFollow = $stmt->fetchAll();
             <button class="post-btn" data-open="postDialog">Post</button>
 
             <div id="profile_tag" data-open="updateProfileDialog">
-                <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile">
+                <img src="/public/imag/avatar.jpg" alt="Profile">
                 <div>
                     <div class="name">
                         <?php _($currentUser["user_full_name"]); ?>
@@ -164,7 +164,7 @@ $usersToFollow = $stmt->fetchAll();
                     <div class="profile-cover-filter"></div>
                 </div>
                 <div class="profile-page-info">
-                    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
+                    <img src="/public/images/avatar.jpeg" alt="Profile" class="profile-avatar">
                     <div class="profile-details">
                         <h1><?php _($currentUser["user_full_name"]); ?></h1>
                         <p>@<?php _($currentUser["user_username"]); ?></p>

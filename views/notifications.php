@@ -89,7 +89,7 @@ function timeAgo($ts){
             <button class="post-btn" data-open="postDialog">Post</button>
 
             <div id="profile_tag" data-open="updateProfileDialog">
-                <img src="https://avatar.iran.liara.run/public/<?php echo crc32($_SESSION['user']['user_username']) % 100; ?>" alt="Profile">
+                <img src="/public/img/avatar.jpg" alt="Profile">
                 <div>
                     <div class="name">
                         <?php _($_SESSION['user']['user_full_name']); ?>
@@ -121,7 +121,7 @@ function timeAgo($ts){
                 <?php $unread = ($n['is_read'] == 0); ?>
                 <div class="post <?php if($unread) echo 'notification--unread'; ?> notification-row" data-notif-pk="<?php echo $n['notification_pk']; ?>">
                     <a href="/user?user_pk=<?php echo $n['actor_pk']; ?>&post_pk=<?php echo $n['notification_post_fk']; ?>#post-<?php echo $n['notification_post_fk']; ?>" class="notif-link notif-link--row">
-                      <img src="https://avatar.iran.liara.run/public/<?php echo crc32($n['user_username']) % 100; ?>" alt="avatar" class="avatar">
+                      <img src="        <img src="/public/img/avatar.jpg" alt="Profile Picture" class="avatar">.<img src="/public/img/avatar.jpg" alt="Profile Picture" class="avatar">.liara.run/public/<?php echo crc32($n['user_username']) % 100; ?>" alt="avatar" class="avatar">
                       <div class="post-content">
                           <div class="post-header">
                               <span class="name"><?php _($n['user_full_name']); ?></span>
