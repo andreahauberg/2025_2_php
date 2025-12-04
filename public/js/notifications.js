@@ -29,7 +29,6 @@
       if (!data || data.success !== true) return 0;
       return Number(data.unread_count) || 0;
     } catch (e) {
-      console.error("fetch unread count", e);
       return null;
     }
   }
@@ -66,11 +65,9 @@
         const data = JSON.parse(text);
         return data.success === true;
       } catch (e) {
-        console.error("markNotification non-json response", text);
         return false;
       }
     } catch (e) {
-      console.error("markNotification", e);
       return false;
     }
   }
@@ -88,11 +85,9 @@
         const data = JSON.parse(text);
         return data.success === true;
       } catch (e) {
-        console.error("markAll non-json response", text);
         return false;
       }
     } catch (e) {
-      console.error("markAll", e);
       return false;
     }
   }
@@ -114,7 +109,6 @@
         // decrement badge count by 1
         updateBadgeDelta(-1);
       } else {
-        console.warn("Failed to mark notification");
       }
     });
   }
@@ -127,7 +121,7 @@
       btn.disabled = false;
       if (ok) {
         document.querySelectorAll(".post.notification--unread").forEach((row) => row.classList.remove("notification--unread"));
-        // refresh badge (set to 0)
+
         setBadgeCount(0);
       }
     });
@@ -150,7 +144,6 @@
     }
   }
 
-  // adjust current badge by delta (can be negative)
   function updateBadgeDelta(delta) {
     const node = currentBadgeNode();
     if (!node) return;
@@ -169,18 +162,21 @@
   // wire events on notifications page
   function initNotificationsPage() {
     document.addEventListener("click", function (e) {
-      // handle mark / delete buttons
+      // handle mark / delete buttons first
       if (e.target.closest(".notif-mark-btn")) {
         handleMarkClick(e);
+        return;
       }
       if (e.target.closest(".notif-delete-btn")) {
         handleDeleteClick(e);
+        return;
       }
       if (e.target.id === "markAllBtn") {
         handleMarkAllClick();
+        return;
       }
 
-      // intercept clicks on notification links that point to posts that is deleted
+      // notification link clicked
       const anchor = e.target.closest && e.target.closest("a.notif-link--row");
       if (!anchor) return;
 
@@ -189,48 +185,26 @@
         if (!href) return;
         const url = new URL(href, window.location.origin);
         const postPk = url.searchParams.get("post_pk");
-        if (!postPk) return;
 
-        // mark notification as read immediately when user clicks it
-        const row = anchor.closest(".post");
-        const notifPkAttr = row ? row.getAttribute("data-notif-pk") : null;
-        const wasUnread = row && row.classList.contains("notification--unread");
-        if (notifPkAttr && wasUnread) {
-          row.classList.remove("notification--unread");
-          updateBadgeDelta(-1);
+        // don't automatically mark as read when clicking the link; leave marking
 
-          markNotification(notifPkAttr).then((ok) => {
-            if (!ok) {
-              console.warn("Failed to mark notification (click)");
-            }
-          });
+        // if no post_pk in link, just navigate
+        if (!postPk) {
+          window.location.href = href;
+          return;
         }
 
-        // check if post deleted elsecancel the navigation and show an error toast.
+        // check if post exists — if yes navigate, if not show toast and stay
         e.preventDefault();
-        let navigated = false;
-        const fallbackMs = 150;
-        const fallback = setTimeout(() => {
-          if (!navigated) {
-            navigated = true;
-            window.location.href = href;
-          }
-        }, fallbackMs);
-
         fetch(`/api-get-post?post_pk=${encodeURIComponent(postPk)}`, { credentials: "same-origin" })
           .then((res) => {
-            if (!res.ok) return { ok: false };
+            if (!res.ok) throw new Error("not_found");
             return res.json();
           })
           .then((data) => {
-            if (navigated) return;
             if (data && data.success === true) {
-              clearTimeout(fallback);
-              navigated = true;
               window.location.href = href;
             } else {
-              // post not found -> cancel fallback navigation and show toast
-              clearTimeout(fallback);
               if (typeof showToast === "function") {
                 showToast("This post was deleted", "error");
               } else {
@@ -239,10 +213,14 @@
             }
           })
           .catch((err) => {
-            // on network/server error: allow fallback navigation (do nothing)
-            clearTimeout(fallback);
-            if (!navigated) {
-              navigated = true;
+            if (err.message === "not_found") {
+              if (typeof showToast === "function") {
+                showToast("This post was deleted", "error");
+              } else {
+                alert("This post was deleted");
+              }
+            } else {
+              // network error — don't block navigation
               window.location.href = href;
             }
           });
@@ -290,12 +268,10 @@
         if (row) row.remove();
         if (wasUnread) updateBadgeDelta(-1);
       } else {
-        console.warn("Failed to delete notification");
       }
     });
   }
 
-  // init when DOM ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       update();
