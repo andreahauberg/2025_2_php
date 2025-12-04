@@ -51,7 +51,7 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
             <p>Not following anyone yet.</p>
         <?php endif; ?>
     </div>
-
+<!-- if users page or profile page show following instead of whats happening now -->
     <?php elseif (!empty($currentPage) && $currentPage === 'user'): ?>
     <div class="following">
         <h2>Followers</h2>
