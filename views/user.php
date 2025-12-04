@@ -259,10 +259,9 @@ $usersToFollow = $stmt->fetchAll();
                     <button class="show-more-btn">Show more</button>
                 </div>
         </aside>
-        <div class="search-overlay" aria-hidden="true">
-            <!-- Search overlay -->
-        </div>
+
     </div>
+    <?php require_once __DIR__ . "/../components/_search.php"; ?>
     <script src="../public/js/mixhtml.js"></script>
     <script>
     // If URL contains post_pk query param or a fragment like #post-<pk>, scroll to that post
