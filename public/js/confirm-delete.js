@@ -40,3 +40,28 @@ if (document.readyState === "loading") {
 } else {
   initDeleteConfirm();
 }
+
+// Delete user
+document.addEventListener("click", async function (e) {
+  try {
+    const btn = e.target.closest && e.target.closest(".x-dialog__btn_del");
+    if (!btn) return;
+    const dialog = btn.closest("#updateProfileDialog");
+    if (!dialog) return;
+
+    e.preventDefault();
+    const container = dialog.querySelector(".x-dialog__form") || dialog;
+
+    if (typeof showDeleteConfirmInline === "function") {
+      const ok = await showDeleteConfirmInline(container, "Are you sure you want to delete your profile? This action cannot be undone.");
+      if (!ok) return;
+      window.location.href = "api-delete-profile";
+    } else {
+      const ok = window.confirm("Are you sure you want to delete your profile? This action cannot be undone.");
+      if (!ok) return;
+      window.location.href = "api-delete-profile";
+    }
+  } catch (err) {
+    console.error("[confirm-delete] error handling profile delete", err);
+  }
+});
