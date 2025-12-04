@@ -1,13 +1,10 @@
 <?php
-// components/_nav.php includes the side navigation menu and profile tag and post button
 require_once __DIR__ . '/../x.php';
 $user = _currentUser();
 
-// accept optional layout variables
 $currentPage = $currentPage ?? '';
 
 $notifCount = $notifCount ?? 0;
-// if no notifCount provided, try to get it here
 if ($notifCount === 0 && $user) {
     try {
         require_once __DIR__ . '/../models/NotificationModel.php';
