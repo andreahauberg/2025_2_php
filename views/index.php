@@ -1,4 +1,9 @@
 <?php 
+require_once __DIR__ . '/../x.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 $title = "Welcome";
 ?>
 <!DOCTYPE html>
@@ -43,4 +48,3 @@ require_once __DIR__."/../components/_signup-dialog.php";
 
 </main>
 
-<?php require_once __DIR__."/../components/_footer.php"; ?>
