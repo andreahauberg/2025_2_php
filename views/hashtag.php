@@ -45,20 +45,20 @@ $currentUser = $_SESSION["user"]["user_pk"];
 </head>
 
 <body>
-<?php require __DIR__ . '/../components/___toast.php'; ?>
+    <?php require __DIR__ . '/../components/___toast.php'; ?>
 
-<div id="container">
+    <div id="container">
         <button class="burger" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
             <i class="fa-solid fa-xmark"></i>
         </button>
         <nav>
             <ul>
-            <li>
-    <a href="/home">
-        <img src="/public/favicon/favicon.ico" alt="Logo" class="nav-logo">
-    </a>
-</li>
+                <li>
+                    <a href="/home">
+                        <img src="/public/favicon/favicon.ico" alt="Logo" class="nav-logo">
+                    </a>
+                </li>
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a>
                 </li>
@@ -93,61 +93,57 @@ $currentUser = $_SESSION["user"]["user_pk"];
         </nav>
 
 
-    <?php
+        <?php
     require_once __DIR__ . '/../components/_post-dialog.php';
     require_once __DIR__ . '/../components/_update-profile-dialog.php';
     require_once __DIR__ . '/../components/_update-post-dialog.php';
     ?>
 
-    <main class="feed-column">
+        <main class="feed-column">
 
-        <h2 style="padding:15px;">Showing posts for <?= $hashtag ?></h2>
+            <h2 style="padding:15px;">Showing posts for <?= $hashtag ?></h2>
 
-        <?php if (empty($posts)): ?>
+            <?php if (empty($posts)): ?>
             <p style="padding:15px;">No posts found for <?= $hashtag ?>.</p>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <?php foreach ($posts as $post): ?>
+            <?php foreach ($posts as $post): ?>
             <?php require __DIR__ . '/../components/_post.php'; ?>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
 
-    </main>
-    <aside>
+        </main>
+        <aside>
 
-        <form id="home-search-form">
-            <input
-                id="home-search-input"
-                type="text"
-                placeholder="Search Weave"
-                autocomplete="off"
-                value="<?= $hashtag ?>"
-            >
-            <button type="submit">Search</button>
-        </form>
+            <form id="home-search-form">
+                <input id="home-search-input" type="text" placeholder="Search Weave" autocomplete="off"
+                    value="<?= $hashtag ?>">
+                <button type="submit">Search</button>
+            </form>
 
-        <div class="happening-now">
-            <h2>What's happening now</h2>
-            <?php require __DIR__ . '/../components/_trending.php'; ?>
-        </div>
+            <div class="happening-now">
+                <h2>What's happening now</h2>
+                <?php require __DIR__ . '/../components/_trending.php'; ?>
+            </div>
 
-    </aside>
+        </aside>
 
-</div>
-
-<div class="search-overlay" aria-hidden="true">
-    <div class="search-overlay-box">
-        <button type="button" class="search-overlay-close">&times;</button>
-
-        <form id="searchOverlayForm" class="search-overlay-form">
-            <input id="searchOverlayInput" type="text" name="query" class="search-overlay-input" autocomplete="off">
-            <button type="submit" class="search-overlay-btn">Search</button>
-        </form>
-
-        <div id="searchOverlayResults" class="search-overlay-results"></div>
     </div>
-</div>
 
-<script src="/public/js/mixhtml.js"></script>
+    <div class="search-overlay" aria-hidden="true">
+        <div class="search-overlay-box">
+            <button type="button" class="search-overlay-close">&times;</button>
+
+            <form id="searchOverlayForm" class="search-overlay-form">
+                <input id="searchOverlayInput" type="text" name="query" class="search-overlay-input" autocomplete="off">
+                <button type="submit" class="search-overlay-btn">Search</button>
+            </form>
+
+            <div id="searchOverlayResults" class="search-overlay-results"></div>
+        </div>
+    </div>
+
+    <script src="/public/js/mixhtml.js"></script>
 
 </body>
+
 </html>
