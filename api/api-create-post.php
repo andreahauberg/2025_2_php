@@ -10,7 +10,7 @@ $user = $_SESSION["user"];
 
 try {
     $postMessage = _validatePost();
-    $postImage = "https://picsum.photos/400/250";
+    $postImage = "";
 
     $postPk = bin2hex(random_bytes(25));
 
