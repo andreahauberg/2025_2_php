@@ -546,7 +546,7 @@ aside {
 .x-landing__footer {
   position: absolute;
   bottom: 1rem;
-  left: 50%;
+  left: 85%;
   transform: translateX(-50%);
   font-size: 0.8rem;
   color: #666;

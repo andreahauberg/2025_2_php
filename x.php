@@ -156,7 +156,6 @@ function _redirectPath(string $fallback = '/home'): string {
 
 
 //  TOAST helper funktion  
-
 function _setToast(string $message, string $type = 'ok'): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
@@ -182,8 +181,7 @@ function _toastRedirect(string $message, string $type, string $location): void {
     exit();
 }
 
-// LOGIN HELPER 
-
+// LOGIN HELPER IF CHECK FOR USER LOGGED IN, REDIRECT IF NOT
 function _ensureLogin(string $redirect = '/'): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
@@ -194,4 +192,12 @@ function _ensureLogin(string $redirect = '/'): void {
         header("Location: $redirect");
         exit();
     }
+}
+
+// USER HELPER TO GET CURRENT USER FROM SESSION
+function _currentUser(): ?array {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    return $_SESSION['user'] ?? null;
 }

@@ -9,7 +9,7 @@
             <ul class="search-results-list">
                 <?php foreach ($users as $user): ?>
                     <li class="search-results-user">
-                        <a href="/profile?user_pk=<?php _($user['user_pk']); ?>">
+                        <a href="/user?user_pk=<?php _($user['user_pk']); ?>">
                             <div>
                                 <span
                                     class="search-results-user-name"

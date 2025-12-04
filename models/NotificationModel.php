@@ -45,4 +45,19 @@ class NotificationModel {
             return 0;
         }
     }
+
+    /**
+     * Count unread notifications for a given user PK. Returns an integer >= 0 to fix  error in nav component.
+     */
+    public function countUnreadForUser(string $userPk): int {
+        global $_db;
+
+        $q = "SELECT COUNT(*) FROM notifications WHERE notification_user_fk = :user AND is_read = 0";
+        $stmt = $_db->prepare($q);
+        $stmt->bindValue(':user', $userPk);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+
+        return (int) $count;
+    }
 }
