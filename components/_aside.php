@@ -1,5 +1,4 @@
 <?php
-// Shared aside used on all pages including search, trending and who-to-follow
 require_once __DIR__ . '/../x.php';
 require_once __DIR__ . '/../models/TrendingModel.php';
 require_once __DIR__ . '/../models/FollowModel.php';
@@ -32,12 +31,11 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         <input
             id="home-search-input"
             type="text"
-            placeholder="Search Twitter"
+            placeholder="Search Weave"
             autocomplete="off"
         >
         <button type="submit">Search</button>
     </form>
-<!-- added a check if on profile page we show following instead of trending -->
     <?php if (!empty($currentPage) && $currentPage === 'profile'): ?>
     <div class="following">
         <h2>Following</h2>
