@@ -3,12 +3,10 @@
   </footer>
 
   <?php
-    // include dialog components if available
     if (file_exists(__DIR__ . '/_post-dialog.php')) require_once __DIR__ . '/_post-dialog.php';
     if (file_exists(__DIR__ . '/_update-profile-dialog.php')) require_once __DIR__ . '/_update-profile-dialog.php';
     if (file_exists(__DIR__ . '/_update-post-dialog.php')) require_once __DIR__ . '/_update-post-dialog.php';
 
-    // shared overlays (search overlay etc.) — embedded here so overlays load last
   ?>
     <div class="search-overlay" aria-hidden="true">
       <div class="search-overlay-box">

@@ -34,8 +34,6 @@ $title = 'Home';
 $currentPage = 'home';
 require __DIR__ . '/../components/_header.php';
 ?>
-    <?php // reforged - header now provides the container, burger and nav ?>
-    <?php // dialogs and overlays are loaded in the footer component ?>
 
         <main>
             <?php foreach ($posts as $post): ?>
