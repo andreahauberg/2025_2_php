@@ -228,7 +228,7 @@ $usersToFollow = $stmt->fetchAll();
         </main>
         <aside>
             <form action="">
-                <input id="profile-search-input" type="text" placeholder="Search Twitter" autocomplete="off">
+                <input id="profile-search-input" type="text" placeholder="Search Weave" autocomplete="off">
                 <button>Search</button>
             </form>
             <div class="following">

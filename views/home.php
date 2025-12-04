@@ -117,7 +117,7 @@ $initialFollowCount = count($usersToFollow);
                 <input
                     id="home-search-input"
                     type="text"
-                    placeholder="Search Twitter"
+                    placeholder="Search Weave"
                     autocomplete="off">
                 <button type="submit">Search</button>
             </form>
