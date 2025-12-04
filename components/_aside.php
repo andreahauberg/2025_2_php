@@ -36,7 +36,22 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
             autocomplete="off">
         <button type="submit">Search</button>
     </form>
+<!-- added a check if on profile page we show following instead of trending -->
+    <?php if (!empty($currentPage) && $currentPage === 'profile'): ?>
+    <div class="following">
+        <h2>Following</h2>
 
+        <?php if (!empty($following)): ?>
+            <div class="follow-suggestion">
+                <?php foreach ($following as $user): ?>
+                    <?php require __DIR__ . '/_follow_tag.php'; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>Not following anyone yet.</p>
+        <?php endif; ?>
+    </div>
+    <?php else: ?>
     <div class="happening-now">
         <h2>What's happening now</h2>
 
@@ -52,6 +67,7 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         </button>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 
     <hr>
 
