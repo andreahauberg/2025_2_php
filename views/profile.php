@@ -11,11 +11,9 @@ if (!$currentUser) {
 }
 require_once __DIR__ . "/../db.php";
 
-// Hent den loggede bruger
 $currentUser = $_SESSION["user"];
 $currentUserPk = $currentUser["user_pk"];
 
-// 1. Hent brugerens posts
 $q = "
   SELECT
     posts.post_pk,
@@ -25,7 +23,8 @@ $q = "
     posts.created_at,
     users.user_full_name,
     users.user_username,
-    users.user_pk AS author_user_pk
+    users.user_pk AS author_user_pk,
+    users.user_avatar
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
   WHERE posts.post_user_fk = :currentUserPk AND posts.deleted_at IS NULL
@@ -36,10 +35,8 @@ $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->execute();
 $posts = $stmt->fetchAll();
 
-// Tilføj comment-og like data til posts
 require_once __DIR__ . '/../models/CommentModel.php';
 $commentModel = new CommentModel();
-// Tilføj comment_count via modellen så view får server-side værdi
 foreach ($posts as &$post) {
     $q = "SELECT COUNT(*) AS like_count FROM likes WHERE like_post_fk = :postPk";
     $stmt = $_db->prepare($q);
@@ -53,7 +50,6 @@ foreach ($posts as &$post) {
     $stmt->bindValue(':userPk', $currentUserPk);
     $stmt->execute();
     $post['is_liked_by_user'] = $stmt->fetch()['is_liked'] > 0;
-    // server-side comment count
     try {
         $post['comment_count'] = $commentModel->countForPost($post['post_pk']);
     } catch (Exception $_) {
@@ -62,7 +58,6 @@ foreach ($posts as &$post) {
 }
 unset($post);
 
-// 2. Hent brugere, som den loggede bruger følger
 $q = "
   SELECT users.*
   FROM follows
@@ -75,7 +70,6 @@ $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->execute();
 $following = $stmt->fetchAll();
 
-// 3. Hent forslag til brugere at følge (samme logik som forsiden)
 $q = "
   SELECT users.*
   FROM users
@@ -94,7 +88,6 @@ $stmt->execute();
 $usersToFollow = $stmt->fetchAll();
 ?>
 <?php
-// Useing header/footer components 
 $title = 'Profile: ' . ($currentUser['user_full_name'] ?? '');
 $currentPage = 'profile';
 require __DIR__ . '/../components/_header.php';
@@ -103,12 +96,55 @@ require __DIR__ . '/../components/_header.php';
         <main>
 
             <div class="profile-header">
+                
                 <div class="profile-cover-container">
+                    
                     <img src="https://picsum.photos/600/200" alt="Cover" class="profile-cover">
                     <div class="profile-cover-filter"></div>
                 </div>
                 <div class="profile-page-info">
-                    <img src="/public/img/avatar.jpg" alt="Profile" class="profile-avatar">
+                    <!-- Tre prikker -->
+<button class="avatar-menu-btn">⋮</button>
+
+<!-- Dropdown menu -->
+<div class="avatar-menu">
+    <form action="/api/api-update-avatar.php" method="POST" enctype="multipart/form-data">
+        <label class="avatar-menu-item">
+            Change photo
+            <input type="file" name="avatar" accept="image/*" hidden>
+        </label>
+
+        <button type="submit" class="avatar-menu-item save-btn">
+            Save
+        </button>
+    </form>
+</div>
+                <div class="avatar-wrapper">
+
+<img 
+    src="<?php echo !empty($currentUser['user_avatar']) ? $currentUser['user_avatar'] : '/public/img/avatar.jpg'; ?>" 
+    alt="Profile" 
+    class="profile-avatar"
+>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.querySelector(".avatar-menu-btn");
+    const menu = document.querySelector(".avatar-menu");
+
+    btn.addEventListener("click", () => {
+        menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = "none";
+        }
+    });
+});
+    </script>
+</div>
                     <div class="profile-details">
                         <h1><?php _($currentUser["user_full_name"]); ?></h1>
                         <p>@<?php _($currentUser["user_username"]); ?></p>

@@ -23,7 +23,7 @@ if ($notifCount === 0 && $user) {
     <ul>
         <li>
             <a href="/home">
-                <img src="/public/img/weave-logo.png" alt="Weave logo" class="post-logo">
+                <img src="/public/img/weave-logo.png" alt="Weave logo" class="nav-logo">
             </a>
         </li>
         <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
@@ -44,8 +44,10 @@ if ($notifCount === 0 && $user) {
     <button class="post-btn" data-open="postDialog">Post</button>
 
     <div id="profile_tag" data-open="updateProfileDialog">
-        <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user['user_username'] ?? '') % 100; ?>"
-            alt="Profile">
+    <img 
+  src="<?php echo !empty($currentUser['user_avatar']) ? $currentUser['user_avatar'] : '/public/img/avatar.jpg'; ?>" 
+  alt="Profile"
+>
         <div>
             <div class="name"><?= htmlspecialchars($user['user_full_name'] ?? '') ?></div>
             <div class="handle"><?= $user ? ('@' . htmlspecialchars($user['user_username'])) : '' ?></div>

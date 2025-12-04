@@ -1119,3 +1119,49 @@ aside {
   display: flex;
   gap: 0.4rem;
 }
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-menu-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.avatar-menu {
+  position: absolute;
+  right: 0;
+  top: 115%;
+  width: 160px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 8px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.avatar-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.avatar-menu-item:hover {
+  background: #f2f2f2;
+}
