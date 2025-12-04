@@ -53,3 +53,8 @@ docker-compose.override.yml
 # Ignorer personlige konfigurationer
 /.php-cs-fixer.cache
 /phpunit.result.cache
+
+
+public/uploads/avatars/
+
+public/uploads/posts/
