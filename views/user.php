@@ -129,7 +129,7 @@ $usersToFollow = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../public/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="../public/favicon/favicon.ico">
     <link rel="stylesheet" href="../public/css/app.css">
     <link rel="stylesheet" href="../public/css/search.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -147,9 +147,12 @@ $usersToFollow = $stmt->fetchAll();
             <i class="fa-solid fa-xmark"></i>
         </button>
         <nav>
-            <!-- Navigation -->
             <ul>
-                <li><a href="/home"><i class="fab fa-twitter"></i></a></li>
+            <li>
+                    <a href="/home">
+                        <img src="/public/favicon/favicon.ico" alt="Logo" class="nav-logo">
+                    </a>
+                </li>
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
                 <li><a href="/notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>

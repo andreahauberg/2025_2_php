@@ -54,7 +54,11 @@ $currentUser = $_SESSION["user"]["user_pk"];
         </button>
         <nav>
             <ul>
-                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+            <li>
+    <a href="/home">
+        <img src="/public/favicon/favicon.ico" alt="Logo" class="nav-logo">
+    </a>
+</li>
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a>
                 </li>
@@ -114,7 +118,7 @@ $currentUser = $_SESSION["user"]["user_pk"];
             <input
                 id="home-search-input"
                 type="text"
-                placeholder="Search Twitter"
+                placeholder="Search Weave"
                 autocomplete="off"
                 value="<?= $hashtag ?>"
             >
