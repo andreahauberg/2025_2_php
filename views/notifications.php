@@ -63,7 +63,7 @@ require __DIR__ . '/../components/_header.php';
                 <?php $unread = ($n['is_read'] == 0); ?>
                 <div class="post <?php if($unread) echo 'notification--unread'; ?> notification-row" data-notif-pk="<?php echo $n['notification_pk']; ?>">
                     <a href="/user?user_pk=<?php echo $n['actor_pk']; ?>&post_pk=<?php echo $n['notification_post_fk']; ?>#post-<?php echo $n['notification_post_fk']; ?>" class="notif-link notif-link--row">
-                      <img src="https://avatar.iran.liara.run/public/<?php echo crc32($n['user_username']) % 100; ?>" alt="avatar" class="avatar">
+                    <img src="/public/img/avatar.jpg" alt="Profile">
                       <div class="post-content">
                           <div class="post-header">
                               <span class="name"><?php _($n['user_full_name']); ?></span>

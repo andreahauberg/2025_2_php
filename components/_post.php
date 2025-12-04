@@ -1,6 +1,6 @@
 <article class="post" id="post-<?php _($post["post_pk"]); ?>" data-post-pk="<?php _($post["post_pk"]); ?>">
     <a href="/user?user_pk=<?php _($post["post_user_fk"]); ?>">
-        <img src="https://avatar.iran.liara.run/public/101" alt="Profile Picture" class="avatar">
+    <img src="/public/img/avatar.jpg" class="avatar" alt="Profile">
         <div class="post-content">
             <div class="post-header">
                 <span class="name"><?php _($post["user_full_name"]); ?></span>
@@ -11,7 +11,7 @@
                     $interval = $now->diff($createdAt);
 
                     if ($interval->days > 0) {
-                        echo $createdAt->format('j M'); // Vis datoen i formatet "25 nov"
+                        echo $createdAt->format('j M');
                     } else if ($interval->h > 0) {
                         echo $interval->h . "h";
                     } else if ($interval->i > 0) {

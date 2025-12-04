@@ -136,7 +136,7 @@ require __DIR__ . '/../components/_header.php';
                     <div class="profile-cover-filter"></div>
                 </div>
                 <div class="profile-page-info">
-                    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($profileUser["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
+                <img src="/public/img/avatar.jpg" class="profile-avatar" alt="Profile">
                     <div class="profile-details">
                         <h1><?php _($profileUser["user_full_name"]); ?></h1>
                         <p>@<?php _($profileUser["user_username"]); ?></p>

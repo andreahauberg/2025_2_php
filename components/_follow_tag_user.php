@@ -1,12 +1,11 @@
 <a href="/user?user_pk=<?php echo $user['user_pk']; ?>" class="profile-info" id="<?php echo $user["user_pk"]; ?>">
-    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user["user_username"]) % 100; ?>" alt="Profile Picture">
+<img src="/public/img/avatar.jpg" alt="Profile Picture">
     <div class="info-copy">
         <p class="name"><?php _($user["user_full_name"]); ?></p>
         <p class="handle"><?php _("@" . $user["user_username"]); ?></p>
     </div>
     <?php
     $user_pk = $user["user_pk"];
-    // Tjek om den loggede bruger følger denne bruger
     $isFollowing = false;
     if (isset($_SESSION["user"])) {
         require_once __DIR__ . '/../db.php';

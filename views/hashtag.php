@@ -21,10 +21,8 @@ $postModel = new PostModel();
 $posts = $postModel->getPostsByHashtag($tag);
 $hashtag = "#" . htmlspecialchars($tag);
 
-// Prefill aside search
 $homeSearchValue = $hashtag;
 
-// page meta for shared header/footer
 $title = $hashtag;
 $currentPage = 'hashtag';
 require __DIR__ . '/../components/_header.php';
