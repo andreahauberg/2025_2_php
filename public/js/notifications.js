@@ -169,6 +169,7 @@
   // wire events on notifications page
   function initNotificationsPage() {
     document.addEventListener("click", function (e) {
+      // handle mark / delete buttons
       if (e.target.closest(".notif-mark-btn")) {
         handleMarkClick(e);
       }
@@ -177,6 +178,76 @@
       }
       if (e.target.id === "markAllBtn") {
         handleMarkAllClick();
+      }
+
+      // intercept clicks on notification links that point to posts that is deleted
+      const anchor = e.target.closest && e.target.closest("a.notif-link--row");
+      if (!anchor) return;
+
+      try {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        const url = new URL(href, window.location.origin);
+        const postPk = url.searchParams.get("post_pk");
+        if (!postPk) return;
+
+        // mark notification as read immediately when user clicks it
+        const row = anchor.closest(".post");
+        const notifPkAttr = row ? row.getAttribute("data-notif-pk") : null;
+        const wasUnread = row && row.classList.contains("notification--unread");
+        if (notifPkAttr && wasUnread) {
+          row.classList.remove("notification--unread");
+          updateBadgeDelta(-1);
+
+          markNotification(notifPkAttr).then((ok) => {
+            if (!ok) {
+              console.warn("Failed to mark notification (click)");
+            }
+          });
+        }
+
+        // check if post deleted elsecancel the navigation and show an error toast.
+        e.preventDefault();
+        let navigated = false;
+        const fallbackMs = 150;
+        const fallback = setTimeout(() => {
+          if (!navigated) {
+            navigated = true;
+            window.location.href = href;
+          }
+        }, fallbackMs);
+
+        fetch(`/api-get-post?post_pk=${encodeURIComponent(postPk)}`, { credentials: "same-origin" })
+          .then((res) => {
+            if (!res.ok) return { ok: false };
+            return res.json();
+          })
+          .then((data) => {
+            if (navigated) return;
+            if (data && data.success === true) {
+              clearTimeout(fallback);
+              navigated = true;
+              window.location.href = href;
+            } else {
+              // post not found -> cancel fallback navigation and show toast
+              clearTimeout(fallback);
+              if (typeof showToast === "function") {
+                showToast("This post was deleted", "error");
+              } else {
+                alert("This post was deleted");
+              }
+            }
+          })
+          .catch((err) => {
+            // on network/server error: allow fallback navigation (do nothing)
+            clearTimeout(fallback);
+            if (!navigated) {
+              navigated = true;
+              window.location.href = href;
+            }
+          });
+      } catch (err) {
+        console.error("notifications link check error", err);
       }
     });
   }

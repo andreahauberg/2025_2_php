@@ -27,6 +27,21 @@ if (!$profileUser) {
     exit();
 }
 
+// Tjek om der er en specifik post_pk i URL for at scrolle til eller om post er slettet
+$requestedPostPk = $_GET['post_pk'] ?? null;
+if ($requestedPostPk) {
+    $q = "SELECT 1 FROM posts WHERE post_pk = :post_pk AND deleted_at IS NULL LIMIT 1";
+    $stmt = $_db->prepare($q);
+    $stmt->bindValue(':post_pk', $requestedPostPk);
+    $stmt->execute();
+    $exists = $stmt->fetchColumn();
+    if (!$exists) {
+    
+        _toastError('This post was deleted');
+    
+    }
+}
+
 // Hent den loggede bruger
 $currentUserPk = $currentUser["user_pk"];
 
