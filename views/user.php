@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . "/../x.php";
-session_start();
-if (!isset($_SESSION["user"])) {
-    _toastError('Not logged in, please login first');
+_ensureLogin('/');
+$currentUser = _currentUser();
+if (!$currentUser) {
     header('Location: /');
     exit();
 }
@@ -20,15 +20,14 @@ $q = "SELECT * FROM users WHERE user_pk = :userPk";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
-$user = $stmt->fetch();
+$profileUser = $stmt->fetch();
 
-if (!$user) {
+if (!$profileUser) {
     header("location: /home");
     exit();
 }
 
 // Hent den loggede bruger
-$currentUser = $_SESSION["user"];
 $currentUserPk = $currentUser["user_pk"];
 
 // Tjek om den loggede bruger følger denne bruger
@@ -123,63 +122,13 @@ $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
 $usersToFollow = $stmt->fetchAll();
+
+// Use header/footer components
+$title = $profileUser["user_full_name"] . " (@" . $profileUser["user_username"] . ")";
+$currentPage = 'user';
+require __DIR__ . '/../components/_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../public/favicon.ico">
-    <link rel="stylesheet" href="../public/css/app.css">
-    <link rel="stylesheet" href="../public/css/search.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="module" src="../public/js/app.js"></script>
-    <script defer src="../public/js/dialog.js"></script>
-    <script defer src="../public/js/flip-btn.js"></script>
-    <script defer src="../public/js/comment.js"></script>
-    <script defer src="../public/js/notifications.js"></script>
-    <title><?php _($user["user_full_name"]); ?> (@<?php _($user["user_username"]); ?>)</title>
-</head>
-<body>
-    <div id="container">
-        <button class="burger" aria-label="Menu">
-            <i class="fa-solid fa-bars"></i>
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <nav>
-            <!-- Navigation -->
-            <ul>
-                <li><a href="/home"><i class="fab fa-twitter"></i></a></li>
-                <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
-                <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
-                <li><a href="/notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
-                <li><a href="#"><i class="fa-regular fa-envelope"></i><span>Messages</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-atom"></i><span>Grok</span></a></li>
-                <li><a href="#"><i class="fa-regular fa-bookmark"></i><span>Bookmarks</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-briefcase"></i><span>Jobs</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-users"></i><span>Communities</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-star"></i><span>Premium</span></a></li>
-                <li><a href="/profile"><i class="fa-regular fa-user"></i><span>Profile</span></a></li>
-                <li><a href="#" data-open="updateProfileDialog"><i class="fa-solid fa-ellipsis"></i><span>More</span></a></li>
-                <li><a href="bridge-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
-            </ul>
-            <button class="post-btn" data-open="postDialog">Post</button>
-            <div id="profile_tag" data-open="updateProfileDialog">
-                <img src="https://avatar.iran.liara.run/public/<?php echo crc32($currentUser["user_username"]) % 100; ?>" alt="Profile">
-                <div>
-                    <div class="name">
-                        <?php _($currentUser["user_full_name"]); ?>
-                    </div>
-                    <div class="handle">
-                        <?php _("@" . $currentUser["user_username"]); ?>
-                    </div>
-                </div>
-                <i class="fa-solid fa-ellipsis option"></i>
-            </div>
-        </nav>
-        <?php
-            require_once __DIR__ . "/../components/_post-dialog.php";
-        ?>
+
         <main>
             <div class="profile-header">
                 <div class="profile-cover-container">
@@ -187,10 +136,10 @@ $usersToFollow = $stmt->fetchAll();
                     <div class="profile-cover-filter"></div>
                 </div>
                 <div class="profile-page-info">
-                    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($user["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
+                    <img src="https://avatar.iran.liara.run/public/<?php echo crc32($profileUser["user_username"]) % 100; ?>" alt="Profile" class="profile-avatar">
                     <div class="profile-details">
-                        <h1><?php _($user["user_full_name"]); ?></h1>
-                        <p>@<?php _($user["user_username"]); ?></p>
+                        <h1><?php _($profileUser["user_full_name"]); ?></h1>
+                        <p>@<?php _($profileUser["user_username"]); ?></p>
                         <div class="profile-stats">
                             <span><strong><?php echo count($posts); ?></strong> Posts</span>
                             <span><strong><?php echo count($followers); ?></strong> Followers</span>
@@ -215,6 +164,7 @@ $usersToFollow = $stmt->fetchAll();
                     </div>
                 </div>
             </div>
+
             <?php if (empty($posts)): ?>
                 <p class="no-posts">No posts yet.</p>
             <?php else: ?>
@@ -223,68 +173,9 @@ $usersToFollow = $stmt->fetchAll();
                 <?php endforeach; ?>
             <?php endif; ?>
         </main>
-        <aside>
-            <form action="">
-                <input id="profile-search-input" type="text" placeholder="Search Twitter" autocomplete="off">
-                <button>Search</button>
-            </form>
-            <div class="following">
-                <h2>Followers</h2>
-    <?php if (empty($followers)): ?>
-        <p>No followers yet.</p>
-    <?php else: ?>
-        <div class="follow-suggestion">
-            <?php foreach ($followers as $follower): ?>
-                <?php $user = $follower; ?>
-                <?php require __DIR__ . "/../components/_follow_tag_user.php"; ?>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-            </div>
-            <hr>
-            <div class="who-to-follow">
-                <h2>Who to follow</h2>
-                <?php if (empty($usersToFollow)): ?>
-                    <p>No more users to follow.</p>
-                <?php else: ?>
-                    <div class="follow-suggestion">
-                        <?php foreach ($usersToFollow as $user): ?>
-                            <?php require __DIR__ . "/../components/_follow_tag.php"; ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-                    <button class="show-more-btn">Show more</button>
-                </div>
-        </aside>
-        <div class="search-overlay" aria-hidden="true">
-            <!-- Search overlay -->
-        </div>
-    </div>
-    <script src="../public/js/mixhtml.js"></script>
-    <script>
-    // If URL contains post_pk query param or a fragment like #post-<pk>, scroll to that post
-    (function(){
-        function scrollToPost(postId){
-            if(!postId) return;
-            var el = document.getElementById('post-' + postId);
-            if(!el) return;
-            try{
-                el.scrollIntoView({behavior:'smooth', block:'center'});
-                el.classList.add('post--highlight');
-                setTimeout(function(){ el.classList.remove('post--highlight'); }, 2500);
-            }catch(e){ console.error('scrollToPost', e); }
-        }
 
-        document.addEventListener('DOMContentLoaded', function(){
-            var params = new URLSearchParams(window.location.search);
-            var postPk = params.get('post_pk');
-            if(postPk){ scrollToPost(postPk); return; }
-            if(window.location.hash && window.location.hash.indexOf('#post-')===0){
-                var id = window.location.hash.replace('#post-','');
-                scrollToPost(id);
-            }
-        });
-    })();
-    </script>
-</body>
-</html>
+        <?php require __DIR__ . '/../components/_aside.php'; ?>
+
+        <?php require __DIR__ . '/../components/_footer.php'; ?>
+
+<?php

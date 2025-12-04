@@ -51,6 +51,23 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
             <p>Not following anyone yet.</p>
         <?php endif; ?>
     </div>
+
+    <?php elseif (!empty($currentPage) && $currentPage === 'user'): ?>
+    <div class="following">
+        <h2>Followers</h2>
+
+        <?php if (!empty($followers)): ?>
+            <div class="follow-suggestion">
+                <?php foreach ($followers as $follower): ?>
+                    <?php $user = $follower; ?>
+                    <?php require __DIR__ . '/_follow_tag_user.php'; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>No followers yet.</p>
+        <?php endif; ?>
+    </div>
+
     <?php else: ?>
     <div class="happening-now">
         <h2>What's happening now</h2>
