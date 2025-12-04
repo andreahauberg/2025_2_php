@@ -24,6 +24,7 @@
   ?>
 
   <script defer src="/public/js/notifications.js"></script>
+  <script defer src="/public/js/confirm-delete.js"></script>
   <script src="/public/js/mixhtml.js"></script>
 </body>
 </html>
