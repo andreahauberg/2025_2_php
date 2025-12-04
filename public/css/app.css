@@ -8,6 +8,12 @@
   width: 28px;
   height: 28px;
 }
+
+.post-logo {
+  width:85px; 
+  height:85px;
+  align-self:center;
+}
 body {
   width: 100vw;
   height: 100%;
@@ -901,6 +907,7 @@ aside {
   resize: none;
   margin-bottom: 8px;
 }
+
 
 .edit-comment-form button {
   margin-top: 5px;

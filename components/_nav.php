@@ -23,7 +23,7 @@ if ($notifCount === 0 && $user) {
     <ul>
         <li>
             <a href="/home">
-                <img src="/public/img/weave-logo.png" alt="Weave Logo" class="nav-logo">
+                <img src="/public/img/weave-logo.png" alt="Weave logo" class="post-logo">
             </a>
         </li>
         <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>

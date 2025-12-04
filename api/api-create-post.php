@@ -10,7 +10,22 @@ $user = $_SESSION["user"];
 
 try {
     $postMessage = _validatePost();
-    $postImage = "";
+// default: no image
+$postImage = "";
+
+if (!empty($_FILES["post_image"]["name"])) {
+    $fileTmp = $_FILES["post_image"]["tmp_name"];
+    $fileName = bin2hex(random_bytes(10)) . "_" . basename($_FILES["post_image"]["name"]);
+    $targetPath = __DIR__ . "/../public/uploads/" . $fileName;
+
+    if (!is_dir(__DIR__ . "/../public/uploads")) {
+        mkdir(__DIR__ . "/../public/uploads", 0777, true);
+    }
+
+    if (move_uploaded_file($fileTmp, $targetPath)) {
+        $postImage = "/public/uploads/" . $fileName;
+    }
+}
 
     $postPk = bin2hex(random_bytes(25));
 

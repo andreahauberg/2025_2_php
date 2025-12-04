@@ -3,12 +3,7 @@
   <div class="x-dialog__content">
     <button class="x-dialog__close" aria-label="Close">&times;</button>
     <div class="x-dialog__header">
-      <svg class="x-dialog__logo" viewBox="0 0 300 300">
-        <g fill="none" stroke="#0b0f11" stroke-width="44">
-          <line x1="40"  y1="40"  x2="260" y2="260"/>
-          <line x1="260" y1="40"  x2="40"  y2="260"/>
-        </g>
-      </svg>
+    <img src="/public/img/weave-logo.png" alt="Weave logo" class="post-logo">
     </div>
     <h2 id="updateProfileTitle">Update your information</h2>
     <form class="x-dialog__form" action="api-update-profile" method="POST" autocomplete="off">

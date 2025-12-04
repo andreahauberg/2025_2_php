@@ -25,7 +25,7 @@ $title = "404";
 <main class="x-landing">
   <div class="x-landing__left">
       <div class="x-landing__logo" aria-hidden="true">
-      <img src="/public/img/weave-logo.png" alt="Weave logo" class="logo">
+      <img src="/public/img/weave-logo.png" alt="Weave logo" class="post-logo">
       </div>
   </div>
 
