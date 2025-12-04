@@ -24,7 +24,11 @@ if ($notifCount === 0 && $user) {
 ?>
 <nav>
         <ul>
-                <li><a href="/home"><i class="fab fa-twitter"></i></a></li>
+        <li>
+    <a href="/home">
+        <img src="/public/img/weave-logo.png" alt="Weave Logo" class="nav-logo">
+    </a>
+</li>
                 <li><a href="/home"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
                 <li><a href="#" class="open-search"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a></li>
                 <li><a href="/notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a></li>
