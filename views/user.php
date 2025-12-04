@@ -263,6 +263,6 @@ $usersToFollow = $stmt->fetchAll();
     </div>
     <?php require_once __DIR__ . "/../components/_search.php"; ?>
     <script src="../public/js/mixhtml.js"></script>
-    <script defer src="/public/js/scroll-to-post.js"></script>
+    <script defer src="../public/js/scroll-to-post.js"></script>
 </body>
 </html>
