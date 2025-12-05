@@ -41,11 +41,19 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         <h2>Following</h2>
 
         <?php if (!empty($following)): ?>
-            <div class="follow-suggestion">
+            <div class="follow-suggestion" id="followingList">
                 <?php foreach ($following as $user): ?>
                     <?php require __DIR__ . '/_follow_tag.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <?php
+                
+                $followLimit = $followLimit ?? 10;
+                $initialFollowingCount = count($following);
+            ?>
+            <?php if ($initialFollowingCount > 0): ?>
+                <button id="followingShowMore" class="show-more-btn" data-offset="<?= $initialFollowingCount ?>" data-limit="<?= $followLimit ?>" data-initial="<?= $initialFollowingCount ?>" data-max="100">Show more</button>
+            <?php endif; ?>
         <?php else: ?>
             <p>Not following anyone yet.</p>
         <?php endif; ?>
@@ -56,12 +64,19 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         <h2>Followers</h2>
 
         <?php if (!empty($followers)): ?>
-            <div class="follow-suggestion">
+            <div class="follow-suggestion" id="followersList">
                 <?php foreach ($followers as $follower): ?>
                     <?php $user = $follower; ?>
                     <?php require __DIR__ . '/_follow_tag_user.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <?php
+                $initialFollowersCount = isset($initialFollowersCount) ? $initialFollowersCount : count($followers);
+                $profileUserPk = $profileUser['user_pk'] ?? ($user['user_pk'] ?? null);
+            ?>
+            <?php if ($initialFollowersCount > 0): ?>
+                <button id="followersShowMore" class="show-more-btn" data-offset="<?= $initialFollowersCount ?>" data-limit="3" data-initial="<?= $initialFollowersCount ?>" data-max="100" data-user-pk="<?= htmlspecialchars($profileUserPk) ?>">Show more</button>
+            <?php endif; ?>
         <?php else: ?>
             <p>No followers yet.</p>
         <?php endif; ?>
@@ -99,12 +114,12 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         </div>
         <?php endif; ?>
 
-        <?php if ($initialFollowCount === ($followLimit ?? 3)): ?>
+        <?php if ($initialFollowCount > 0): ?>
             <button
                 id="followShowMore"
                 class="show-more-btn"
                 data-offset="<?= $initialFollowCount ?>"
-                data-limit="3"
+                data-limit="<?= $followLimit ?? 3 ?>"
                 data-initial="<?= $initialFollowCount ?>"
                 data-max="10"
             >

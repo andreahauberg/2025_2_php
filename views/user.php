@@ -104,13 +104,20 @@ $q = "
     WHERE follows.follow_user_fk = :userPk
     AND users.user_pk != :currentUserPk
     AND users.deleted_at IS NULL
-  LIMIT 10
+    LIMIT 3
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
 $stmt->execute();
 $followers = $stmt->fetchAll();
+
+// total followers count (not limited)
+$qCount = "SELECT COUNT(*) FROM follows f JOIN users u ON f.follower_user_fk = u.user_pk WHERE f.follow_user_fk = :userPk AND u.deleted_at IS NULL";
+$stmt = $_db->prepare($qCount);
+$stmt->bindValue(':userPk', $userPk);
+$stmt->execute();
+$followersCount = (int) $stmt->fetchColumn();
 
 $q = "
   SELECT DISTINCT users.*
@@ -152,7 +159,7 @@ require __DIR__ . '/../components/_header.php';
                 <p>@<?php _($profileUser["user_username"]); ?></p>
                 <div class="profile-stats">
                     <span><strong><?php echo count($posts); ?></strong> Posts</span>
-                    <span><strong><?php echo count($followers); ?></strong> Followers</span>
+                    <span><strong><?php echo isset($followersCount) ? $followersCount : count($followers); ?></strong> Followers</span>
                 </div>
                 <?php if ($userPk !== $currentUserPk): ?>
                 <div class="follow-button-container">
@@ -182,7 +189,10 @@ require __DIR__ . '/../components/_header.php';
     <?php endif; ?>
 </main>
 
-<?php require __DIR__ . '/../components/_aside.php'; ?>
+<?php
+// ensure aside uses same follow limit
+$followLimit = $followLimit ?? 3;
+require __DIR__ . '/../components/_aside.php'; ?>
 
 <?php require __DIR__ . '/../components/_footer.php'; ?>
 
