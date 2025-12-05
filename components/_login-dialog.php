@@ -1,29 +1,70 @@
 <?php
-// åben når server er sat til `$_SESSION['open_dialog'] = 'login'`
-$__login_active = '';
-if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'login') {
-    $__login_active = ' active';
-    unset($_SESSION['open_dialog']);
-}
+$state = $_SESSION['open_dialog'] ?? null;
+$active = ($state === 'login') ? ' active' : '';
+
+$old = $_SESSION['login_old'] ?? [];
+$err = $_SESSION['login_error'] ?? '';
+
+$emailErr = ($err === 'auth' || str_contains($err, 'Email'));
+$passErr  = ($err === 'auth' || str_contains($err, 'Password'));
 ?>
-<div class="x-dialog<?php echo $__login_active; ?>" id="loginDialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-  <div class="x-dialog__overlay"></div>
-  <div class="x-dialog__content">
-    <button class="x-dialog__close" aria-label="Close">&times;</button>
-    <div class="x-dialog__header">
-    <img src="/public/img/weave-logo.png" alt="Weave logo" class="post-logo">
-        <g fill="none" stroke="#0b0f11" stroke-width="44">
-          <line x1="40"  y1="40"  x2="260" y2="260"/>
-          <line x1="260" y1="40"  x2="40"  y2="260"/>
-        </g>
-      </svg>
+
+<div 
+    class="x-dialog<?php echo $active; ?>" 
+    id="loginDialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="loginTitle"
+    data-open-state="<?php echo ($state === 'login') ? 'open' : 'closed'; ?>"
+    mix-ignore
+    mix-on="yes"
+>
+    <div class="x-dialog__overlay"></div>
+
+    <div class="x-dialog__content">
+        <button class="x-dialog__close" aria-label="Close">&times;</button>
+
+        <div class="x-dialog__header">
+            <img src="/public/img/weave-logo.png" alt="Weave logo" class="x-dialog__logo">
+        </div>
+
+        <h2 id="loginTitle">Log in</h2>
+
+        <form class="x-dialog__form" action="bridge-login" method="POST" autocomplete="off">
+
+            <label for="login_email">Email</label>
+            <input
+                id="login_email"
+                name="user_email"
+                type="text"
+                maxlength="50"
+                placeholder="Email"
+                data-rule=".{6,50}"
+                value="<?php echo htmlspecialchars($old['user_email'] ?? ''); ?>"
+                class="<?php echo $emailErr ? 'x-error' : ''; ?>"
+            >
+
+            <label for="login_password">Password</label>
+            <input
+                id="login_password"
+                name="user_password"
+                type="password"
+                maxlength="50"
+                placeholder="Password"
+                data-rule=".{6,50}"
+                class="<?php echo $passErr ? 'x-error' : ''; ?>"
+            >
+
+            <button class="x-dialog__btn">Next</button>
+        </form>
+
+        <p class="x-dialog__alt">
+            Don't have an account?
+            <a href="#" data-open="signupDialog">Sign up</a>
+        </p>
     </div>
-    <h2 id="loginTitle">Log in to X</h2>
-    <form class="x-dialog__form" action="bridge-login" method="POST" autocomplete="off">
-      <input name="user_email" type="text" maxlength="50" placeholder="Email" required <?php if ($__login_active) echo 'autofocus'; ?> >
-      <input name="user_password" type="password" maxlength="50" placeholder="Password" required>
-      <button class="x-dialog__btn">Next</button>
-    </form>
-    <p class="x-dialog__alt">Don't have an account? <a href="#" data-open="signupDialog">Sign up</a></p>
-  </div>
 </div>
+
+<?php
+unset($_SESSION['login_old'], $_SESSION['login_error'], $_SESSION['open_dialog']);
+?>

@@ -1,60 +1,107 @@
 <?php
-try{
-session_start(); 
-    require_once __DIR__ . "/../x.php";
-    require_once __DIR__ . "/../classes/User.php";
+session_start();
+require_once __DIR__ . '/../x.php';
+require_once __DIR__ . '/../db.php';
 
+try {
     $userFullName = _validateUserFullName();
-    $username = _validateUsername();
-    $userEmail = _validateEmail();
+    $username     = _validateUsername();
+    $userEmail    = _validateEmail();
     $userPassword = _validatePassword();
     $hashedPassword = password_hash($userPassword, PASSWORD_DEFAULT);
 
-    $userPk = bin2hex(random_bytes(25));
-
-    require_once __DIR__ . "/../db.php";
-
-    // tjek username og email er unikt
-    $check = $_db->prepare('SELECT user_username, user_email FROM users WHERE user_username = :u OR user_email = :e LIMIT 1');
+    $check = $_db->prepare("
+        SELECT user_username, user_email 
+        FROM users 
+        WHERE user_username = :u OR user_email = :e 
+        LIMIT 1
+    ");
     $check->execute([':u' => $username, ':e' => $userEmail]);
     $existing = $check->fetch();
+
     if ($existing) {
-        if (isset($existing['user_username']) && $existing['user_username'] === $username) {
-            $_SESSION['toast'] = ['message' => 'Username is already taken', 'type' => 'error'];
+        if (!empty($existing['user_username']) && $existing['user_username'] === $username) {
+            _toastError("Username is already taken");
         } else {
-            _toastError('You already have an account with this email');
+            _toastError("An account already exists with this email");
         }
-        // keep signup dialog open when toast is shown
         $_SESSION['open_dialog'] = 'signup';
-        header('Location: /');
+        header("Location: /");
         exit();
     }
 
-    // Use the User class to create a new user. Example of using OOP
-    User::create($_db, $userPk, $username, $userFullName, $userEmail, $hashedPassword);
+    $userPk = bin2hex(random_bytes(25));
+    $token  = bin2hex(random_bytes(32));
 
-    // ved succesfuld oprettelse, log brugeren ind automatisk
-    $fetch = $_db->prepare('SELECT * FROM users WHERE user_pk = :pk AND deleted_at IS NULL LIMIT 1');
-    $fetch->execute([':pk' => $userPk]);
-    $newUser = $fetch->fetch();
-    if ($newUser) {
-        unset($newUser['user_password']);
-        $_SESSION['user'] = $newUser;
-        _toastOk('Welcome, ' . ($newUser['user_full_name'] ?? $username) . '!');
-        header('Location: /home');
-        exit();
-    } else {
-        // fallback
-        _toastOk('Account created successfully! Please login.');
-        $_SESSION['open_dialog'] = 'login';
-        header('Location: /');
+    $stmt = $_db->prepare("
+        INSERT INTO users (
+            user_pk,
+            user_username,
+            user_email,
+            user_password,
+            user_full_name,
+            user_avatar,
+            user_is_verified,
+            user_verify_token
+        ) VALUES (
+            :pk, :username, :email, :password, :full, '', 0, :token
+        )
+    ");
+
+    $stmt->execute([
+        ':pk'       => $userPk,
+        ':username' => $username,
+        ':email'    => $userEmail,
+        ':password' => $hashedPassword,
+        ':full'     => $userFullName,
+        ':token'    => $token
+    ]);
+
+    if (!weaveIsProd()) {
+        $_db->prepare("
+            UPDATE users 
+            SET user_is_verified = 1,
+                user_verify_token = NULL
+            WHERE user_pk = :pk
+        ")->execute([':pk' => $userPk]);
+
+        $fetch = $_db->prepare("SELECT * FROM users WHERE user_pk = :pk LIMIT 1");
+        $fetch->execute([':pk' => $userPk]);
+        $newUser = $fetch->fetch();
+
+        if ($newUser) {
+            unset($newUser['user_password']);
+            $_SESSION['user'] = $newUser;
+        }
+
+        _toastOk('Welcome!');
+        header("Location: /home");
         exit();
     }
 
-}
-catch(Exception $e){
+    $_SESSION['last_signup_email'] = $userEmail;
+
+    $verifyUrl = "https://michelleenoe.com/verify-email?token=$token";
+
+    sendWeaveMail(
+        $userEmail,
+        "Verify your Weave account",
+        "Click the link to verify your email: $verifyUrl"
+    );
+
+    _toastOk("We just sent you a verification email. Please check your inbox.");
+    $_SESSION['open_dialog'] = 'signup_verified';
+
+    header("Location: /");
+    exit();
+
+} catch (Exception $e) {
     _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'signup';
-    header('Location: /');
+
+    $_SESSION['signup_old'] = $_POST;
+    $_SESSION['signup_error_field'] = $e->getMessage();
+
+    header("Location: /");
     exit();
 }
