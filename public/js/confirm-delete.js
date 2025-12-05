@@ -71,43 +71,56 @@ document.addEventListener("submit", async function (e) {
   const form = e.target.closest && e.target.closest("#updateProfileDialog .x-dialog__form");
   if (!form) return;
   e.preventDefault();
-
+  //example how to get it to render the changes immediately
   try {
-    const data = new URLSearchParams(new FormData(form)).toString();
+    const fd = new FormData(form);
     const res = await fetch(form.getAttribute("action") || "api-update-profile", {
       method: "POST",
       credentials: "same-origin",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
+        Accept: "application/json",
       },
-      body: data,
+      body: fd,
     });
 
-    let json = {};
-    let contentType = res.headers.get("Content-Type") || res.headers.get("content-type") || "";
+    let data = null;
     try {
-      json = await res.json();
-    } catch (_) {
-      json = {};
-    }
-
-    if (res.ok && json && json.success === true) {
-      if (typeof showToast === "function") showToast(json.message || "Profile updated", "ok");
-      // update session values in UI where possible (page reload is safest)
-      setTimeout(() => window.location.reload(), 800);
+      data = await res.json();
+    } catch (e) {
+      if (typeof showToast === "function") showToast("Could not update profile", "error");
       return;
     }
 
-    // handle no-change
-    if (json && json.error_code === "no_change") {
-      if (typeof showToast === "function") showToast(json.message || "Please change something before updating", "error");
+    if (!res.ok || !data || data.success !== true) {
+      // Specific field errors
+      if (data && data.error_code === "no_change") {
+        if (typeof showToast === "function") showToast(data.message || "Please change something before updating", "error");
+        return;
+      }
+
+      if (data && data.error_code === "email_taken") {
+        if (typeof showToast === "function") showToast(data.message || "Email is already taken", "error");
+        const emailInput = form.querySelector('input[name="user_email"]');
+        if (emailInput) emailInput.focus();
+        return;
+      }
+
+      if (data && data.error_code === "username_taken") {
+        if (typeof showToast === "function") showToast(data.message || "Username is already taken", "error");
+        const usernameInput = form.querySelector('input[name="user_username"]');
+        if (usernameInput) usernameInput.focus();
+        return;
+      }
+
+      if (typeof showToast === "function") showToast((data && (data.message || data.error)) || "Could not update profile", "error");
       return;
     }
 
-    const msg = (json && (json.message || json.error)) || "Could not update profile";
-    if (typeof showToast === "function") showToast(msg, "error");
+    if (typeof showToast === "function") showToast(data.message || "Profile updated", "ok");
+    // reload so feed/nav/trending renders with new username
+    setTimeout(() => window.location.reload(), 600);
+    return;
   } catch (err) {
     if (typeof showToast === "function") showToast("Network error while updating profile", "error");
   }
