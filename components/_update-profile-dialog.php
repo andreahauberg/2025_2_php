@@ -13,7 +13,7 @@
         maxlength="20"
         placeholder="Name"
         value="<?php _($_SESSION["user"]["user_full_name"] ?? ''); ?>"
-        required
+    
       >
       <input
         name="user_username"
@@ -21,7 +21,7 @@
         maxlength="20"
         placeholder="Username"
         value="<?php _($_SESSION["user"]["user_username"] ?? ''); ?>"
-        required
+  
       >
       <input
         name="user_email"
@@ -29,7 +29,7 @@
         maxlength="50"
         placeholder="Email"
         value="<?php _($_SESSION["user"]["user_email"] ?? ''); ?>"
-        required
+
       >
       <button type="submit" class="x-dialog__btn">Update</button>
       <button type="button" class="x-dialog__btn_del">Delete</button>

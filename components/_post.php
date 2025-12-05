@@ -62,7 +62,7 @@
     <div class="comment-dialog" id="commentDialog_<?php _($post["post_pk"]); ?>" style="display: none;">
         <div class="comments-container" id="commentsContainer_<?php _($post["post_pk"]); ?>"></div>
         <form class="comment-form" data-post-pk="<?php _($post["post_pk"]); ?>">
-            <textarea name="comment_message" placeholder="Write a comment..." required></textarea>
+            <textarea name="comment_message" placeholder="Write a comment..."></textarea>
             <button class="comment-form_btn" type="submit">Comment</button>
         </form>
     </div>

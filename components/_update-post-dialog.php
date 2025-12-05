@@ -21,7 +21,7 @@ if ($updateActive) {
     <form class="x-dialog__form" action="api-update-post" method="POST" autocomplete="off">
     <input type="hidden" name="post_pk" id="postPkInput" value="<?php _($updatePk, ENT_QUOTES, 'UTF-8'); ?>">
     <input type="hidden" name="redirect_to" id="redirectToInput" value="">
-      <textarea type="text" maxlength="200" name="post_message" id="postMessageInput" placeholder="Your post message here" required <?php echo $updateActive ? 'autofocus' : ''; ?>><?php _($updateMessage, ENT_QUOTES, 'UTF-8'); ?></textarea>
+      <textarea type="text" maxlength="200" name="post_message" id="postMessageInput" placeholder="Your post message here" <?php echo $updateActive ? 'autofocus' : ''; ?>><?php _($updateMessage, ENT_QUOTES, 'UTF-8'); ?></textarea>
     <button type="submit" class="x-dialog__btn">Update</button>
     <button type="button" class="x-dialog__btn_del" id="deletePostBtn">Delete</button>
 
