@@ -25,3 +25,4 @@ get('/api-follow', 'api/api-follow.php');
 get('/api-unfollow', 'api/api-unfollow.php');
 
 any('/404','views/404.php');
+get('/verify-email', 'api/api-verify-email.php');
