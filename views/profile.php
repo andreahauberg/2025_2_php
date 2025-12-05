@@ -65,7 +65,7 @@ $q = "
   JOIN users ON follows.follow_user_fk = users.user_pk
   WHERE follows.follower_user_fk = :currentUserPk
     AND users.deleted_at IS NULL
-    LIMIT 10
+        LIMIT 3
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
@@ -83,7 +83,7 @@ $q = "
   )
     AND users.deleted_at IS NULL
   ORDER BY RAND()
-  LIMIT 3
+    LIMIT 3
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
@@ -167,6 +167,9 @@ require __DIR__ . '/../components/_header.php';
             <?php endif; ?>
         </main>
 
-        <?php require __DIR__ . '/../components/_aside.php'; ?>
+        <?php
+        // ensure aside uses same follow limit
+        $followLimit = $followLimit ?? 3;
+        require __DIR__ . '/../components/_aside.php'; ?>
 
         <?php require __DIR__ . '/../components/_footer.php'; ?>

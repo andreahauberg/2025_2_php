@@ -109,7 +109,7 @@ $q = "
     WHERE follows.follow_user_fk = :userPk
     AND users.user_pk != :currentUserPk
     AND users.deleted_at IS NULL
-  LIMIT 10
+    LIMIT 3
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
@@ -186,7 +186,10 @@ require __DIR__ . '/../components/_header.php';
     <?php endif; ?>
 </main>
 
-<?php require __DIR__ . '/../components/_aside.php'; ?>
+<?php
+// ensure aside uses same follow limit
+$followLimit = $followLimit ?? 3;
+require __DIR__ . '/../components/_aside.php'; ?>
 
 <?php require __DIR__ . '/../components/_footer.php'; ?>
 
