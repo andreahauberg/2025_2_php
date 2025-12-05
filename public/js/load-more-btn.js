@@ -1,211 +1,229 @@
-document.addEventListener("DOMContentLoaded", () => {
-  function setupLoadMore({ buttonId, listId, url, defaultLimit = 10, handleNonOk, renderItem }) {
-    const btn = document.getElementById(buttonId);
-    const list = document.getElementById(listId);
-    if (!btn || !list) return;
+function setupLoadMore({ buttonId, listId, url, defaultLimit = 10, handleNonOk, renderItem }) {
+  const btn = document.getElementById(buttonId);
+  const list = document.getElementById(listId);
+  if (!btn || !list) return;
 
-    const initialCount = Number(btn.dataset.initial || list.children.length || 0);
-    const maxItems = Number(btn.dataset.max || Infinity);
+  const initialCount = Number(btn.dataset.initial || list.children.length || 0);
+  const maxItems = Number(btn.dataset.max || Infinity);
 
-    btn.dataset.mode = btn.dataset.mode || "more";
-    btn.dataset.offset = btn.dataset.offset || initialCount;
+  btn.dataset.mode = btn.dataset.mode || "more";
+  btn.dataset.offset = btn.dataset.offset || initialCount;
 
-    const userPk = btn.dataset.userPk || null;
+  const userPk = btn.dataset.userPk || null;
 
-    btn.addEventListener("click", async () => {
-      const mode = btn.dataset.mode;
+  btn.addEventListener("click", async () => {
+    const mode = btn.dataset.mode;
 
-      // --------- SHOW LESS ----------
-      if (mode === "less") {
-        while (list.children.length > initialCount) {
-          list.removeChild(list.lastElementChild);
-        }
-        btn.dataset.mode = "more";
-        btn.textContent = "Show more";
-        btn.style.display = "";
-        btn.dataset.offset = initialCount;
-        return;
+    // --------- SHOW LESS ----------
+    if (mode === "less") {
+      console.debug("[load-more] show less clicked", { buttonId, initialCount, current: list.children.length });
+      while (list.children.length > initialCount) {
+        list.removeChild(list.lastElementChild);
+      }
+      btn.dataset.mode = "more";
+      btn.textContent = "Show more";
+      btn.style.display = "";
+      btn.dataset.offset = initialCount;
+      return;
+    }
+
+    // --------- SHOW MORE ----------
+    const offset = Number(btn.dataset.offset);
+    const limit = Number(btn.dataset.limit || defaultLimit);
+
+    // byg URL på en sikker måde (også hvis der er query på forhånd)
+    const requestUrl = new URL(url, window.location.origin);
+    requestUrl.searchParams.set("offset", offset);
+    requestUrl.searchParams.set("limit", limit);
+    if (userPk) requestUrl.searchParams.set("user_pk", userPk);
+
+    try {
+      const res = await fetch(requestUrl.toString());
+      if (!res.ok) {
+        if (handleNonOk && handleNonOk(res, btn) === false) return;
+        throw new Error(`Request failed with status ${res.status}`);
       }
 
-      // --------- SHOW MORE ----------
-      const offset = Number(btn.dataset.offset);
-      const limit = Number(btn.dataset.limit || defaultLimit);
-      const requestUrl = new URL(url, window.location.origin);
-      requestUrl.searchParams.set("offset", offset);
-      requestUrl.searchParams.set("limit", limit);
-      if (userPk) requestUrl.searchParams.set("user_pk", userPk);
-
-      try {
-        const res = await fetch(requestUrl.toString());
-        if (!res.ok) {
-          if (handleNonOk && handleNonOk(res, btn) === false) return;
-          throw new Error(`Request failed with status ${res.status}`);
-        }
-
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) {
-          // ikke mere data → skjul knap
-          btn.style.display = "none";
-          return;
-        }
-
-        data.forEach((item) => renderItem(item, list));
-
-        // MixHTML: init nye knapper
-        if (typeof window.mix_convert === "function") {
-          try {
-            window.mix_convert();
-          } catch (err) {
-            console.warn("mix_convert failed", err);
-          }
-        }
-
-        const total = list.children.length;
-        btn.dataset.offset = offset + data.length;
-
-        if (total >= maxItems) {
-          // vi har nået max -> gå i "show less"-tilstand
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        // ingen flere data fra server
+        const totalNow = list.children.length;
+        if (totalNow > initialCount) {
+          // Vi har udvidet listen tidligere — skift til "Show less" i stedet for at skjule knappen
           btn.dataset.mode = "less";
           btn.textContent = "Show less";
           btn.style.display = "";
-        } else if (data.length < limit) {
-          // mindre end limit tilbage → ingen flere sider
-          btn.style.display = "none";
         } else {
-          // der *kan* stadig være mere → behold "show more"
-          btn.dataset.mode = "more";
-          btn.textContent = "Show more";
-          btn.style.display = "";
+          // Intet at vise overhovedet
+          btn.style.display = "none";
         }
-      } catch (err) {
-        console.error("Load-more error:", err);
+        return;
       }
-    });
-  }
 
-  // ---------------------------------------------------
-  // HJÆLPER TIL FOLLOW / UNFOLLOW / FOLLOWERS
-  // ----------------------------------------------------
-  function renderUserRow(user, list, { buttonText, buttonClass, endpoint }) {
-    const a = document.createElement("a");
-    a.href = `/user?user_pk=${user.user_pk}`;
-    a.className = "profile-info";
-    a.id = user.user_pk;
+      data.forEach((item) => renderItem(item, list));
 
-    const img = document.createElement("img");
-    img.src = user.user_avatar || "/public/img/avatar.jpg";
-    img.className = "profile-avatar";
+      // MixHTML: init nye knapper
+      if (typeof window.mix_convert === "function") {
+        try {
+          window.mix_convert();
+        } catch (err) {
+          console.warn("mix_convert failed", err);
+        }
+      }
 
-    const info = document.createElement("div");
-    info.className = "info-copy";
+      const total = list.children.length;
+      btn.dataset.offset = offset + data.length;
+      console.debug("[load-more] appended items", { id: buttonId, appended: data.length, total });
 
-    const nameEl = document.createElement("p");
-    nameEl.className = "name";
-    nameEl.textContent = user.user_full_name;
+      if (total >= maxItems) {
+        // vi har nået max -> gå i "show less"-tilstand
+        btn.dataset.mode = "less";
+        btn.textContent = "Show less";
+        btn.style.display = "";
+      } else if (data.length < limit) {
+        // mindre end limit tilbage → hvis vi nu har flere items end initialCount, skift til "Show less",
+        // ellers skjul knappen (ingen flere items på listen)
+        if (total > initialCount) {
+          btn.dataset.mode = "less";
+          btn.textContent = "Show less";
+          btn.style.display = "";
+        } else {
+          btn.style.display = "none";
+        }
+      } else {
+        // der *kan* stadig være mere → behold "show more"
+        btn.dataset.mode = "more";
+        btn.textContent = "Show more";
+        btn.style.display = "";
+      }
+    } catch (err) {
+      console.error("Load-more error:", err);
+    }
+  });
+}
 
-    const handleEl = document.createElement("p");
-    handleEl.className = "handle";
-    handleEl.textContent = `@${user.user_username}`;
+// ---------------------------------------------------
+// HJÆLPER TIL FOLLOW / UNFOLLOW / FOLLOWERS
+// ----------------------------------------------------
+function renderUserRow(user, list, { buttonText, buttonClass, endpoint }) {
+  const a = document.createElement("a");
+  a.href = `/user?user_pk=${user.user_pk}`;
+  a.className = "profile-info";
+  a.id = user.user_pk;
 
-    info.append(nameEl, handleEl);
+  const img = document.createElement("img");
+  img.src = user.user_avatar || "/public/img/avatar.jpg";
+  img.className = "profile-avatar";
 
-    const btn = document.createElement("button");
-    btn.className = `${buttonClass} button-${user.user_pk}`;
-    btn.setAttribute("mix-get", `${endpoint}?user-pk=${user.user_pk}`);
-    btn.textContent = buttonText;
+  const info = document.createElement("div");
+  info.className = "info-copy";
 
-    a.append(img, info, btn);
-    list.appendChild(a);
-  }
+  const nameEl = document.createElement("p");
+  nameEl.className = "name";
+  nameEl.textContent = user.user_full_name;
 
-  // ----------------------------------------------------
-  // TRENDING
-  // ----------------------------------------------------
-  setupLoadMore({
-    buttonId: "trendingShowMore",
-    listId: "trendingList",
-    url: "/api/_api-get-trending.php",
-    defaultLimit: 2,
-    renderItem(item, list) {
-      const raw = (item.topic || "").trim();
-      const tag = raw || "#?";
-      const clean = tag.startsWith("#") ? tag.slice(1) : tag;
+  const handleEl = document.createElement("p");
+  handleEl.className = "handle";
+  handleEl.textContent = `@${user.user_username}`;
 
-      const div = document.createElement("div");
-      div.className = "trending-item";
-      div.innerHTML = `
+  info.append(nameEl, handleEl);
+
+  const btn = document.createElement("button");
+  btn.className = `${buttonClass} button-${user.user_pk}`;
+  btn.setAttribute("mix-get", `${endpoint}?user-pk=${user.user_pk}`);
+  btn.textContent = buttonText;
+
+  a.append(img, info, btn);
+  list.appendChild(a);
+}
+
+// ----------------------------------------------------
+// TRENDING
+// ----------------------------------------------------
+setupLoadMore({
+  buttonId: "trendingShowMore",
+  listId: "trendingList",
+  url: "/api/_api-get-trending.php",
+  defaultLimit: 2,
+  renderItem(item, list) {
+    const raw = (item.topic || "").trim();
+    const tag = raw || "#?";
+    const clean = tag.startsWith("#") ? tag.slice(1) : tag;
+
+    const div = document.createElement("div");
+    div.className = "trending-item";
+    div.innerHTML = `
         <div class="trending-info">
           <span class="item_title">Trending · ${item.post_count} posts</span>
           <p><a href="/hashtag/${clean}" class="hashtag-link">${tag}</a></p>
         </div>
         <span class="option">⋮</span>
       `;
-      list.appendChild(div);
-    },
-  });
+    list.appendChild(div);
+  },
+});
 
-  // ----------------------------------------------------
-  // WHO TO FOLLOW
-  // ----------------------------------------------------
-  setupLoadMore({
-    buttonId: "followShowMore",
-    listId: "whoToFollowList",
-    url: "/api/_api-get-who-to-follow.php",
-    defaultLimit: 3,
-    handleNonOk(res, btn) {
-      if (res.status === 401) {
-        btn.style.display = "none";
-        return false;
-      }
-      return true;
-    },
-    renderItem(user, list) {
-      renderUserRow(user, list, {
-        buttonText: "Follow",
-        buttonClass: "follow-btn",
-        endpoint: "api-follow",
-      });
-    },
-  });
+// ----------------------------------------------------
+// WHO TO FOLLOW
+// ----------------------------------------------------
+setupLoadMore({
+  buttonId: "followShowMore",
+  listId: "whoToFollowList",
+  url: "/api/_api-get-who-to-follow.php",
+  defaultLimit: 3,
+  handleNonOk(res, btn) {
+    if (res.status === 401) {
+      btn.style.display = "none";
+      return false;
+    }
+    return true;
+  },
+  renderItem(user, list) {
+    renderUserRow(user, list, {
+      buttonText: "Follow",
+      buttonClass: "follow-btn",
+      endpoint: "api-follow",
+    });
+  },
+});
 
-  // ----------------------------------------------------
-  // PROFILE: FOLLOWING-LISTE (den du selv følger)
-  // ----------------------------------------------------
-  setupLoadMore({
-    buttonId: "followingShowMore",
-    listId: "followingList",
-    url: "/api/_api-get-following.php",
-    defaultLimit: 3,
-    handleNonOk(res, btn) {
-      if (res.status === 401) {
-        btn.style.display = "none";
-        return false;
-      }
-      return true;
-    },
-    renderItem(user, list) {
-      renderUserRow(user, list, {
-        buttonText: "Unfollow",
-        buttonClass: "unfollow-btn",
-        endpoint: "api-unfollow",
-      });
-    },
-  });
+// ----------------------------------------------------
+// PROFILE: FOLLOWING-LISTE (den du selv følger)
+// ----------------------------------------------------
+setupLoadMore({
+  buttonId: "followingShowMore",
+  listId: "followingList",
+  url: "/api/_api-get-following.php",
+  defaultLimit: 3,
+  handleNonOk(res, btn) {
+    if (res.status === 401) {
+      btn.style.display = "none";
+      return false;
+    }
+    return true;
+  },
+  renderItem(user, list) {
+    renderUserRow(user, list, {
+      buttonText: "Unfollow",
+      buttonClass: "unfollow-btn",
+      endpoint: "api-unfollow",
+    });
+  },
+});
 
-  // ----------------------------------------------------
-  // USER-PROFIL: FOLLOWERS
-  // ----------------------------------------------------
-  setupLoadMore({
-    buttonId: "followersShowMore",
-    listId: "followersList",
-    url: "/api/_api-get-followers.php",
-    defaultLimit: 3,
-    renderItem(user, list) {
-      renderUserRow(user, list, {
-        buttonText: "Follow",
-        buttonClass: "follow-btn",
-        endpoint: "api-follow",
-      });
-    },
-  });
+// ----------------------------------------------------
+// USER-PROFIL: FOLLOWERS
+// ----------------------------------------------------
+setupLoadMore({
+  buttonId: "followersShowMore",
+  listId: "followersList",
+  url: "/api/_api-get-followers.php",
+  defaultLimit: 3,
+  renderItem(user, list) {
+    renderUserRow(user, list, {
+      buttonText: "Follow",
+      buttonClass: "follow-btn",
+      endpoint: "api-follow",
+    });
+  },
 });
