@@ -263,10 +263,10 @@ document.addEventListener("submit", async (e) => {
       handleEl.textContent = handleEl.textContent.trim() + " · Redigeret";
     }
 
-    showToast((data && data.message) || "Kommentar opdateret", "ok");
+    showToast((data && data.message) || "Comment updated", "ok");
   } catch (err) {
     console.error("Error updating comment:", err);
-    showToast("Noget gik galt ved opdatering af kommentaren", "error");
+    showToast("Something went wrong while updating the comment", "error");
   }
 });
 
@@ -303,10 +303,10 @@ document.addEventListener("click", async (e) => {
     const userPk = commentBtn ? commentBtn.getAttribute("data-user-pk") : null;
     await loadComments(postPk, userPk);
 
-    showToast((data && data.message) || "Kommentar slettet", "ok");
+    showToast((data && data.message) || "Comment deleted", "ok");
   } catch (err) {
     console.error("Error deleting comment:", err);
-    showToast("Noget gik galt ved sletning af kommentaren", "error");
+    showToast("Something went wrong while deleting the comment", "error");
   }
 });
 
@@ -327,12 +327,12 @@ document.addEventListener("submit", async (e) => {
 
     // Kun succes hvis success === true
     if (!response.ok || !data || data.success !== true) {
-      const msg = (data && (data.error || data.message)) || "Noget gik galt ved oprettelse";
+      const msg = (data && (data.error || data.message)) || "Something went wrong while creating the comment";
       showToast(msg, "error");
       return;
     }
 
-    showToast(data.message || "Kommentar oprettet", "ok");
+    showToast(data.message || "Comment created", "ok");
 
     const commentBtn = document.querySelector(`.comment-btn[data-post-pk="${postPk}"]`);
     const userPk = commentBtn ? commentBtn.getAttribute("data-user-pk") : null;
@@ -341,6 +341,6 @@ document.addEventListener("submit", async (e) => {
     form.reset();
   } catch (err) {
     console.error("Error creating comment:", err);
-    showToast("Noget gik galt ved oprettelse", "error");
+    showToast("Something went wrong while creating the comment", "error");
   }
 });
