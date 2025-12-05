@@ -8,14 +8,12 @@ if (!$currentUser) {
 }
 require_once __DIR__ . "/../db.php";
 
-// Hent brugeren fra URL-parametre (f.eks. /user?user_pk=123)
 $userPk = $_GET['user_pk'] ?? null;
-if (!$userPk) {
-    header("location: /home");
+if ($userPk == $currentUser["user_pk"]) {
+    header("Location: /profile");
     exit();
 }
 
-// Hent den valgte bruger (skjul slettede profiler)
 $q = "SELECT * FROM users WHERE user_pk = :userPk AND deleted_at IS NULL";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
@@ -43,10 +41,8 @@ if ($requestedPostPk) {
     }
 }
 
-// Hent den loggede bruger
 $currentUserPk = $currentUser["user_pk"];
 
-// Tjek om den loggede bruger følger denne bruger
 $isFollowing = false;
 if ($currentUserPk !== $userPk) {
     $q = "SELECT COUNT(*) FROM follows WHERE follower_user_fk = :followerPk AND follow_user_fk = :followUserPk";
@@ -57,7 +53,6 @@ if ($currentUserPk !== $userPk) {
     $isFollowing = $stmt->fetchColumn() > 0;
 }
 
-// 1. Hent brugerens posts
 $q = "
   SELECT
     posts.post_pk,
@@ -145,7 +140,8 @@ require __DIR__ . '/../components/_header.php';
 <main>
     <div class="profile-header">
         <div class="profile-cover-container">
-            <img src="https://picsum.photos/600/200" alt="Cover" class="profile-cover">
+            <img src="<?php echo !empty($profileUser['user_cover']) ? $profileUser['user_cover'] : 'https://picsum.photos/600/200'; ?>"
+                alt="Cover" class="profile-cover">
             <div class="profile-cover-filter"></div>
         </div>
         <div class="profile-page-info">
