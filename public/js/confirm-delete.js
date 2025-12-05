@@ -88,40 +88,40 @@ document.addEventListener("submit", async function (e) {
     try {
       data = await res.json();
     } catch (e) {
-      if (typeof showToast === "function") showToast("Could not update profile", "error");
+      showToast("Could not update profile", "error");
       return;
     }
 
     if (!res.ok || !data || data.success !== true) {
       // Specific field errors
       if (data && data.error_code === "no_change") {
-        if (typeof showToast === "function") showToast(data.message || "Please change something before updating", "error");
+        showToast(data.message || "Please change something before updating", "error");
         return;
       }
 
       if (data && data.error_code === "email_taken") {
-        if (typeof showToast === "function") showToast(data.message || "Email is already taken", "error");
+        showToast(data.message || "Email is already taken", "error");
         const emailInput = form.querySelector('input[name="user_email"]');
         if (emailInput) emailInput.focus();
         return;
       }
 
       if (data && data.error_code === "username_taken") {
-        if (typeof showToast === "function") showToast(data.message || "Username is already taken", "error");
+        showToast(data.message || "Username is already taken", "error");
         const usernameInput = form.querySelector('input[name="user_username"]');
         if (usernameInput) usernameInput.focus();
         return;
       }
 
-      if (typeof showToast === "function") showToast((data && (data.message || data.error)) || "Could not update profile", "error");
+      showToast((data && (data.message || data.error)) || "Could not update profile", "error");
       return;
     }
 
-    if (typeof showToast === "function") showToast(data.message || "Profile updated", "ok");
+    showToast(data.message || "Profile updated", "ok");
     // reload so feed/nav/trending renders with new username
     setTimeout(() => window.location.reload(), 600);
     return;
   } catch (err) {
-    if (typeof showToast === "function") showToast("Network error while updating profile", "error");
+    showToast("Network error while updating profile", "error");
   }
 });

@@ -41,6 +41,7 @@ if ($user) {
     
     <script type="module" src="/public/js/app.js"></script>
     <script defer src="/public/js/dialog.js"></script>
+    <script src="/public/js/toast.js"></script>
     <script defer src="/public/js/comment.js"></script>
     <script defer src="/public/js/load-more-btn.js"></script>
 

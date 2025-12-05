@@ -1,23 +1,3 @@
-// ---------------- TOAST ----------------
-function showToast(message, type = "ok", ttl = 5000) {
-  let container = document.querySelector(".toast-container");
-  if (!container) {
-    container = document.createElement("div");
-    container.className = "toast-container";
-    document.body.appendChild(container);
-  }
-
-  const toast = document.createElement("div");
-  toast.className = "toast " + (type === "error" ? "toast-error" : "toast-ok");
-  toast.textContent = message;
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    setTimeout(() => toast.remove(), 500);
-  }, ttl);
-}
-
 // ------------- INLINE DELETE CONFIRM -------------
 function showDeleteConfirmInline(containerElement, message) {
   return new Promise((resolve) => {
@@ -70,7 +50,7 @@ function showDeleteConfirmInline(containerElement, message) {
   });
 }
 
-// ------------- FÆLLES POST-HJÆLPER -------------
+// ------------- POST-HJÆLPER -------------
 async function sendForm(url, payload) {
   const body = new URLSearchParams(payload).toString();
 
@@ -173,6 +153,7 @@ function createCommentElement(comment, userPk) {
   ta.name = "comment_message";
   ta.className = "edit-comment-textarea";
   ta.value = comment.comment_message || "";
+  ta.dataset.original = comment.comment_message || "";
 
   const saveBtn = document.createElement("button");
   saveBtn.type = "submit";
@@ -236,7 +217,15 @@ document.addEventListener("submit", async (e) => {
 
   const form = e.target;
   const commentPk = form.dataset.commentPk;
-  const message = form.querySelector("textarea").value;
+  const ta = form.querySelector("textarea");
+  const message = ta.value;
+  const original = ta.dataset.original !== undefined ? ta.dataset.original : ta.defaultValue || "";
+
+  // If no change was made, show an error toast and don't send the request
+  if ((message || "").trim() === (original || "").trim()) {
+    showToast("Please change something first", "error");
+    return;
+  }
 
   try {
     const { response, data } = await sendForm("/api-update-comment", {
@@ -245,7 +234,7 @@ document.addEventListener("submit", async (e) => {
     });
 
     if (!response.ok || data.success === false) {
-      const msg = (data && (data.error || data.message)) || "Noget gik galt ved opdatering af kommentaren";
+      const msg = (data && (data.error || data.message)) || "Something went wrong while updating the comment";
       showToast(msg, "error");
       return;
     }

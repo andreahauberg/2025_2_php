@@ -205,20 +205,12 @@
             if (data && data.success === true) {
               window.location.href = href;
             } else {
-              if (typeof showToast === "function") {
-                showToast("This post was deleted", "error");
-              } else {
-                alert("This post was deleted");
-              }
+              showToast("This post was deleted", "error");
             }
           })
           .catch((err) => {
             if (err.message === "not_found") {
-              if (typeof showToast === "function") {
-                showToast("This post was deleted", "error");
-              } else {
-                alert("This post was deleted");
-              }
+              showToast("This post was deleted", "error");
             } else {
               // network error — don't block navigation
               window.location.href = href;
