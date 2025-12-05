@@ -14,7 +14,6 @@ if (!in_array($type, ['avatar', 'cover'])) {
     exit();
 }
 
-// Validate file existence
 if (!isset($_FILES['file'])) {
     _toastError("No file received");
     header("Location: /profile");
