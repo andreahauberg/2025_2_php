@@ -7,7 +7,6 @@ try {
     $email    = _validateEmail();
     $password = _validatePassword();
 
-    // 1. Check if email exists
     $stmt = $_db->prepare("
         SELECT * 
         FROM users 
@@ -26,15 +25,13 @@ try {
         exit();
     }
 
-    // 2. Email exists, now check password
     if (!password_verify($password, $user['user_password'])) {
         _toastError("Incorrect password");
         $_SESSION['open_dialog'] = 'login';
         header("Location: /");
         exit();
     }
-
-    // 3. Optionally check email verification
+    
     if (!$user["user_is_verified"] && weaveIsProd()) {
         _toastError("Please verify your email before logging in");
         $_SESSION['open_dialog'] = 'login';
