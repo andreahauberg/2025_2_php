@@ -1,4 +1,11 @@
 <?php
+function weaveIsProd() {
+    $host = $_SERVER["HTTP_HOST"] ?? '';
+    return in_array($host, [
+        'michelleenoe.com',
+        'www.michelleenoe.com'
+    ]);
+}
 
 function _($text) {
     echo htmlspecialchars($text);
@@ -11,16 +18,12 @@ function _noCache(){
     header('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
 }
 
-
-
 define("postMinLength", 1);
 define("postMaxLength", 200);
 function _validatePost() {
     $postMessage = trim($_POST['post_message']);
     $len = strlen($postMessage);
-
     if ($len < postMinLength || $len > postMaxLength) {
-        //throw new Exception("Message must be between " . postMinLength . " and " . postMaxLength . " characters");
         throw new Exception("Post cannot be empty, must be at least ".postMinLength." characters long", 400);
     }
     return $postMessage;
@@ -29,7 +32,6 @@ function _validatePost() {
 define("emailMin", 6);
 define("emailMax", 50);
 function _validateEmail(){
-
     $userEmail = $_POST["user_email"];
     if(strlen($userEmail) < emailMin){
         _toastError("Email must be at least ".emailMin." characters long");
@@ -40,14 +42,11 @@ function _validateEmail(){
         throw new Exception("Email must be max ".emailMax." characters long", 400);
     }
     return $userEmail;
-
 }
-
 
 define("passwordMin", 6);
 define("passwordMax", 50);
 function _validatePassword(){
-
     $userPassword = trim($_POST["user_password"]);
     if(strlen($userPassword) < passwordMin){
         _toastError("Password must be at least ".passwordMin." characters long");
@@ -58,8 +57,6 @@ function _validatePassword(){
         throw new Exception("Password must be max ".passwordMax." characters long", 400);
     }
     return $userPassword;
-
-
 }
 
 define("userFullNameMin", 1);
@@ -88,6 +85,10 @@ function _validateUsername(){
     return $username;
 }
 
+define("REGEX_FULLNAME", "^.{".userFullNameMin.",".userFullNameMax."}$");
+define("REGEX_USERNAME", "^.{".usernameMin.",".usernameMax."}$");
+define("REGEX_EMAIL", "^.{".emailMin.",".emailMax."}$");
+define("REGEX_PASSWORD", "^.{".passwordMin.",".passwordMax."}$");
 
 define("pkMinLength", 1);
 define("pkMaxLength", 50);
@@ -105,32 +106,21 @@ function _validatePk($fieldName) {
 define("commentMinLength", 1);
 define("commentMaxLength", 200);
 function _validateComment($text = null){
-    // validere at det er tekst og ellers brug det fra post feltet
     if ($text === null) {
         $text = $_POST['comment_message'] ?? '';
     }
-
     $comment = trim((string)$text);
-
-    
     $len = strlen($comment);
-
     if ($len < commentMinLength) {
         throw new Exception("Comment cannot be empty, must be at least " . commentMinLength . " characters long", 400);
     }
     if ($len > commentMaxLength) {
         throw new Exception("Comment must be at most " . commentMaxLength . " characters long", 400);
     }
-
-
     return $comment;
 }
 
-
-
-// Helper funktion til at bestemme redirect path
 function _redirectPath(string $fallback = '/home'): string {
-    // prefer non-empty POST, then non-empty GET, then REFERER, then fallback
     if (!empty($_POST['redirect_to'])) {
         $redirect = $_POST['redirect_to'];
     } elseif (!empty($_GET['redirect_to'])) {
@@ -140,22 +130,16 @@ function _redirectPath(string $fallback = '/home'): string {
     } else {
         $redirect = $fallback;
     }
-
     $parsed = parse_url($redirect);
     $path   = $parsed['path'] ?? $fallback;
     $query  = isset($parsed['query']) ? ('?' . $parsed['query']) : '';
-
     $redirect = $path . $query;
-
     if (strpos($redirect, '/') !== 0) {
         $redirect = $fallback;
     }
-
     return $redirect;
 }
 
-
-//  TOAST helper funktion  
 function _setToast(string $message, string $type = 'ok'): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
@@ -174,19 +158,16 @@ function _toastError(string $message): void {
     _setToast($message, 'error');
 }
 
-//  toast + redirect + exit i én funktion
 function _toastRedirect(string $message, string $type, string $location): void {
     _setToast($message, $type);
     header("Location: $location");
     exit();
 }
 
-// LOGIN HELPER IF CHECK FOR USER LOGGED IN, REDIRECT IF NOT
 function _ensureLogin(string $redirect = '/'): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
-
     if (!isset($_SESSION['user'])) {
         _toastError('Not logged in, please login first');
         header("Location: $redirect");
@@ -194,10 +175,55 @@ function _ensureLogin(string $redirect = '/'): void {
     }
 }
 
-// USER HELPER TO GET CURRENT USER FROM SESSION
 function _currentUser(): ?array {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
     return $_SESSION['user'] ?? null;
+}
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+function sendWeaveMail($to, $subject, $body) {
+    $host = $_SERVER["HTTP_HOST"] ?? '';
+    $isProd =
+        $host === "michelleenoe.com" ||
+        $host === "www.michelleenoe.com";
+
+    if (!$isProd) {
+        file_put_contents(__DIR__ . "/../mail-log.txt",
+            "[" . date("Y-m-d H:i:s") . "] LOCAL MAIL SKIPPED → $to : $subject\n",
+            FILE_APPEND
+        );
+        return true;
+    }
+
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'websmtp.simply.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'hi@michelleenoe.com';
+        $mail->Password = 'DIN_MAIL_ADGANGSKODE';
+        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+        $mail->setFrom('hi@michelleenoe.com', 'Weave');
+        $mail->addAddress($to);
+
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->isHTML(false);
+
+        return $mail->send();
+    } catch (Exception $e) {
+        file_put_contents(__DIR__ . "/../mail-errors.txt",
+            "[" . date("Y-m-d H:i:s") . "] MAIL ERROR → " . $e->getMessage() . "\n",
+            FILE_APPEND
+        );
+        return false;
+    }
 }
