@@ -19,6 +19,25 @@ try {
 
     require_once __DIR__ . '/../db.php';
 
+    // verify follow target exists and is not soft-deleted
+    $userSql = "SELECT user_pk FROM users WHERE user_pk = :followPk AND deleted_at IS NULL LIMIT 1";
+    $userStmt = $_db->prepare($userSql);
+    $userStmt->bindValue(':followPk', $followPk);
+    $userStmt->execute();
+
+    if (!$userStmt->fetchColumn()) {
+        // user doesn't exist or is soft-deleted
+        http_response_code(404);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success'    => false,
+            'error'      => 'User was deleted',
+            'error_code' => 'user_deleted',
+            'user_pk'    => $followPk,
+        ]);
+        exit();
+    }
+
     // Tjek om brugeren allerede følger
     $checkSql = "SELECT * FROM follows WHERE follower_user_fk = :followerPk AND follow_user_fk = :followPk";
     $checkStmt = $_db->prepare($checkSql);

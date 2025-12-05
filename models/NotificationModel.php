@@ -7,7 +7,8 @@ class NotificationModel {
         global $_db;
 
         // find followers: users who follow the actor
-        $q = "SELECT follower_user_fk FROM follows WHERE follow_user_fk = :actor";
+        // only notify followers that still exist (not soft-deleted)
+        $q = "SELECT f.follower_user_fk FROM follows f JOIN users u ON f.follower_user_fk = u.user_pk WHERE f.follow_user_fk = :actor AND u.deleted_at IS NULL";
         $stmt = $_db->prepare($q);
         $stmt->bindValue(':actor', $actorPk);
         $stmt->execute();
@@ -25,8 +26,7 @@ class NotificationModel {
 
             $count = 0;
             foreach ($followers as $followerPk) {
-                $notifPk = bin2hex(random_bytes(50)); // 100 hex chars -> varchar(100)
-                // execute with values array to avoid any leftover bindings
+                $notifPk = bin2hex(random_bytes(50)); 
                 $insert->execute([
                     ':pk' => $notifPk,
                     ':user_fk' => $followerPk,
@@ -51,13 +51,36 @@ class NotificationModel {
      */
     public function countUnreadForUser(string $userPk): int {
         global $_db;
+        $q = "
+            SELECT COUNT(*)
+            FROM notifications n
+            JOIN users a ON a.user_pk = n.notification_actor_fk
+            WHERE n.notification_user_fk = :user
+              AND n.is_read = 0
+              AND (n.deleted_at IS NULL OR n.deleted_at = '0000-00-00 00:00:00')
+              AND a.deleted_at IS NULL
+              AND (n.notification_post_fk IS NOT NULL)
+        ";
 
-        $q = "SELECT COUNT(*) FROM notifications WHERE notification_user_fk = :user AND is_read = 0";
         $stmt = $_db->prepare($q);
         $stmt->bindValue(':user', $userPk);
         $stmt->execute();
-        $count = $stmt->fetchColumn();
 
-        return (int) $count;
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Delete notifications related to a user (actor or recipient).
+     * Returns number of deleted rows.
+     */
+    public function deleteForUser(string $userPk): int {
+        global $_db;
+
+        $sql = "DELETE FROM notifications WHERE notification_actor_fk = :user OR notification_user_fk = :user";
+        $stmt = $_db->prepare($sql);
+        $stmt->bindValue(':user', $userPk);
+        $stmt->execute();
+
+        return $stmt->rowCount();
     }
 }

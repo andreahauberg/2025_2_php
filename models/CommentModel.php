@@ -35,10 +35,11 @@ class CommentModel
     public function getByPost(string $postPk, ?int $limit = null, ?int $offset = null): array
     {
         $sql = "SELECT c.*, u.user_full_name, u.user_handle
-                FROM comments c
-                LEFT JOIN users u ON u.user_pk = c.comment_user_fk
-                WHERE c.comment_post_fk = :post_pk AND c.deleted_at IS NULL
-                ORDER BY c.comment_created_at DESC";
+            FROM comments c
+            LEFT JOIN users u ON u.user_pk = c.comment_user_fk
+            WHERE c.comment_post_fk = :post_pk AND c.deleted_at IS NULL
+              AND (u.deleted_at IS NULL OR u.user_pk IS NULL)
+            ORDER BY c.comment_created_at DESC";
 
         if ($limit !== null) {
             $sql .= " LIMIT :limit";

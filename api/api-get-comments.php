@@ -20,9 +20,10 @@ try {
             comments.comment_user_fk,
             users.user_full_name,
             users.user_username
-        FROM comments
-        JOIN users ON comments.comment_user_fk = users.user_pk
-        WHERE comments.comment_post_fk = :postPk AND comments.deleted_at IS NULL
+                FROM comments
+                JOIN users ON comments.comment_user_fk = users.user_pk
+                WHERE comments.comment_post_fk = :postPk AND comments.deleted_at IS NULL
+                    AND users.deleted_at IS NULL
         ORDER BY comments.comment_created_at DESC
     ";
     $stmt = $_db->prepare($sql);

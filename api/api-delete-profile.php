@@ -15,15 +15,52 @@ try {
 
     $user_id = $user['user_pk'];
 
-    $sql = "UPDATE users SET deleted_at = NOW() WHERE user_pk = :user_pk";
+    // soft-delete the user
+    $sql = "UPDATE users SET deleted_at = NOW() WHERE user_pk = :user_pk AND deleted_at IS NULL";
     $stmt = $_db->prepare($sql);
     $stmt->bindValue(":user_pk", $user_id);
     $stmt->execute();
 
-    // destroy the existing session to log the user out
-    session_destroy();
+    // user's posts
+    $sql = "UPDATE posts SET deleted_at = NOW() WHERE post_user_fk = :user_pk AND deleted_at IS NULL";
+    $stmt = $_db->prepare($sql);
+    $stmt->bindValue(":user_pk", $user_id);
+    $stmt->execute();
 
-    // use toast helper to notify and redirect (will start a fresh session for the toast)
+    // user's comments
+    $sql = "UPDATE comments SET deleted_at = NOW() WHERE comment_user_fk = :user_pk AND deleted_at IS NULL";
+    $stmt = $_db->prepare($sql);
+    $stmt->bindValue(":user_pk", $user_id);
+    $stmt->execute();
+
+    // remove likes by the user 
+    $sql = "DELETE FROM likes WHERE like_user_fk = :user_pk";
+    $stmt = $_db->prepare($sql);
+    $stmt->bindValue(":user_pk", $user_id);
+    $stmt->execute();
+
+    // remove follow relations involving this user
+    $sql = "DELETE FROM follows WHERE follow_user_fk = :user_pk OR follower_user_fk = :user_pk";
+    $stmt = $_db->prepare($sql);
+    $stmt->bindValue(":user_pk", $user_id);
+    $stmt->execute();
+
+    // 6) remove notifications where this user is actor or recipient
+    try {
+        require_once __DIR__ . '/../models/NotificationModel.php';
+        $nm = new NotificationModel();
+        $nm->deleteForUser($user_id);
+    } catch (Exception $_e) {
+       
+    }
+
+    // log the user out
+    if (session_status() !== PHP_SESSION_NONE) {
+        session_unset();
+        session_destroy();
+    }
+
+    // set a toast and redirect to homepage
     _toastRedirect('Profile was deleted', 'ok', '/');
 
 } catch (Exception $e) {

@@ -53,6 +53,7 @@ class PostModel {
             FROM posts p
             JOIN users u ON u.user_pk = p.post_user_fk
             WHERE p.deleted_at IS NULL
+                            AND u.deleted_at IS NULL
               AND p.post_message REGEXP :pattern
             ORDER BY p.created_at DESC
         ";
@@ -83,6 +84,7 @@ class PostModel {
             JOIN users u ON u.user_pk = p.post_user_fk
             WHERE p.deleted_at IS NULL
               AND p.post_pk = :id
+                            AND u.deleted_at IS NULL
             LIMIT 1
         ";
 
@@ -105,7 +107,7 @@ class PostModel {
 
             // comment count
             $stmt = $_db->prepare(
-                "SELECT COUNT(*) FROM comments WHERE comment_post_fk = :id"
+                "SELECT COUNT(*) FROM comments WHERE comment_post_fk = :id AND deleted_at IS NULL"
             );
             $stmt->bindValue(":id", $post["post_pk"]);
             $stmt->execute();
@@ -113,7 +115,7 @@ class PostModel {
 
             // like count
             $stmt = $_db->prepare(
-                "SELECT COUNT(*) FROM likes WHERE like_post_fk = :id"
+                "SELECT COUNT(*) FROM likes l JOIN users u ON l.like_user_fk = u.user_pk WHERE l.like_post_fk = :id AND u.deleted_at IS NULL"
             );
             $stmt->bindValue(":id", $post["post_pk"]);
             $stmt->execute();

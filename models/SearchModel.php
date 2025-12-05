@@ -14,9 +14,10 @@ class SearchModel {
                 user_email
             FROM users
             WHERE 
-                user_username LIKE :q
+                (user_username LIKE :q
                 OR user_full_name LIKE :q
-                OR user_email LIKE :q
+                OR user_email LIKE :q)
+                AND deleted_at IS NULL
             LIMIT 25
         ";
 
@@ -40,6 +41,8 @@ class SearchModel {
             FROM posts
             JOIN users ON posts.post_user_fk = users.user_pk
             WHERE posts.post_message LIKE :q
+            AND posts.deleted_at IS NULL
+            AND users.deleted_at IS NULL
             LIMIT 25
         ";
 
@@ -64,6 +67,8 @@ class SearchModel {
             FROM posts
             JOIN users ON posts.post_user_fk = users.user_pk
             WHERE posts.post_message REGEXP :tag
+            AND posts.deleted_at IS NULL
+            AND users.deleted_at IS NULL
             LIMIT 50
         ";
 

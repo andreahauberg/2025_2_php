@@ -8,14 +8,11 @@ if (!isset($_SESSION['user'])) {
 }
 
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../models/NotificationModel.php';
 
 try {
-    $q = "SELECT COUNT(*) AS cnt FROM notifications WHERE notification_user_fk = :user AND is_read = 0 AND notification_post_fk IS NOT NULL";
-    $stmt = $_db->prepare($q);
-    $stmt->bindValue(':user', $_SESSION['user']['user_pk']);
-    $stmt->execute();
-    $row = $stmt->fetch();
-    $count = $row ? (int)$row['cnt'] : 0;
+    $nm = new NotificationModel();
+    $count = $nm->countUnreadForUser($_SESSION['user']['user_pk']);
 
     echo json_encode(["success" => true, "unread_count" => $count]);
     exit();

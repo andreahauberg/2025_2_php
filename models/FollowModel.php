@@ -10,6 +10,7 @@ class FollowModel {
             SELECT users.*
             FROM users
             WHERE users.user_pk != :user
+              AND users.deleted_at IS NULL
               AND users.user_pk NOT IN (
                 SELECT follow_user_fk
                 FROM follows

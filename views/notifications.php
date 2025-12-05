@@ -24,6 +24,7 @@ $q = "
     FROM notifications n
     JOIN users u ON n.notification_actor_fk = u.user_pk
     WHERE n.notification_user_fk = :user
+    AND u.deleted_at IS NULL
     AND n.notification_post_fk IS NOT NULL
     ORDER BY n.created_at DESC
 ";
