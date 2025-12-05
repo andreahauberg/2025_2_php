@@ -86,20 +86,26 @@ document.addEventListener("submit", async function (e) {
     });
 
     let json = {};
+    let contentType = res.headers.get("Content-Type") || res.headers.get("content-type") || "";
     try {
       json = await res.json();
     } catch (_) {
       json = {};
     }
 
-    if (res.ok && json.success === true) {
+    if (res.ok && json && json.success === true) {
       if (typeof showToast === "function") showToast(json.message || "Profile updated", "ok");
       // update session values in UI where possible (page reload is safest)
       setTimeout(() => window.location.reload(), 800);
       return;
     }
 
-    // handle errors
+    // handle no-change
+    if (json && json.error_code === "no_change") {
+      if (typeof showToast === "function") showToast(json.message || "Please change something before updating", "error");
+      return;
+    }
+
     const msg = (json && (json.message || json.error)) || "Could not update profile";
     if (typeof showToast === "function") showToast(msg, "error");
   } catch (err) {

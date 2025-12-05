@@ -4,6 +4,13 @@ session_start();
 require_once __DIR__ . '/../x.php';
 _ensureLogin('/');
 
+// Detect AJAX / JSON request
+$isAjax =
+    (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+    || (!empty($_SERVER['HTTP_ACCEPT']) &&
+        strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+
 try {
     $user = $_SESSION["user"];
 
