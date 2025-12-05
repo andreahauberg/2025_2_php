@@ -99,7 +99,6 @@ try {
     _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'signup';
 
-    // NEW: Preserve old input + error field
     $_SESSION['signup_old'] = $_POST;
     $_SESSION['signup_error_field'] = $e->getMessage();
 
