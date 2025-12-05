@@ -64,12 +64,19 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         <h2>Followers</h2>
 
         <?php if (!empty($followers)): ?>
-            <div class="follow-suggestion">
+            <div class="follow-suggestion" id="followersList">
                 <?php foreach ($followers as $follower): ?>
                     <?php $user = $follower; ?>
                     <?php require __DIR__ . '/_follow_tag_user.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <?php
+                $initialFollowersCount = isset($initialFollowersCount) ? $initialFollowersCount : count($followers);
+                $profileUserPk = $profileUser['user_pk'] ?? ($user['user_pk'] ?? null);
+            ?>
+            <?php if ($initialFollowersCount > 0): ?>
+                <button id="followersShowMore" class="show-more-btn" data-offset="<?= $initialFollowersCount ?>" data-limit="3" data-initial="<?= $initialFollowersCount ?>" data-max="100" data-user-pk="<?= htmlspecialchars($profileUserPk) ?>">Show more</button>
+            <?php endif; ?>
         <?php else: ?>
             <p>No followers yet.</p>
         <?php endif; ?>

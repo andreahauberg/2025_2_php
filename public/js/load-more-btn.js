@@ -29,7 +29,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const limit = parseInt(btn.dataset.limit || String(defaultLimit), 10);
 
       try {
-        const res = await fetch(`${url}?offset=${offset}&limit=${limit}`);
+        // build url and include optional user_pk from the button dataset
+        let queryUrl = url;
+        const hasQuery = queryUrl.indexOf("?") !== -1;
+        queryUrl += (hasQuery ? "&" : "?") + `offset=${offset}&limit=${limit}`;
+        if (btn.dataset.userPk) {
+          queryUrl += `&user_pk=${encodeURIComponent(btn.dataset.userPk)}`;
+        }
+
+        const res = await fetch(queryUrl);
         if (!res.ok) {
           if (handleNonOk && handleNonOk(res, btn) === false) return;
           throw new Error(`Request failed with status ${res.status}`);
@@ -188,5 +196,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return true;
     },
     renderItem: renderFollowingItem,
+  });
+
+  // Load more for followers on a user profile
+  setupLoadMore({
+    buttonId: "followersShowMore",
+    listId: "followersList",
+    url: "/api/_api-get-followers.php",
+    defaultLimit: 3,
+    renderItem: renderFollowSuggestion,
   });
 });
