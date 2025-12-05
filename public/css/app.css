@@ -914,7 +914,6 @@ aside {
   margin-right: 5px;
 }
 
-/********* toast *****************/
 .toast-container {
   position: fixed;
   top: 20px;
@@ -1057,12 +1056,10 @@ aside {
   font-weight: 600;
 }
 
-/* allow scrolling to posts without being hidden under fixed nav */
 .post {
   scroll-margin-top: 90px;
 }
 
-/* highlight when navigated-to */
 .post--highlight,
 .post:target {
   background-color: rgba(29, 155, 240, 0.08);
@@ -1096,8 +1093,6 @@ aside {
   background: #fff0f0;
   border-color: #e6a3a3;
 }
-
-/* Notification row layout */
 .notification-row {
   display: flex;
   align-items: center;
@@ -1112,7 +1107,6 @@ aside {
 }
 
 .notifications-list .notif-actions {
-  /* keep actions on the right; ensure they don't overlap delete btn and mark btn */
   position: absolute;
   right: 0.8rem;
   top: 1rem;
@@ -1164,4 +1158,28 @@ aside {
 
 .avatar-menu-item:hover {
   background: #f2f2f2;
+}
+
+.x-dialog__form input.x-error {
+  border: 2px solid #f4212e !important;
+  background-color: #fff5f5 !important;
+}
+
+.x-dialog__form input.x-valid {
+  border: 2px solid #38a169 !important;
+  background-color: #f4faff !important;
+}
+
+.x-dialog__form input.x-error:focus,
+.x-dialog__form input.x-valid:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.x-dialog__form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  margin-bottom: -0.3rem;
+  color: #0f1419;
 }
