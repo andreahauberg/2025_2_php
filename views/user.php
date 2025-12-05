@@ -71,7 +71,8 @@ $q = "
     users.user_avatar
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
-  WHERE posts.post_user_fk = :userPk AND posts.deleted_at IS NULL
+    WHERE posts.post_user_fk = :userPk AND posts.deleted_at IS NULL
+        AND users.deleted_at IS NULL
   ORDER BY posts.created_at DESC
 ";
 $stmt = $_db->prepare($q);

@@ -27,7 +27,8 @@ $q = "
     users.user_avatar
   FROM posts
   JOIN users ON posts.post_user_fk = users.user_pk
-  WHERE posts.post_user_fk = :currentUserPk AND posts.deleted_at IS NULL
+    WHERE posts.post_user_fk = :currentUserPk AND posts.deleted_at IS NULL
+        AND users.deleted_at IS NULL
   ORDER BY posts.created_at DESC
 ";
 $stmt = $_db->prepare($q);
@@ -63,7 +64,8 @@ $q = "
   FROM follows
   JOIN users ON follows.follow_user_fk = users.user_pk
   WHERE follows.follower_user_fk = :currentUserPk
-  LIMIT 10
+    AND users.deleted_at IS NULL
+    LIMIT 10
 ";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":currentUserPk", $currentUserPk);
@@ -74,11 +76,12 @@ $q = "
   SELECT users.*
   FROM users
   WHERE users.user_pk != :currentUserPk
-  AND users.user_pk NOT IN (
+    AND users.user_pk NOT IN (
     SELECT follow_user_fk
     FROM follows
     WHERE follower_user_fk = :currentUserPk
   )
+    AND users.deleted_at IS NULL
   ORDER BY RAND()
   LIMIT 3
 ";
