@@ -1,5 +1,4 @@
 <?php
-// åben når server er sat til `$_SESSION['open_dialog'] = 'signup'`
 $__signup_active = '';
 if (!empty($_SESSION['open_dialog']) && $_SESSION['open_dialog'] === 'signup') {
   $__signup_active = ' active';
