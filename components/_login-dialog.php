@@ -28,7 +28,7 @@ $passErr  = ($err === 'auth' || str_contains($err, 'Password'));
             <img src="/public/img/weave-logo.png" alt="Weave logo" class="x-dialog__logo">
         </div>
 
-        <h2 id="loginTitle">Log in</h2>
+        <h2 id="loginTitle">Log in to Weave</h2>
 
         <form class="x-dialog__form" action="bridge-login" method="POST" autocomplete="off">
 
