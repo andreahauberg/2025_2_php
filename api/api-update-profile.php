@@ -36,7 +36,46 @@ try {
         exit();
     }
 
+    // ensure DB is available for validation and update
     require_once __DIR__ . '/../db.php';
+
+    // Validate that the new email is not already used by another (non-deleted) user
+    $sqlCheck = "SELECT user_pk FROM users WHERE user_email = :email AND user_pk != :pk AND deleted_at IS NULL LIMIT 1";
+    $stmtCheck = $_db->prepare($sqlCheck);
+    $stmtCheck->bindValue(':email', $newEmail);
+    $stmtCheck->bindValue(':pk', $user['user_pk']);
+    $stmtCheck->execute();
+    $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+    if ($existing) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Email is already taken', 'error_code' => 'email_taken']);
+            exit();
+        }
+        _toastError('Email is already taken');
+        header('Location: /profile');
+        exit();
+    }
+    
+    // Validate that the new username is not already used by another (non-deleted) user
+    $sqlCheckUser = "SELECT user_pk FROM users WHERE user_username = :username AND user_pk != :pk AND deleted_at IS NULL LIMIT 1";
+    $stmtCheckUser = $_db->prepare($sqlCheckUser);
+    $stmtCheckUser->bindValue(':username', $newUsername);
+    $stmtCheckUser->bindValue(':pk', $user['user_pk']);
+    $stmtCheckUser->execute();
+    $existingUser = $stmtCheckUser->fetch(PDO::FETCH_ASSOC);
+    if ($existingUser) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Username is already taken', 'error_code' => 'username_taken']);
+            exit();
+        }
+        _toastError('Username is already taken');
+        header('Location: /profile');
+        exit();
+    }
     $sql = "UPDATE users SET user_email = :email, user_username = :username, user_full_name = :full_name, updated_at = NOW() WHERE user_pk = :pk AND deleted_at IS NULL";
     $stmt = $_db->prepare($sql);
     $stmt->bindParam(':email', $newEmail);
@@ -59,11 +98,66 @@ try {
     _toastRedirect('Profile updated', 'ok', '/profile');
     exit();
 } catch (Exception $e) {
-    if (!empty($isAjax)) {
-        header('Content-Type: application/json; charset=utf-8');
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    // duplicate constraint (email / username)
+    $isDuplicateEmail = false;
+    $isDuplicateUsername = false;
+    if ($e instanceof PDOException) {
+        $info = $e->errorInfo;
+        if (is_array($info) && !empty($info[1]) && intval($info[1]) === 1062) {
+            // Duplicate entry; check message for columns
+            $msg = isset($info[2]) ? $info[2] : $e->getMessage();
+            if (stripos($msg, 'user_email') !== false || stripos($msg, 'email') !== false) {
+                $isDuplicateEmail = true;
+            }
+            if (stripos($msg, 'user_username') !== false || stripos($msg, 'username') !== false) {
+                $isDuplicateUsername = true;
+            }
+        }
+    } else {
+        // fallback: parse message text
+        $msg = $e->getMessage();
+        if (stripos($msg, 'Duplicate entry') !== false) {
+            if (stripos($msg, 'email') !== false || stripos($msg, 'user_email') !== false) {
+                $isDuplicateEmail = true;
+            }
+            if (stripos($msg, 'username') !== false || stripos($msg, 'user_username') !== false) {
+                $isDuplicateUsername = true;
+            }
+        }
+    }
+
+    if ($isDuplicateEmail) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Email is already taken', 'error_code' => 'email_taken']);
+            exit();
+        }
+        _toastError('Email is already taken');
+        header('Location: /profile');
         exit();
     }
-    echo "Error: " . $e->getMessage();
+
+    if ($isDuplicateUsername) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Username is already taken', 'error_code' => 'username_taken']);
+            exit();
+        }
+        _toastError('Username is already taken');
+        header('Location: /profile');
+        exit();
+    }
+
+    if ($isAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Could not update profile']);
+        exit();
+    }
+
+    _toastError('Could not update profile');
+    header('Location: /profile');
+    exit();
 }
