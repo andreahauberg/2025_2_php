@@ -59,8 +59,5 @@ document.addEventListener("DOMContentLoaded", () => {
         signupDialog.dataset.openState = "open";
       }
     }
-  } catch (err) {
-    // non-fatal
-    console.warn("signup dialog guard error", err);
-  }
+  } catch (err) {}
 });
