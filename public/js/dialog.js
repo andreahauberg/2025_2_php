@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const openButtons = document.querySelectorAll("[data-open]");
-  const closeButtons = document.querySelectorAll(".x-dialog__close, .x-dialog__overlay");
+  const closeButtons = document.querySelectorAll(".x-dialog__close");
 
-  // Open dialog
+
   openButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -24,18 +24,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (pkInput) pkInput.value = postPk || "";
         if (msgInput) msgInput.value = postMessage || "";
-        // redirect_to lader vi PHP styre (hidden input med $_SERVER['REQUEST_URI'])
       }
 
       dialog.classList.add("active");
     });
   });
 
-  // Close dialog
   closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const dialog = btn.closest(".x-dialog");
       if (dialog) dialog.classList.remove("active");
+    });
+  });
+  
+  document.querySelectorAll(".x-dialog__overlay").forEach((overlay) => {
+    overlay.addEventListener("click", (e) => {
+      const dialog = overlay.closest(".x-dialog");
+      if (!dialog) return;
+  
+      if (dialog.id === "signupDialog" && dialog.dataset.openState === "open") {
+        return;
+      }
+  
+      dialog.classList.remove("active");
     });
   });
 });
