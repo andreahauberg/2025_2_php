@@ -1,11 +1,9 @@
 <?php
 require_once __DIR__ . "/../x.php";
 
-// helper to ensure the user is logged in and get current user
 _ensureLogin('/');
 $currentUser = _currentUser();
 if (!$currentUser) {
-    // fallback
     header('Location: /');
     exit();
 }
@@ -96,77 +94,72 @@ $currentPage = 'profile';
 require __DIR__ . '/../components/_header.php';
 ?>
 
-        <main>
+<main>
 
-            <div class="profile-header">
-                
-                <div class="profile-cover-container">
-                    
-                    <img src="https://picsum.photos/600/200" alt="Cover" class="profile-cover">
-                    <div class="profile-cover-filter"></div>
-                </div>
-                <div class="profile-page-info">
-                    <!-- Tre prikker -->
-<button class="avatar-menu-btn">⋮</button>
+    <div class="profile-header">
 
-<!-- Dropdown menu -->
-<div class="avatar-menu">
-    <form action="/api/api-update-avatar.php" method="POST" enctype="multipart/form-data">
-        <label class="avatar-menu-item">
-            Change photo
-            <input type="file" name="avatar" accept="image/*" hidden>
-        </label>
-
-        <button type="submit" class="avatar-menu-item save-btn">
-            Save
-        </button>
-    </form>
-</div>
-                <div class="avatar-wrapper">
-
-<img 
-    src="<?php echo !empty($currentUser['user_avatar']) ? $currentUser['user_avatar'] : '/public/img/avatar.jpg'; ?>" 
-    alt="Profile" 
-    class="profile-avatar"
+        <div class="profile-cover-container">
+        <img 
+    src="<?php echo !empty($currentUser['user_cover']) ? $currentUser['user_cover'] : 'https://picsum.photos/800/300'; ?>" 
+    alt="Cover" 
+    class="profile-cover"
 >
+<form action="/api/api-upload-image.php"
+      method="POST"
+      enctype="multipart/form-data"
+      class="cover-upload-form">
+    <input type="hidden" name="type" value="cover">
+
+    <label class="cover-upload-btn">
+        <i class="fa-solid fa-camera"></i>
+        <input type="file" name="file" accept="image/*" hidden>
+    </label>
+
+    <button type="submit" class="cover-save-btn" style="display:none;">
+        Save
+    </button>
+</form>
+            <div class="profile-cover-filter"></div>
+        </div>
+        <div class="profile-page-info">
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.querySelector(".avatar-menu-btn");
-    const menu = document.querySelector(".avatar-menu");
+            <form action="/api/api-upload-image.php"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  class="avatar-upload-form">
+                <input type="hidden" name="type" value="avatar">
 
-    btn.addEventListener("click", () => {
-        menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-    });
+                <div class="avatar-wrapper">
+                    <img src="<?php echo !empty($currentUser['user_avatar']) ? $currentUser['user_avatar'] : '/public/img/avatar.jpg'; ?>"
+                         alt="Profile" class="profile-avatar">
 
-    document.addEventListener("click", (e) => {
-        if (!btn.contains(e.target) && !menu.contains(e.target)) {
-            menu.style.display = "none";
-        }
-    });
-});
-    </script>
-</div>
-                    <div class="profile-details">
-                        <h1><?php _($currentUser["user_full_name"]); ?></h1>
-                        <p>@<?php _($currentUser["user_username"]); ?></p>
-                        <div class="profile-stats">
-                            <span><strong><?php echo count($posts); ?></strong> Posts</span>
-                            <span><strong><?php echo count($following); ?></strong> Following</span>
-                        </div>
-                    </div>
+                    <label class="avatar-edit-btn" style="position:absolute; bottom:0; right:0; z-index:25; background:black; padding:6px; border-radius:50%;">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" name="file" accept="image/*" hidden>
+                    </label>
                 </div>
+            </form>
+            <div class="profile-details">
+                <h1><?php _($currentUser["user_full_name"]); ?></h1>
+                <p>@<?php _($currentUser["user_username"]); ?></p>
+                <div class="profile-stats">
+                    <span><strong><?php echo count($posts); ?></strong> Posts</span>
+                    <span><strong><?php echo count($following); ?></strong> Following</span>
+                </div>
+            </div>
+        </div>
 
-            <?php if (empty($posts)): ?>
-                <p class="no-posts">No posts yet.</p>
-            <?php else: ?>
-                <?php foreach ($posts as $post): ?>
-                    <?php require __DIR__ . "/../components/_post.php"; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </main>
+        <?php if (empty($posts)): ?>
+        <p class="no-posts">No posts yet.</p>
+        <?php else: ?>
+        <?php foreach ($posts as $post): ?>
+        <?php require __DIR__ . "/../components/_post.php"; ?>
+        <?php endforeach; ?>
+        <?php endif; ?>
+<script src="/public/js/profile.js"></script>
+</main>
 
-        <?php require __DIR__ . '/../components/_aside.php'; ?>
+<?php require __DIR__ . '/../components/_aside.php'; ?>
 
-        <?php require __DIR__ . '/../components/_footer.php'; ?>
+<?php require __DIR__ . '/../components/_footer.php'; ?>

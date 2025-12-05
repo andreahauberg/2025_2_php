@@ -725,6 +725,7 @@ aside {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   overflow: hidden;
+  z-index: 1;
 }
 
 .profile-cover {
@@ -741,7 +742,7 @@ aside {
   height: 100%;
   background: rgba(255, 255, 255, 0.4);
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
 .profile-page-info {
@@ -757,8 +758,31 @@ aside {
   border-radius: 50%;
   border: 4px solid white;
   object-fit: cover;
-  margin-right: 1rem;
-  z-index: 2;
+  position: relative;
+  z-index: 6;
+  margin-right: 0;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 5px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  z-index: 7;
+  backdrop-filter: blur(3px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.avatar-edit-btn:hover {
+  background: rgba(0,0,0,0.85);
+  transform: scale(1.05);
 }
 
 .profile-details {
@@ -1118,47 +1142,6 @@ aside {
   display: inline-block;
 }
 
-.avatar-menu-btn {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background: #000;
-  color: #fff;
-  border: none;
-  font-size: 18px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.avatar-menu {
-  position: absolute;
-  right: 0;
-  top: 115%;
-  width: 160px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  padding: 8px 0;
-  display: none;
-  flex-direction: column;
-  z-index: 20;
-}
-
-.avatar-menu-item {
-  width: 100%;
-  text-align: left;
-  padding: 10px 14px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.avatar-menu-item:hover {
-  background: #f2f2f2;
-}
 
 .x-dialog__form input.x-error {
   border: 2px solid #f4212e !important;
@@ -1182,4 +1165,37 @@ aside {
   margin-top: 0.4rem;
   margin-bottom: -0.3rem;
   color: #0f1419;
+}
+
+.cover-upload-form {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 0;
+}
+
+.cover-upload-btn {
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease;
+}
+
+.cover-upload-btn:hover {
+  background: rgba(0,0,0,0.9);
+}
+@media (min-width: 768px) {
+  .cover-upload-form {
+    justify-content: flex-end;
+    padding-right: 1rem;
+  }
 }
