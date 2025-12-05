@@ -1,40 +1,56 @@
 <?php
+session_start();
+require_once __DIR__.'/../x.php';
+require_once __DIR__.'/../db.php';
 
-try{
-    session_start();
-    require_once __DIR__."/../x.php";
-    $userEmail = _validateEmail();
-    $userPassword = _validatePassword();
-    require_once __DIR__."/../db.php";
-    $sql = "SELECT * FROM users WHERE user_email = :email AND deleted_at IS NULL";
-    $stmt = $_db->prepare( $sql );
+try {
+    $email    = _validateEmail();
+    $password = _validatePassword();
 
-    $stmt->bindValue(":email", $userEmail);
+    // 1. Check if email exists
+    $stmt = $_db->prepare("
+        SELECT * 
+        FROM users 
+        WHERE user_email = :email 
+          AND deleted_at IS NULL
+        LIMIT 1
+    ");
+    $stmt->bindValue(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch();
-    // echo $user;
-    // var_dump($user);
-    // echo "<br>";
-    // print_r($user); 
-    // echo "<br>";
-    // echo json_encode($user);
-    if(!$user || !password_verify($userPassword, $user["user_password"])){
-        // hvis brugeren ikke eksisterer eller adgangskoden/email er forkert 
-        _toastError('Wrong email or password');
-        // hold dialog boksen åben 
-        $_SESSION['open_dialog'] = 'login'; 
+
+    if (!$user) {
+        _toastError("There is no account with this email");
+        $_SESSION['open_dialog'] = 'login';
         header("Location: /");
         exit();
     }
 
-    unset($user["user_password"]);
-    $_SESSION["user"] = $user;
-    header("Location: /home");
+    // 2. Email exists, now check password
+    if (!password_verify($password, $user['user_password'])) {
+        _toastError("Incorrect password");
+        $_SESSION['open_dialog'] = 'login';
+        header("Location: /");
+        exit();
+    }
 
-}catch(Exception $e){
+    // 3. Optionally check email verification
+    if (!$user["user_is_verified"] && weaveIsProd()) {
+        _toastError("Please verify your email before logging in");
+        $_SESSION['open_dialog'] = 'login';
+        header("Location: /");
+        exit();
+    }
+
+    unset($user['user_password']);
+    $_SESSION['user'] = $user;
+
+    header("Location: /home");
+    exit();
+
+} catch (Exception $e) {
     _toastError($e->getMessage());
     $_SESSION['open_dialog'] = 'login';
-    header('Location: /');
+    header("Location: /");
     exit();
 }
-
