@@ -11,7 +11,8 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 function rand50() {
     return bin2hex(random_bytes(25)); 
 }
-
+// user_is_verified = 1
+// user_verify_token = NULL
 function fakeMessage() {
     $emojis = ["🔥","✨","😊","🎉","📸","💬","🙌","👍","💡","📍","⭐","😎","🛠️","❤️","🚀","📢"];
     $hashtags = ["#update","#news","#hello","#random","#coding","#project","#daily","#vibes","#now","#trending","#life","#post"];
