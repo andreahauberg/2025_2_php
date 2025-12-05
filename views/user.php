@@ -15,14 +15,15 @@ if (!$userPk) {
     exit();
 }
 
-// Hent den valgte bruger
-$q = "SELECT * FROM users WHERE user_pk = :userPk";
+// Hent den valgte bruger (skjul slettede profiler)
+$q = "SELECT * FROM users WHERE user_pk = :userPk AND deleted_at IS NULL";
 $stmt = $_db->prepare($q);
 $stmt->bindValue(":userPk", $userPk);
 $stmt->execute();
 $profileUser = $stmt->fetch();
 
 if (!$profileUser) {
+    _toastError('User not found');
     header("location: /home");
     exit();
 }
@@ -104,8 +105,9 @@ $q = "
   SELECT DISTINCT users.*
   FROM follows
   JOIN users ON follows.follower_user_fk = users.user_pk
-  WHERE follows.follow_user_fk = :userPk
-  AND users.user_pk != :currentUserPk
+    WHERE follows.follow_user_fk = :userPk
+    AND users.user_pk != :currentUserPk
+    AND users.deleted_at IS NULL
   LIMIT 10
 ";
 $stmt = $_db->prepare($q);
@@ -119,6 +121,7 @@ $q = "
   FROM users
   WHERE users.user_pk != :currentUserPk
   AND users.user_pk != :userPk
+    AND users.deleted_at IS NULL
   AND users.user_pk NOT IN (
     SELECT follow_user_fk
     FROM follows

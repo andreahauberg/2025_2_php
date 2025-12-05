@@ -55,11 +55,9 @@ document.addEventListener("click", async function (e) {
     if (typeof showDeleteConfirmInline === "function") {
       const ok = await showDeleteConfirmInline(container, "Are you sure you want to delete your profile? This action cannot be undone.");
       if (!ok) return;
-      window.location.href = "api-delete-profile";
     } else {
       const ok = window.confirm("Are you sure you want to delete your profile? This action cannot be undone.");
       if (!ok) return;
-      window.location.href = "api-delete-profile";
     }
   } catch (err) {
     console.error("[confirm-delete] error handling profile delete", err);

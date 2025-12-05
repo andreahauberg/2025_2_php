@@ -9,6 +9,7 @@ $sql = "
     SELECT post_message
     FROM posts
     WHERE post_message REGEXP '#[A-Za-z0-9_]+'
+      AND deleted_at IS NULL
 ";
 $stmt = $_db->prepare($sql);
 $stmt->execute();
