@@ -62,6 +62,47 @@ document.addEventListener("click", async function (e) {
 
     window.location.href = "api-delete-profile";
   } catch (err) {
-    console.error("[confirm-delete] error handling profile delete", err);
+    // swallow errors silently
+  }
+});
+
+// Intercept update-profile form submission to use fetch + toast
+document.addEventListener("submit", async function (e) {
+  const form = e.target.closest && e.target.closest("#updateProfileDialog .x-dialog__form");
+  if (!form) return;
+  e.preventDefault();
+
+  try {
+    const data = new URLSearchParams(new FormData(form)).toString();
+    const res = await fetch(form.getAttribute("action") || "api-update-profile", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: data,
+    });
+
+    let json = {};
+    try {
+      json = await res.json();
+    } catch (_) {
+      json = {};
+    }
+
+    if (res.ok && json.success === true) {
+      if (typeof showToast === "function") showToast(json.message || "Profile updated", "ok");
+      // update session values in UI where possible (page reload is safest)
+      setTimeout(() => window.location.reload(), 800);
+      return;
+    }
+
+    // handle errors
+    const msg = (json && (json.message || json.error)) || "Could not update profile";
+    if (typeof showToast === "function") showToast(msg, "error");
+  } catch (err) {
+    if (typeof showToast === "function") showToast("Network error while updating profile", "error");
   }
 });
