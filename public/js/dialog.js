@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const openButtons = document.querySelectorAll("[data-open]");
   const closeButtons = document.querySelectorAll(".x-dialog__close");
 
-
   openButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -36,17 +35,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dialog) dialog.classList.remove("active");
     });
   });
-  
+
   document.querySelectorAll(".x-dialog__overlay").forEach((overlay) => {
     overlay.addEventListener("click", (e) => {
       const dialog = overlay.closest(".x-dialog");
       if (!dialog) return;
-  
+
       if (dialog.id === "signupDialog" && dialog.dataset.openState === "open") {
         return;
       }
-  
+
       dialog.classList.remove("active");
     });
   });
+
+  try {
+    const signupDialog = document.getElementById("signupDialog");
+    if (signupDialog) {
+      const hasErrorField = !!signupDialog.querySelector(".x-error");
+      const serverOpen = signupDialog.dataset.openState === "open";
+      if (hasErrorField || serverOpen) {
+        signupDialog.classList.add("active");
+        signupDialog.dataset.openState = "open";
+      }
+    }
+  } catch (err) {
+    // non-fatal
+    console.warn("signup dialog guard error", err);
+  }
 });
