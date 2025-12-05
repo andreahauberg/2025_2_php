@@ -41,11 +41,19 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         <h2>Following</h2>
 
         <?php if (!empty($following)): ?>
-            <div class="follow-suggestion">
+            <div class="follow-suggestion" id="followingList">
                 <?php foreach ($following as $user): ?>
                     <?php require __DIR__ . '/_follow_tag.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <?php
+                // show more when we returned as many items as the page limit
+                $followLimit = $followLimit ?? 10;
+                $initialFollowingCount = count($following);
+            ?>
+            <?php if ($initialFollowingCount === $followLimit): ?>
+                <button id="followingShowMore" class="show-more-btn" data-offset="<?= $initialFollowingCount ?>" data-limit="<?= $followLimit ?>" data-initial="<?= $initialFollowingCount ?>" data-max="100">Show more</button>
+            <?php endif; ?>
         <?php else: ?>
             <p>Not following anyone yet.</p>
         <?php endif; ?>

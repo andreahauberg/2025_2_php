@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", async () => {
       const mode = btn.dataset.mode || "more";
 
-
       if (mode === "less") {
         while (list.children.length > initialCount) {
           list.removeChild(list.lastElementChild);
@@ -69,10 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const raw = item.topic || "";
       const tag = raw.trim();
       const clean = tag.startsWith("#") ? tag.slice(1) : tag;
-    
+
       const div = document.createElement("div");
       div.className = "trending-item";
-    
+
       div.innerHTML = `
         <div class="trending-info">
           <span class="item_title">Trending · ${item.post_count} posts</span>
@@ -82,11 +81,40 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <span class="option">⋮</span>
       `;
-    
+
       list.appendChild(div);
-  
     },
   });
+
+  // shared renderer for follow items (used by who-to-follow and profile following)
+  function renderFollowItem(user, list) {
+    const a = document.createElement("a");
+    a.href = `/user?user_pk=${user.user_pk}`;
+    a.className = "profile-info";
+    a.id = user.user_pk;
+
+    const img = document.createElement("img");
+    img.src = user.user_avatar || "/public/img/avatar.jpg";
+    img.className = "profile-avatar";
+
+    const info = document.createElement("div");
+    info.className = "info-copy";
+    const pName = document.createElement("p");
+    pName.className = "name";
+    pName.textContent = user.user_full_name;
+    const pHandle = document.createElement("p");
+    pHandle.className = "handle";
+    pHandle.textContent = `@${user.user_username}`;
+    info.append(pName, pHandle);
+
+    const btnFollow = document.createElement("button");
+    btnFollow.className = `follow-btn button-${user.user_pk}`;
+    btnFollow.setAttribute("mix-get", `api-follow?user-pk=${user.user_pk}`);
+    btnFollow.textContent = "Follow";
+
+    a.append(img, info, btnFollow);
+    list.appendChild(a);
+  }
 
   setupLoadMore({
     buttonId: "followShowMore",
@@ -101,33 +129,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return true;
     },
-    renderItem(user, list) {
-      const a = document.createElement("a");
-      a.href = `/user?user_pk=${user.user_pk}`;
-      a.className = "profile-info";
-      a.id = user.user_pk;
+    renderItem: renderFollowItem,
+  });
 
-      const img = document.createElement("img");
-      const seed = Math.abs((user.user_username || "").split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 100);
-      img.src = "/public/img/avatar.jpg";
-
-      const info = document.createElement("div");
-      info.className = "info-copy";
-      const pName = document.createElement("p");
-      pName.className = "name";
-      pName.textContent = user.user_full_name;
-      const pHandle = document.createElement("p");
-      pHandle.className = "handle";
-      pHandle.textContent = `@${user.user_username}`;
-      info.append(pName, pHandle);
-
-      const btnFollow = document.createElement("button");
-      btnFollow.className = `follow-btn button-${user.user_pk}`;
-      btnFollow.setAttribute("mix-get", `api-follow?user-pk=${user.user_pk}`);
-      btnFollow.textContent = "Follow";
-
-      a.append(img, info, btnFollow);
-      list.appendChild(a);
+  // Load more for profile following list
+  setupLoadMore({
+    buttonId: "followingShowMore",
+    listId: "followingList",
+    url: "/api/_api-get-following.php",
+    defaultLimit: 10,
+    handleNonOk(res, btn) {
+      if (res.status === 401) {
+        btn.style.display = "none";
+        return false;
+      }
+      return true;
     },
+    renderItem: renderFollowItem,
   });
 });
