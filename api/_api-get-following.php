@@ -20,8 +20,8 @@ $sql = "
     JOIN users u ON u.user_pk = f.follow_user_fk
     WHERE f.follower_user_fk = :user
       AND u.deleted_at IS NULL
-    ORDER BY f.created_at DESC
-    LIMIT :limit OFFSET :offset
+      ORDER BY u.user_full_name ASC
+      LIMIT :limit OFFSET :offset
 ";
 
 $stmt = $_db->prepare($sql);
@@ -29,7 +29,7 @@ $stmt->bindValue(':user', $currentUser['user_pk']);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$rows = $stmt->fetchAll();
 
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode($rows);

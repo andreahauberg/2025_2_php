@@ -42,11 +42,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         data.forEach((item) => renderItem(item, list));
+        // ensure any mix-get/mix-post attributes on newly appended nodes are initialized
+        if (typeof window.mix_convert === "function") {
+          try {
+            window.mix_convert();
+          } catch (e) {
+            console.warn("mix_convert failed", e);
+          }
+        }
 
         const total = list.children.length;
         btn.dataset.offset = offset + data.length;
 
-        if (total >= maxItems) {
+        if (total > initialCount) {
+          btn.dataset.mode = "less";
+          btn.textContent = "Show less";
+          btn.style.display = "";
+        } else if (total >= maxItems) {
+          // fallback
           btn.dataset.mode = "less";
           btn.textContent = "Show less";
           btn.style.display = "";
@@ -86,8 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  // shared renderer for follow items (used by who-to-follow and profile following)
-  function renderFollowItem(user, list) {
+  // renderers for follow items
+  function renderFollowSuggestion(user, list) {
     const a = document.createElement("a");
     a.href = `/user?user_pk=${user.user_pk}`;
     a.className = "profile-info";
@@ -116,6 +129,35 @@ document.addEventListener("DOMContentLoaded", () => {
     list.appendChild(a);
   }
 
+  function renderFollowingItem(user, list) {
+    const a = document.createElement("a");
+    a.href = `/user?user_pk=${user.user_pk}`;
+    a.className = "profile-info";
+    a.id = user.user_pk;
+
+    const img = document.createElement("img");
+    img.src = user.user_avatar || "/public/img/avatar.jpg";
+    img.className = "profile-avatar";
+
+    const info = document.createElement("div");
+    info.className = "info-copy";
+    const pName = document.createElement("p");
+    pName.className = "name";
+    pName.textContent = user.user_full_name;
+    const pHandle = document.createElement("p");
+    pHandle.className = "handle";
+    pHandle.textContent = `@${user.user_username}`;
+    info.append(pName, pHandle);
+
+    const btnUnfollow = document.createElement("button");
+    btnUnfollow.className = `unfollow-btn button-${user.user_pk}`;
+    btnUnfollow.setAttribute("mix-get", `api-unfollow?user-pk=${user.user_pk}`);
+    btnUnfollow.textContent = "Unfollow";
+
+    a.append(img, info, btnUnfollow);
+    list.appendChild(a);
+  }
+
   setupLoadMore({
     buttonId: "followShowMore",
     listId: "whoToFollowList",
@@ -129,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return true;
     },
-    renderItem: renderFollowItem,
+    renderItem: renderFollowSuggestion,
   });
 
   // Load more for profile following list
@@ -137,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buttonId: "followingShowMore",
     listId: "followingList",
     url: "/api/_api-get-following.php",
-    defaultLimit: 10,
+    defaultLimit: 3,
     handleNonOk(res, btn) {
       if (res.status === 401) {
         btn.style.display = "none";
@@ -145,6 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return true;
     },
-    renderItem: renderFollowItem,
+    renderItem: renderFollowingItem,
   });
 });

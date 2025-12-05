@@ -47,11 +47,11 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
                 <?php endforeach; ?>
             </div>
             <?php
-                // show more when we returned as many items as the page limit
+                
                 $followLimit = $followLimit ?? 10;
                 $initialFollowingCount = count($following);
             ?>
-            <?php if ($initialFollowingCount === $followLimit): ?>
+            <?php if ($initialFollowingCount > 0): ?>
                 <button id="followingShowMore" class="show-more-btn" data-offset="<?= $initialFollowingCount ?>" data-limit="<?= $followLimit ?>" data-initial="<?= $initialFollowingCount ?>" data-max="100">Show more</button>
             <?php endif; ?>
         <?php else: ?>
@@ -107,12 +107,12 @@ $initialFollowCount = $initialFollowCount ?? count($usersToFollow);
         </div>
         <?php endif; ?>
 
-        <?php if ($initialFollowCount === ($followLimit ?? 3)): ?>
+        <?php if ($initialFollowCount > 0): ?>
             <button
                 id="followShowMore"
                 class="show-more-btn"
                 data-offset="<?= $initialFollowCount ?>"
-                data-limit="3"
+                data-limit="<?= $followLimit ?? 3 ?>"
                 data-initial="<?= $initialFollowCount ?>"
                 data-max="10"
             >
